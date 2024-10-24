@@ -4,14 +4,11 @@ import static school.hei.haapi.service.utils.DataFormatterUtils.formatLocalDate;
 import static school.hei.haapi.service.utils.DataFormatterUtils.instantToOcsDateFormat;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import lombok.SneakyThrows;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -19,20 +16,27 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 @Component
-public class XlsxCellsGenerator<T> implements Function<List<T>, byte[]> {
+public class XlsxCellsGenerator<T> implements BiFunction<List<T>, List<String>, byte[]> {
+
+  /***
+   *
+   * @param objectsToPrint the first function argument, given List object will be printed in the xlsx
+   * @param fieldsToBePrinted the second function argument, given List of Class fields to be printed
+   * @return xlsx file
+   */
   @Override
   @SneakyThrows
-  public byte[] apply(List<T> t) {
+  public byte[] apply(List<T> objectsToPrint, List<String> fieldsToBePrinted) {
     Workbook workbook = new XSSFWorkbook();
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
     Sheet sheet = workbook.createSheet("excel-sheet");
     Row row0 = sheet.createRow(0);
 
-    generateHeadedRow(row0, t.get(0));
+    generateHeadedRow(row0, fieldsToBePrinted);
 
-    for (int i = 0; i < t.size(); i++) {
+    for (int i = 0; i < objectsToPrint.size(); i++) {
       Row rowi = sheet.createRow(i + 1);
-      generateBodiesRow(rowi, t.get(i));
+      generateBodiesRow(rowi, objectsToPrint.get(i), fieldsToBePrinted);
     }
 
     try {
@@ -44,26 +48,21 @@ public class XlsxCellsGenerator<T> implements Function<List<T>, byte[]> {
   }
 
   @SneakyThrows
-  private void generateBodiesRow(Row rowi, T t) {
-    var objectClazz = t.getClass();
-    var fields = Arrays.stream(objectClazz.getDeclaredFields()).map(Field::getName).toArray();
+  private void generateBodiesRow(Row rowi, T objectToPrint, List<String> fieldsToBePrinted) {
+    var objectClazz = objectToPrint.getClass();
 
-    for (int i = 0; i < fields.length; i++) {
-      var fieldValue = objectClazz.getDeclaredField(fields[i].toString());
+    for (int i = 0; i < fieldsToBePrinted.size(); i++) {
+      var fieldValue = objectClazz.getDeclaredField(fieldsToBePrinted.get(i));
       fieldValue.setAccessible(true);
-      Object value = fieldValue.get(t);
-
+      Object value = fieldValue.get(objectToPrint);
       String formatedValue = formatValue(value);
       rowi.createCell(i).setCellValue(formatedValue != null ? formatedValue : "");
     }
   }
 
-  private void generateHeadedRow(Row row0, T objectToPrint) {
-    var objectClazz = objectToPrint.getClass();
-    var fields = Arrays.stream(objectClazz.getDeclaredFields()).map(Field::getName).toArray();
-
-    for (int i = 0; i < fields.length; i++) {
-      row0.createCell(i).setCellValue(fields[i].toString());
+  private void generateHeadedRow(Row row0, List<String> fieldsToBePrinted) {
+    for (int i = 0; i < fieldsToBePrinted.size(); i++) {
+      row0.createCell(i).setCellValue(fieldsToBePrinted.get(i).toString());
     }
   }
 

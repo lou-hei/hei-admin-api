@@ -75,6 +75,6 @@ public class PromotionService {
 
   private byte[] generateSheetsOfStudentsPromotionById(List<User> students) throws IOException {
     XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
-    return xlsxCellsGenerator.apply(students);
+    return xlsxCellsGenerator.apply(students, List.of("ref", "firstName", "lastName"));
   }
 }
