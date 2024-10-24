@@ -947,6 +947,80 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /exams:
+    get:
+      tags:
+        - Teaching
+      summary: Get all exam infos.
+      parameters:
+        - name: awarded_course_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+          description: Set value to 1 by default if null is provided
+          required: false
+        - name: page_size
+          in: query
+          description: Set value to 15 by default if null is provided
+          schema:
+            $ref: '#/components/schemas/PageSize'
+      operationId: getAllExams
+      responses:
+        '200':
+          description: List of exam infos without the participants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamInfo'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Teaching
+      summary: Create new exams or update existing exams
+      operationId: CreateOrUpdateExamsInfos
+      requestBody:
+        required: true
+        description: Exams to update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrupdateExam'
+      responses:
+        '200':
+          description: Exams infos without the students participated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamInfo'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /awarded_courses/{awarded_course_id}/exams/{exam_id}:
     get:
       tags:
@@ -4723,6 +4797,20 @@ components:
           format: date-time
         awarded_course:
           $ref: '#/components/schemas/AwardedCourse'
+    CrupdateExam:
+      type: object
+      properties:
+        id:
+          type: string
+        coefficient:
+          type: integer
+        title:
+          type: string
+        examination_date:
+          type: string
+          format: date-time
+        awarded_course_id:
+          type: string
     Grade:
       type: object
       required:

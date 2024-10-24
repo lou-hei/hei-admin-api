@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import school.hei.haapi.endpoint.rest.mapper.ExamMapper;
+import school.hei.haapi.endpoint.rest.model.CrupdateExam;
 import school.hei.haapi.endpoint.rest.model.ExamInfo;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.Exam;
@@ -34,6 +35,18 @@ public class ExamController {
     // TODO: Review this part, why it has test and passed then now this resources disapeared and
     // test failed
     throw new NotImplementedException("Resources are not implemented yet");
+  }
+
+  @GetMapping("/exams")
+  public List<ExamInfo> getAllExams(
+      @RequestParam(value = "page", defaultValue = "1") PageFromOne page,
+      @RequestParam(value = "page_size", defaultValue = "15") BoundedPageSize pageSize) {
+    return examMapper.toDomainList(examService.getAllExams(page, pageSize));
+  }
+
+  @PutMapping("/exams")
+  public ExamInfo createOrUpdateExamsInfos(@RequestBody CrupdateExam examInfo) {
+    return examMapper.toRest(examService.createOrUpdateExamsInfos(examMapper.toDomain(examInfo)));
   }
 
   @PutMapping("/awarded_courses/{awarded_course_id}/exams")
