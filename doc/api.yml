@@ -5507,6 +5507,15 @@ components:
           type: integer
         unpaid_fees:
           type: integer
+    FeesStatistics:
+      type: object
+      properties:
+        total_fees:
+          type: integer
+        paid_fees:
+          type: integer
+        unpaid_fees:
+          type: integer
     Letter:
       type: object
       properties:
