@@ -38,6 +38,8 @@ class ExamIT extends MockedThirdParties {
   }
 
   /*
+
+
     //  @Test
     //  void student_read_exam_grades_ko() {
     //    ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
@@ -62,7 +64,6 @@ class ExamIT extends MockedThirdParties {
     //        () -> api.createOrUpdateExams(GROUP1_ID, AWARDED_COURSE1_ID, List.of(exam1())));
     //  }
   */
-
   @Test
   void manager_read_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
