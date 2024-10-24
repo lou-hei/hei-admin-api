@@ -1,3 +1,20 @@
+# [1.71.0](https://github.com/hei-school/hei-admin-api/compare/v1.70.0...v1.71.0) (2024-10-24)
+
+
+### Bug Fixes
+
+* course id null while creating an event ([b63feb9](https://github.com/hei-school/hei-admin-api/commit/b63feb901e6536788d61a34159fb8e5583e8b88b))
+* security conf for students promotin generation  ([3bb12a0](https://github.com/hei-school/hei-admin-api/commit/3bb12a0ff1a0680da6fe617e69ec3d65eb732a43))
+* xlsx cell instant format  ([3a7276d](https://github.com/hei-school/hei-admin-api/commit/3a7276d97df5dcdce5cbfa5fdd4d98007f87df15))
+
+
+### Features
+
+* generate students promotion in xlsx  ([ca7ef7e](https://github.com/hei-school/hei-admin-api/commit/ca7ef7ebcc478a18907d7184fbe0a28f7cfde393))
+* **not-implemented:** add endpoint specific for exams creation and retrieve ([8417681](https://github.com/hei-school/hei-admin-api/commit/8417681faad5903424dd112b821be4960f0c3f49))
+
+
+
 # [1.70.0](https://github.com/hei-school/hei-admin-api/compare/v1.69.0...v1.70.0) (2024-10-23)
 
 
@@ -89,15 +106,6 @@
 
 * **not implemented:** crupdate student fees ([598a7fd](https://github.com/hei-school/hei-admin-api/commit/598a7fd8803218e7a37f7c3be1e76c3eba29d1b5))
 * scheduled cron job to update student status  ([af972bd](https://github.com/hei-school/hei-admin-api/commit/af972bd3481ad3b24593ecbbb713dd4efb740870))
-
-
-
-# [1.61.0](https://github.com/hei-school/hei-admin-api/compare/v1.60.0...v1.61.0) (2024-10-07)
-
-
-### Features
-
-* get letter by fee id ([7d4a717](https://github.com/hei-school/hei-admin-api/commit/7d4a717f24f0b645665c586331cf321feef8125b))
 
 
 
