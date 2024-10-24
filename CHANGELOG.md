@@ -1,3 +1,13 @@
+# [1.72.0](https://github.com/hei-school/hei-admin-api/compare/v1.71.0...v1.72.0) (2024-10-24)
+
+
+### Features
+
+* generate students group in xlsx  ([b761cd4](https://github.com/hei-school/hei-admin-api/commit/b761cd4378f5cdb0cf598ce2fa6c9c5ff5256cd5))
+* **not-implemented:** get monthy fees statistics  ([b1a0ee2](https://github.com/hei-school/hei-admin-api/commit/b1a0ee2ab597b67f90d090dbbe336242b9735fc9))
+
+
+
 # [1.71.0](https://github.com/hei-school/hei-admin-api/compare/v1.70.0...v1.71.0) (2024-10-24)
 
 
@@ -91,21 +101,6 @@
 ### Features
 
 * modify request body in linking students to monitor endpoint ([0de28a1](https://github.com/hei-school/hei-admin-api/commit/0de28a13e4504ed49d764990c419666b136cb3a1))
-
-
-
-# [1.62.0](https://github.com/hei-school/hei-admin-api/compare/v1.61.0...v1.62.0) (2024-10-09)
-
-
-### Bug Fixes
-
-* more than one row error while fetching letter ([afe4c14](https://github.com/hei-school/hei-admin-api/commit/afe4c145fe86287ffe329c7072e1a5fd7a8bd338))
-
-
-### Features
-
-* **not implemented:** crupdate student fees ([598a7fd](https://github.com/hei-school/hei-admin-api/commit/598a7fd8803218e7a37f7c3be1e76c3eba29d1b5))
-* scheduled cron job to update student status  ([af972bd](https://github.com/hei-school/hei-admin-api/commit/af972bd3481ad3b24593ecbbb713dd4efb740870))
 
 
 
