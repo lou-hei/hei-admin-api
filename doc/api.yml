@@ -2099,7 +2099,7 @@ paths:
     get:
       tags:
         - Paying
-      summary: Get all student fees filtered by status
+      summary: Get all student fees filtered by status and month
       parameters:
         - name: status
           in: query
@@ -2111,6 +2111,18 @@ paths:
               - UNPAID
               - LATE
               - PAID
+        - name: month_from
+          in: query
+          schema:
+            type: string
+            format: date-time
+          required: false  
+        - name: month_to
+          in: query
+          schema:
+            type: string
+            format: date-time
+          required: false  
         - name: page
           in: query
           schema:
@@ -2148,7 +2160,32 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-
+  /fees/stats:
+    get:
+      tags:
+        - Paying
+      summary: Get monthly statistics on Fees, the actual month by default
+      parameters:
+        - name: month_from
+          in: query
+          schema:
+            type: string
+            format: date-time
+          required: false
+        - name: month_to
+          in: query
+          schema:
+            type: string
+            format: date-time
+          required: false
+      operationId: getFeesStats
+      responses:
+        '200':
+          description: Fees stats info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeesStatistics'
   /fees/templates:
     get:
       tags:
@@ -5415,6 +5452,15 @@ components:
           type: integer
         suspended:
           type: integer
+    FeesStatistics:
+      type: object
+      properties:
+        total_fees:
+          type: integer
+        paid_fees:
+          type: integer
+        unpaid_fees:
+          type: integer      
     Letter:
       type: object
       properties:
