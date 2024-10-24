@@ -1224,6 +1224,7 @@ paths:
       tags:
         - Teaching
       summary: Get all students as xlsx file of a group
+      operationId: generateStudentsGroupInXlsx
       parameters:
         - name: id
           in: path
