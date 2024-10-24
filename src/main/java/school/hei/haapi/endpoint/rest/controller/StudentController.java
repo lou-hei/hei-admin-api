@@ -64,6 +64,11 @@ public class StudentController {
         .collect(Collectors.toUnmodifiableList());
   }
 
+  @GetMapping(value = "/groups/{id}/students/raw", produces = "application/vnd.ms-excel")
+  public byte[] generateStudentsGroupInXlsx(@PathVariable String id) {
+    return userService.generateStudentsGroup(id);
+  }
+
   @GetMapping("/students")
   public List<Student> getStudents(
       @RequestParam PageFromOne page,

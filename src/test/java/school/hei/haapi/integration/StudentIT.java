@@ -1,6 +1,7 @@
 package school.hei.haapi.integration;
 
 import static java.util.UUID.randomUUID;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +25,7 @@ import static school.hei.haapi.endpoint.rest.model.WorkStudyStatus.NOT_WORKING;
 import static school.hei.haapi.endpoint.rest.model.WorkStudyStatus.WORKING;
 import static school.hei.haapi.integration.GroupIT.updatedGroup3;
 import static school.hei.haapi.integration.GroupIT.updatedGroup5;
+import static school.hei.haapi.integration.StudentIT.ContextInitializer.SERVER_PORT;
 import static school.hei.haapi.integration.conf.TestUtils.*;
 import static school.hei.haapi.integration.conf.TestUtils.coordinatesWithNullValues;
 
@@ -32,7 +34,10 @@ import com.github.javafaker.Faker;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -40,6 +45,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -50,6 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -83,7 +90,7 @@ public class StudentIT extends MockedThirdParties {
   @Autowired ObjectMapper objectMapper;
 
   private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, ContextInitializer.SERVER_PORT);
+    return TestUtils.anApiClient(token, SERVER_PORT);
   }
 
   File getFileFromResource(String resourceName) {
@@ -385,6 +392,26 @@ public class StudentIT extends MockedThirdParties {
   }
 
   @Test
+  void manager_generate_promotion_students_ok() throws IOException, InterruptedException {
+    String STUDENTS_GROUP = "/groups/" + GROUP1_ID + "/students/raw";
+    HttpClient httpClient = HttpClient.newBuilder().build();
+    String basePath = "http://localhost:" + SERVER_PORT;
+
+    HttpResponse response =
+        httpClient.send(
+            HttpRequest.newBuilder()
+                .uri(URI.create(basePath + STUDENTS_GROUP))
+                .GET()
+                .header("Authorization", "Bearer " + MANAGER1_TOKEN)
+                .build(),
+            HttpResponse.BodyHandlers.ofByteArray());
+
+    Assert.assertEquals(HttpStatus.OK.value(), response.statusCode());
+    assertNotNull(response.body());
+    assertNotNull(response);
+  }
+
+  @Test
   void student_read_itself_repeating_this_year_ok() throws ApiException {
     ApiClient student8Client = anApiClient(STUDENT8_TOKEN);
 
@@ -410,8 +437,7 @@ public class StudentIT extends MockedThirdParties {
   void manager_upload_profile_picture() throws IOException, InterruptedException {
 
     HttpResponse<InputStream> response =
-        uploadProfilePicture(
-            ContextInitializer.SERVER_PORT, MANAGER1_TOKEN, STUDENT1_ID, "students");
+        uploadProfilePicture(SERVER_PORT, MANAGER1_TOKEN, STUDENT1_ID, "students");
 
     Student student = objectMapper.readValue(response.body(), Student.class);
 
