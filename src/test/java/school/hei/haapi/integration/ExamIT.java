@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.*;
-import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,8 @@ import school.hei.haapi.endpoint.rest.model.ExamInfo;
 import school.hei.haapi.integration.conf.AbstractContextInitializer;
 import school.hei.haapi.integration.conf.MockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
+
+import java.util.List;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
@@ -38,43 +39,6 @@ class ExamIT extends MockedThirdParties {
   }
 
   /*
-    @Test
-    void manager_read_ok() throws ApiException {
-      ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
-      TeachingApi api = new TeachingApi(manager1Client);
-
-      List<ExamInfo> actual = api.getExamsByAwardedCourse(AWARDED_COURSE1_ID, 1, 10);
-
-      ExamInfo oneActualExam = api.getExamById(AWARDED_COURSE1_ID, EXAM1_ID);
-
-      assertEquals(2, actual.size());
-      assertTrue(actual.contains(exam1()));
-      assertTrue(actual.contains(exam2()));
-
-      assertEquals(exam1(), oneActualExam);
-    }
-
-    @Test
-    void student_read_ko() {
-      ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
-      TeachingApi api = new TeachingApi(student1Client);
-      assertThrowsForbiddenException(() -> api.getExamsByAwardedCourse(AWARDED_COURSE1_ID, 1, 10));
-    }
-
-    @Test
-    void teacher_read_ok() throws ApiException {
-      ApiClient teacher1Client = anApiClient(TEACHER1_TOKEN);
-      TeachingApi api = new TeachingApi(teacher1Client);
-      List<ExamInfo> actual = api.getExamsByAwardedCourse(AWARDED_COURSE1_ID, 1, 10);
-      ExamInfo oneActualExam = api.getExamById(AWARDED_COURSE1_ID, EXAM1_ID);
-
-      assertEquals(2, actual.size());
-      assertTrue(actual.contains(exam1()));
-      assertTrue(actual.contains(exam2()));
-
-      assertEquals(exam1(), oneActualExam);
-    }
-
     //  @Test
     //  void student_read_exam_grades_ko() {
     //    ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
@@ -99,6 +63,43 @@ class ExamIT extends MockedThirdParties {
     //        () -> api.createOrUpdateExams(GROUP1_ID, AWARDED_COURSE1_ID, List.of(exam1())));
     //  }
   */
+
+  @Test
+  void manager_read_ok() throws ApiException {
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    TeachingApi api = new TeachingApi(manager1Client);
+
+    List<ExamInfo> actual = api.getAllExams(null, null,1, 5);
+
+    assertEquals(5, actual.size());
+    assertTrue(actual.contains(exam1()));
+    assertTrue(actual.contains(exam2()));
+    assertTrue(actual.contains(exam3()));
+    assertTrue(actual.contains(exam4()));
+    assertTrue(actual.contains(exam5()));
+  }
+
+  @Test
+  void student_read_ko() {
+    ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
+    TeachingApi api = new TeachingApi(student1Client);
+    assertThrowsForbiddenException(() -> api.getAllExams(null, null,1, 10));
+  }
+
+  @Test
+  void teacher_read_ok() throws ApiException {
+    ApiClient teacher1Client = anApiClient(TEACHER1_TOKEN);
+    TeachingApi api = new TeachingApi(teacher1Client);
+    List<ExamInfo> actual = api.getAllExams(null, null,1, 5);
+
+    assertEquals(5, actual.size());
+    assertTrue(actual.contains(exam1()));
+    assertTrue(actual.contains(exam2()));
+    assertTrue(actual.contains(exam3()));
+    assertTrue(actual.contains(exam4()));
+    assertTrue(actual.contains(exam5()));
+  }
+
   @Test
   @DirtiesContext
   void teacher_create_or_update_exam_ok() throws ApiException {
