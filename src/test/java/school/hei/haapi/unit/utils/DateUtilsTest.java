@@ -6,6 +6,9 @@ import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +46,19 @@ public class DateUtilsTest extends MockedThirdParties {
     String expectedRecoveryDate2 = "24 mai 2024";
     assertEquals(expectedRecoveryDate1, recoveryDate1);
     assertEquals(expectedRecoveryDate2, recoveryDate2);
+  }
+
+  @Test
+  public void get_default_month_range_ok() {
+    LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+    LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
+
+    Instant[] defaultRange = dateUtils.getDefaultMonthRange(null, null);
+
+    assertEquals(firstDayOfMonth.atStartOfDay(ZoneOffset.UTC).toInstant(), defaultRange[0]);
+    assertEquals(
+        lastDayOfMonth.atTime(23, 59, 59, 999999999).atZone(ZoneOffset.UTC).toInstant(),
+        defaultRange[1]);
   }
 
   static class ContextInitializer extends AbstractContextInitializer {
