@@ -392,7 +392,7 @@ public class StudentIT extends MockedThirdParties {
   }
 
   @Test
-  void manager_generate_promotion_students_ok() throws IOException, InterruptedException {
+  void manager_generate_group_students_ok() throws IOException, InterruptedException {
     String STUDENTS_GROUP = "/groups/" + GROUP1_ID + "/students/raw";
     HttpClient httpClient = HttpClient.newBuilder().build();
     String basePath = "http://localhost:" + SERVER_PORT;
