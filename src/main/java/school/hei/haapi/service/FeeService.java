@@ -26,6 +26,7 @@ import school.hei.haapi.endpoint.event.model.PojaEvent;
 import school.hei.haapi.endpoint.event.model.StudentsWithOverdueFeesReminder;
 import school.hei.haapi.endpoint.event.model.UnpaidFeesReminder;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
+import school.hei.haapi.endpoint.rest.model.FeesStatistics;
 import school.hei.haapi.endpoint.rest.model.PaymentFrequency;
 import school.hei.haapi.model.*;
 import school.hei.haapi.model.exception.ApiException;
@@ -33,6 +34,7 @@ import school.hei.haapi.model.validator.FeeValidator;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
 import school.hei.haapi.repository.FeeRepository;
 import school.hei.haapi.repository.dao.FeeDao;
+import school.hei.haapi.service.utils.DateUtils;
 
 @Service
 @AllArgsConstructor
@@ -46,6 +48,7 @@ public class FeeService {
   private final EventProducer<PojaEvent> eventProducer;
   private final FeeDao feeDao;
   private final FeeTemplateService feeTemplateService;
+  private final DateUtils dateUtils;
   private static final String MONTHLY_FEE_TEMPLATE_NAME = "Frais mensuel L1";
   private static final String YEARLY_FEE_TEMPLATE_NAME = "Frais annuel L1";
 
@@ -95,17 +98,29 @@ public class FeeService {
       PageFromOne page,
       BoundedPageSize pageSize,
       FeeStatusEnum status,
+      Instant monthFrom,
+      Instant monthTo,
       boolean isMpbs,
       String studentRef) {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "dueDatetime"));
-    if (isMpbs) {
-      return feeRepository.findAllByMpbsIsNotNullOrderByMpbsCreationDatetimeDesc(pageable);
-    }
-    if (status != null || studentRef != null) {
-      return feeDao.getByCriteria(status, studentRef, pageable);
-    }
-    return feeRepository.getFeesByStatus(DEFAULT_STATUS, pageable);
+    return feeDao.getByCriteria(status, studentRef, monthFrom, monthTo, isMpbs, pageable);
+  }
+
+  public FeesStatistics getFeesStats(Instant monthFrom, Instant monthTo) {
+    Instant[] defaultRange = dateUtils.getDefaultMonthRange(monthFrom, monthTo);
+    monthFrom = defaultRange[0];
+    monthTo = defaultRange[1];
+    Object[] stats = feeRepository.getMonthlyFeeStatistics(monthFrom, monthTo).get(0);
+
+    return new FeesStatistics()
+        .totalFees(toInt(stats[0]))
+        .paidFees(toInt(stats[1]))
+        .unpaidFees(toInt(stats[2]));
+  }
+
+  private int toInt(Object value) {
+    return value instanceof Number ? ((Number) value).intValue() : 0;
   }
 
   public List<Fee> getFeesByStudentId(

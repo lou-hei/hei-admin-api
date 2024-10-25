@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.HARDWARE;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.REMEDIAL_COSTS;
@@ -38,6 +39,7 @@ import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.CreateFee;
 import school.hei.haapi.endpoint.rest.model.Fee;
+import school.hei.haapi.endpoint.rest.model.FeesStatistics;
 import school.hei.haapi.integration.conf.AbstractContextInitializer;
 import school.hei.haapi.integration.conf.MockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
@@ -145,7 +147,6 @@ class FeeIT extends MockedThirdParties {
     PayingApi api = new PayingApi(manager1Client);
 
     List<Fee> actual = api.getFees(null, null, null, 1, 10, true, null);
-
     assertEquals(1, actual.size());
   }
 
@@ -373,6 +374,108 @@ class FeeIT extends MockedThirdParties {
     assertTrue(exceptionMessage9.contains("Can't modify total amount"));
     assertTrue(exceptionMessage10.contains("Can't modify CreationDatetime"));
     assertTrue(exceptionMessage11.contains("Fee with id " + wrongId + "does not exist"));
+  }
+
+  @Test
+  void get_fees_by_criteria_ok() throws ApiException {
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    PayingApi api = new PayingApi(manager1Client);
+
+    List<Fee> feesDefault = api.getFees(null, null, null, 1, 10, false, null);
+    assertEquals(5, feesDefault.size());
+
+    List<Fee> feeByMonth =
+        api.getFees(
+            null,
+            Instant.parse("2021-12-01T00:00:00.00Z"),
+            Instant.parse("2021-12-31T23:59:59.00Z"),
+            1,
+            10,
+            false,
+            null);
+    assertEquals(7, feeByMonth.size());
+    assertTrue(feeByMonth.contains(fee1()));
+    assertTrue(feeByMonth.contains(fee2()));
+    assertTrue(feeByMonth.contains(fee3()));
+    assertTrue(feeByMonth.contains(fee4()));
+
+    List<Fee> noFeeByMonth =
+        api.getFees(
+            null,
+            Instant.parse("2021-10-01T00:00:00.00Z"),
+            Instant.parse("2021-10-31T23:59:59.00Z"),
+            1,
+            10,
+            false,
+            null);
+    assertEquals(0, noFeeByMonth.size());
+
+    List<Fee> feeByStatusLateAndMonth =
+        api.getFees(
+            LATE.toString(),
+            Instant.parse("2021-12-01T00:00:00.00Z"),
+            Instant.parse("2021-12-31T23:59:59.00Z"),
+            1,
+            10,
+            false,
+            null);
+    assertEquals(5, feeByStatusLateAndMonth.size());
+    assertTrue(feeByStatusLateAndMonth.contains(fee3()));
+    assertTrue(feeByStatusLateAndMonth.contains(fee4()));
+
+    List<Fee> feeByStatusPaidAndMonth =
+        api.getFees(
+            PAID.toString(),
+            Instant.parse("2021-12-01T00:00:00.00Z"),
+            Instant.parse("2021-12-31T23:59:59.00Z"),
+            1,
+            10,
+            false,
+            null);
+    assertEquals(2, feeByStatusPaidAndMonth.size());
+    assertTrue(feeByStatusPaidAndMonth.contains(fee1()));
+    assertTrue(feeByStatusPaidAndMonth.contains(fee2()));
+
+    List<Fee> feeByStatusLateAndMonthAndStudentRef =
+        api.getFees(
+            LATE.toString(),
+            Instant.parse("2021-12-01T00:00:00.00Z"),
+            Instant.parse("2021-12-31T23:59:59.00Z"),
+            1,
+            10,
+            false,
+            "STD21002");
+    assertEquals(2, feeByStatusLateAndMonthAndStudentRef.size());
+    assertTrue(feeByStatusLateAndMonthAndStudentRef.contains(fee4()));
+
+    List<Fee> feeIsMpbsByMonth =
+        api.getFees(
+            null,
+            Instant.parse("2021-12-01T00:00:00.00Z"),
+            Instant.parse("2021-12-31T23:59:59.00Z"),
+            1,
+            10,
+            true,
+            null);
+    assertEquals(1, feeIsMpbsByMonth.size());
+    assertEquals(feeIsMpbsByMonth.getFirst(), fee1());
+  }
+
+  @Test
+  void get_fees_statistics_ok() throws ApiException {
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    PayingApi api = new PayingApi(manager1Client);
+
+    FeesStatistics stats =
+        api.getFeesStats(
+            Instant.parse("2021-12-01T00:00:00.00Z"), Instant.parse("2021-12-31T00:00:00.00Z"));
+    assertEquals(7, stats.getTotalFees());
+    assertEquals(2, stats.getPaidFees());
+    assertEquals(0, stats.getUnpaidFees());
+
+    FeesStatistics statsWithDefaultMonthRange =
+        api.getFeesStats(null, null); // get statistics for this month
+    assertEquals(0, statsWithDefaultMonthRange.getTotalFees());
   }
 
   static class ContextInitializer extends AbstractContextInitializer {
