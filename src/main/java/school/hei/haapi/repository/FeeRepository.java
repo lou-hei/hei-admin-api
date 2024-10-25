@@ -56,4 +56,16 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
       @Param(value = "status") FeeStatusEnum status, @Param(value = "fee_id") String feeId);
 
   List<Fee> findAllByStudentRef(String studentRef, Pageable pageable);
+
+  @Query(
+      """
+          SELECT
+            COUNT(f) AS totalFees,
+            SUM(CASE WHEN f.status = 'PAID' THEN 1 ELSE 0 END) AS paidFees,
+            SUM(CASE WHEN f.status = 'UNPAID' THEN 1 ELSE 0 END) AS unpaidFees
+          FROM Fee f
+          WHERE f.dueDatetime BETWEEN :from AND :to
+          """)
+  List<Object[]> getMonthlyFeeStatistics(
+      @Param(value = "from") Instant monthFrom, @Param(value = "to") Instant monthTo);
 }

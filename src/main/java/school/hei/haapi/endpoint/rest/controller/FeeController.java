@@ -3,6 +3,7 @@ package school.hei.haapi.endpoint.rest.controller;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
+import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -88,11 +89,22 @@ public class FeeController {
       @RequestParam PageFromOne page,
       @RequestParam("page_size") BoundedPageSize pageSize,
       @RequestParam(required = false) FeeStatusEnum status,
+      @RequestParam(name = "month_from", required = false) Instant monthFrom,
+      @RequestParam(name = "month_to", required = false) Instant monthTo,
       @RequestParam(name = "isMpbs", required = false) boolean isMpbs,
       @RequestParam(name = "student_ref", required = false) String studentRef) {
-    return feeService.getFees(page, pageSize, status, isMpbs, studentRef).stream()
+    return feeService
+        .getFees(page, pageSize, status, monthFrom, monthTo, isMpbs, studentRef)
+        .stream()
         .map(feeMapper::toRestFee)
         .collect(toUnmodifiableList());
+  }
+
+  @GetMapping("/fees/stats")
+  public FeesStatistics getFeesStats(
+      @RequestParam(name = "month_from", required = false) Instant monthFrom,
+      @RequestParam(name = "month_to", required = false) Instant monthTo) {
+    return feeService.getFeesStats(monthFrom, monthTo);
   }
 
   @PutMapping("/fees")
