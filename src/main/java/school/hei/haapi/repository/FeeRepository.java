@@ -2,6 +2,8 @@ package school.hei.haapi.repository;
 
 import java.time.Instant;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -35,6 +37,25 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
       "select f from Fee f where f.status = 'UNPAID' AND EXTRACT(month from f.dueDatetime) ="
           + " :month")
   List<Fee> getUnpaidFeesForTheMonthSpecified(Integer month);
+
+  @Query(value = """
+    SELECT
+        *
+    FROM
+        "fee" f
+    JOIN
+        "user" u ON f.user_id = u.id
+    WHERE
+        f.user_id = ?  
+    ORDER BY
+      CASE
+        WHEN f.status = 'LATE' THEN 1
+        WHEN f.status = 'PAID' THEN 2
+        WHEN f.status = 'UNPAID' THEN 3
+      END,
+      f.due_datetime DESC;
+""", nativeQuery = true)
+  Page<Fee> getFeesByStudentId(String studentId, Pageable pageable);
 
   @Query(
       """

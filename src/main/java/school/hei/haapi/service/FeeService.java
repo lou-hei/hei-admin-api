@@ -115,7 +115,7 @@ public class FeeService {
     if (status != null) {
       return feeRepository.getFeesByStudentIdAndStatus(studentId, status, pageable);
     }
-    return feeRepository.getByStudentId(studentId, pageable);
+    return feeRepository.getFeesByStudentId(studentId, pageable).getContent();
   }
 
   private Fee updateFeeStatus(Fee initialFee) {
@@ -253,5 +253,11 @@ public class FeeService {
           eventProducer.accept(List.of(toUnpaidFeesReminder(unpaidFee)));
           log.info("Unpaid fee with id.{} is sent to Queue", unpaidFee.getId());
         });
+  }
+
+  public boolean hasLateFee(String studentId) {
+    Instant now = Instant.now();
+    return feeRepository.getStudentFeesUnpaidOrLateFrom(now, studentId, LATE).isEmpty()
+            && feeRepository.getStudentFeesUnpaidOrLateFrom(now, studentId, UNPAID).isEmpty();
   }
 }

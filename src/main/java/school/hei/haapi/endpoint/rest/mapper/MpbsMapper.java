@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import school.hei.haapi.endpoint.rest.model.CreateMpbs;
 import school.hei.haapi.endpoint.rest.model.Mpbs;
+import school.hei.haapi.model.exception.ForbiddenException;
 import school.hei.haapi.service.FeeService;
 import school.hei.haapi.service.UserService;
 
@@ -30,9 +31,14 @@ public class MpbsMapper {
   }
 
   public school.hei.haapi.model.Mpbs.Mpbs toDomain(CreateMpbs rest) {
+    String studentId = rest.getStudentId();
+    if (feeService.hasLateFee(studentId)) {
+      throw new ForbiddenException("Student with id #" + studentId + " has unpaid fee");
+    }
+
     school.hei.haapi.model.Mpbs.Mpbs domain = new school.hei.haapi.model.Mpbs.Mpbs();
 
-    domain.setStudent(userService.findById(rest.getStudentId()));
+    domain.setStudent(userService.findById(studentId));
     domain.setFee(feeService.getById(rest.getFeeId()));
     domain.setPspId(rest.getPspId());
     domain.setMobileMoneyType(rest.getPspType());
