@@ -32,9 +32,6 @@ public class PaymentController {
       @PathVariable String feeId,
       @RequestBody List<CreatePayment> toCreate,
       @PathVariable(name = "studentId") String studentId) {
-    if (feeService.hasLateFee(studentId)) {
-      throw new ForbiddenException("Student with id #" + studentId + " has unpaid fee");
-    }
     return paymentService.saveAll(paymentMapper.toDomainPayment(feeId, toCreate)).stream()
         .map(paymentMapper::toRestPayment)
         .collect(toUnmodifiableList());
