@@ -33,37 +33,11 @@ public class FeeDao {
 
     List<Predicate> predicates = new ArrayList<>();
 
-    if (status == null
-        && studentRef == null
-        && monthFrom == null
-        && monthTo == null
-        && isMpbs == false) {
+    if (isCriteriaEmpty(status, studentRef, monthFrom, monthTo, isMpbs)) {
       predicates.add(builder.equal(root.get("status"), FeeStatusEnum.LATE));
     } else {
-      if (status != null) {
-        predicates.add(builder.equal(root.get("status"), status));
-      }
-
-      if (studentRef != null) {
-        Join<Fee, User> join = root.join("student");
-        predicates.add(builder.like(join.get("ref"), "%" + studentRef + "%"));
-      }
-
-      if (monthFrom != null && monthTo != null) {
-        predicates.add(builder.between(root.get("dueDatetime"), monthFrom, monthTo));
-      } else if (monthFrom != null) {
-        predicates.add(builder.greaterThanOrEqualTo(root.get("dueDatetime"), monthFrom));
-      } else if (monthTo != null) {
-        predicates.add(builder.lessThanOrEqualTo(root.get("dueDatetime"), monthTo));
-      }
-
-      if (isMpbs != null) {
-        if (isMpbs) {
-          Join<Fee, Mpbs> mpbsJoin = root.join("mpbs");
-          predicates.add(builder.isNotNull(mpbsJoin));
-          query.orderBy(builder.desc(mpbsJoin.get("creationDatetime")));
-        }
-      }
+      buildPredicates(
+          builder, root, predicates, status, studentRef, monthFrom, monthTo, isMpbs, query);
     }
 
     query
@@ -75,5 +49,59 @@ public class FeeDao {
         .setFirstResult((pageable.getPageNumber()) * pageable.getPageSize())
         .setMaxResults(pageable.getPageSize())
         .getResultList();
+  }
+
+  private boolean isCriteriaEmpty(
+      FeeStatusEnum status, String studentRef, Instant monthFrom, Instant monthTo, Boolean isMpbs) {
+    return status == null
+        && studentRef == null
+        && monthFrom == null
+        && monthTo == null
+        && Boolean.FALSE.equals(isMpbs);
+  }
+
+  private void buildPredicates(
+      CriteriaBuilder builder,
+      Root<Fee> root,
+      List<Predicate> predicates,
+      FeeStatusEnum status,
+      String studentRef,
+      Instant monthFrom,
+      Instant monthTo,
+      Boolean isMpbs,
+      CriteriaQuery<Fee> query) {
+
+    if (status != null) {
+      predicates.add(builder.equal(root.get("status"), status));
+    }
+
+    if (studentRef != null) {
+      Join<Fee, User> join = root.join("student");
+      predicates.add(builder.like(join.get("ref"), "%" + studentRef + "%"));
+    }
+
+    addDatePredicates(builder, root, predicates, monthFrom, monthTo);
+
+    if (Boolean.TRUE.equals(isMpbs)) {
+      Join<Fee, Mpbs> mpbsJoin = root.join("mpbs");
+      predicates.add(builder.isNotNull(mpbsJoin));
+      query.orderBy(builder.desc(mpbsJoin.get("creationDatetime")));
+    }
+  }
+
+  private void addDatePredicates(
+      CriteriaBuilder builder,
+      Root<Fee> root,
+      List<Predicate> predicates,
+      Instant monthFrom,
+      Instant monthTo) {
+
+    if (monthFrom != null && monthTo != null) {
+      predicates.add(builder.between(root.get("dueDatetime"), monthFrom, monthTo));
+    } else if (monthFrom != null) {
+      predicates.add(builder.greaterThanOrEqualTo(root.get("dueDatetime"), monthFrom));
+    } else if (monthTo != null) {
+      predicates.add(builder.lessThanOrEqualTo(root.get("dueDatetime"), monthTo));
+    }
   }
 }
