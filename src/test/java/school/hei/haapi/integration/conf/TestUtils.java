@@ -770,7 +770,7 @@ public class TestUtils {
         .id(EXAM4_ID)
         .coefficient(3)
         .title("Algorithmics2")
-        .awardedCourse(awardedCourse4())
+        .awardedCourse(awardedCourse2())
         .examinationDate(Instant.parse("2022-11-09T08:25:24Z"));
   }
 
