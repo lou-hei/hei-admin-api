@@ -24,6 +24,7 @@ import school.hei.haapi.model.validator.FeeValidator;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
 import school.hei.haapi.repository.FeeRepository;
 import school.hei.haapi.repository.dao.FeeDao;
+import school.hei.haapi.service.utils.DateUtils;
 
 class FeeServiceTest {
   FeeService subject;
@@ -34,6 +35,7 @@ class FeeServiceTest {
   UserService userService;
   FeeDao feeDao;
   FeeTemplateService feeTemplateService;
+  DateUtils dateUtils;
 
   static User student1() {
     return User.builder().id(TestUtils.STUDENT1_ID).build();
@@ -125,7 +127,8 @@ class FeeServiceTest {
             updateFeeValidator,
             eventProducer,
             feeDao,
-            feeTemplateService);
+            feeTemplateService,
+            dateUtils);
   }
 
   @Test
@@ -197,9 +200,9 @@ class FeeServiceTest {
     when(feeRepository.findAll())
         .thenReturn(List.of(fee1(isMocked), fee2(isMocked), fee3(isMocked)));
 
-    List<Fee> actualPaidPage1 = subject.getFees(page1, pageSize, PAID, false, null);
-    List<Fee> actualLatePage1 = subject.getFees(page1, pageSize, LATE, false, null);
-    List<Fee> actualLatePage2 = subject.getFees(page2, pageSize, LATE, false, null);
+    List<Fee> actualPaidPage1 = subject.getFees(page1, pageSize, PAID, null, null, false, null);
+    List<Fee> actualLatePage1 = subject.getFees(page1, pageSize, LATE, null, null, false, null);
+    List<Fee> actualLatePage2 = subject.getFees(page2, pageSize, LATE, null, null, false, null);
 
     assertEquals(0, actualPaidPage1.size());
     assertEquals(0, actualLatePage1.size());
