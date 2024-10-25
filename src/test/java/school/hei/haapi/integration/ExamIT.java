@@ -5,6 +5,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.*;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,8 +20,6 @@ import school.hei.haapi.endpoint.rest.model.ExamInfo;
 import school.hei.haapi.integration.conf.AbstractContextInitializer;
 import school.hei.haapi.integration.conf.MockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
-
-import java.util.List;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
@@ -69,7 +68,7 @@ class ExamIT extends MockedThirdParties {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     TeachingApi api = new TeachingApi(manager1Client);
 
-    List<ExamInfo> actual = api.getAllExams(null, null,1, 5);
+    List<ExamInfo> actual = api.getAllExams(null, null, 1, 5);
 
     assertEquals(5, actual.size());
     assertTrue(actual.contains(exam1()));
@@ -83,14 +82,14 @@ class ExamIT extends MockedThirdParties {
   void student_read_ko() {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     TeachingApi api = new TeachingApi(student1Client);
-    assertThrowsForbiddenException(() -> api.getAllExams(null, null,1, 10));
+    assertThrowsForbiddenException(() -> api.getAllExams(null, null, 1, 10));
   }
 
   @Test
   void teacher_read_ok() throws ApiException {
     ApiClient teacher1Client = anApiClient(TEACHER1_TOKEN);
     TeachingApi api = new TeachingApi(teacher1Client);
-    List<ExamInfo> actual = api.getAllExams(null, null,1, 5);
+    List<ExamInfo> actual = api.getAllExams(null, null, 1, 5);
 
     assertEquals(5, actual.size());
     assertTrue(actual.contains(exam1()));
