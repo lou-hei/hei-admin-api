@@ -1398,7 +1398,7 @@ paths:
     get:
       tags:
         - Teaching
-      summary: Return a participant with his exam grades
+      summary: Return a participant with his exam grade
       operationId: getParticipantGrade
       parameters:
         - name: exam_id
