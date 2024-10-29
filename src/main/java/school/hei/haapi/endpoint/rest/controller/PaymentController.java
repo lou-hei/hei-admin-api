@@ -16,7 +16,6 @@ import school.hei.haapi.endpoint.rest.model.CreatePayment;
 import school.hei.haapi.endpoint.rest.model.Payment;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
-import school.hei.haapi.model.exception.ForbiddenException;
 import school.hei.haapi.service.FeeService;
 import school.hei.haapi.service.PaymentService;
 

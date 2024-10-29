@@ -40,21 +40,21 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
 
   @Query(value = """
     SELECT
-        *
+        f
     FROM
-        "fee" f
+        Fee f
     JOIN
-        "user" u ON f.user_id = u.id
+        User u ON f.student = u
     WHERE
-        f.user_id = ?  
+        f.student.id = :studentId  
     ORDER BY
       CASE
         WHEN f.status = 'LATE' THEN 1
         WHEN f.status = 'PAID' THEN 2
         WHEN f.status = 'UNPAID' THEN 3
       END,
-      f.due_datetime DESC;
-""", nativeQuery = true)
+      f.dueDatetime DESC
+      """)
   Page<Fee> getFeesByStudentId(String studentId, Pageable pageable);
 
   @Query(
