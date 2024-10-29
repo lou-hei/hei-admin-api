@@ -2,7 +2,6 @@ package school.hei.haapi.repository;
 
 import java.time.Instant;
 import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -38,7 +37,9 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
           + " :month")
   List<Fee> getUnpaidFeesForTheMonthSpecified(Integer month);
 
-  @Query(value = """
+  @Query(
+      value =
+          """
     SELECT
         f
     FROM
@@ -46,7 +47,7 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
     JOIN
         User u ON f.student = u
     WHERE
-        f.student.id = :studentId  
+        f.student.id = :studentId
     ORDER BY
       CASE
         WHEN f.status = 'LATE' THEN 1
