@@ -1469,7 +1469,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /exams/{exam_id}/students/grades:
+  /exams/{exam_id}/grades:
     get:
       tags:
         - Teaching
