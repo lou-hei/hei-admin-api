@@ -2119,13 +2119,13 @@ paths:
           schema:
             type: string
             format: date-time
-          required: false  
+          required: false
         - name: month_to
           in: query
           schema:
             type: string
             format: date-time
-          required: false  
+          required: false
         - name: page
           in: query
           schema:
@@ -3473,6 +3473,34 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /events/{id}/stats:
+    get:
+      tags:
+        - Events
+      operationId: Get stats for the given event
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Events stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventStats'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /events/{id}/participants:
     get:
       tags:
@@ -3550,6 +3578,36 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EventParticipant'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  '/students/{id}/event':
+    get:
+      tags:
+        - Events
+      operationId: getEventsByStudentId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get status of each event in which the student participate
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentEventParticipant'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -4554,6 +4612,7 @@ components:
         - SEMINAR
         - SUPPORT_SESSION
         - OTHER
+
     StudentAttendance:
       type: object
       properties:
@@ -5240,6 +5299,39 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GroupIdentifier'
+    EventStats:
+      type: object
+      properties:
+        missing:
+          type: integer
+        present:
+          type: integer
+        late:
+          type: integer
+        total:
+          type: integer
+    StudentEventParticipant:
+      type: object
+      properties:
+        event:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              $ref: '#/components/schemas/EventType'
+            title:
+              type: string
+            begin_datetime:
+              type: string
+              format: date-time
+            end_datetime:
+              type: string
+              format: date-time
+        status:
+          $ref: '#/components/schemas/AttendanceStatus'
+        event_participant_id:
+          type: string
     CrupdatePromotion:
       type: object
       properties:
@@ -5463,7 +5555,7 @@ components:
         paid_fees:
           type: integer
         unpaid_fees:
-          type: integer      
+          type: integer
     Letter:
       type: object
       properties:
