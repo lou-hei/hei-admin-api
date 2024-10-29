@@ -1428,7 +1428,6 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /exams/{exam_id}/student/grade:
     put:
       tags:
         - Teaching
@@ -1436,6 +1435,11 @@ paths:
       operationId: crupdateParticipantGrade
       parameters:
         - name: exam_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: student_id
           in: path
           required: true
           schema:
