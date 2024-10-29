@@ -1451,7 +1451,7 @@ paths:
           application/json:
             schema:
               items:
-                $ref: '#/components/schemas/CreateGrade'
+                $ref: '#/components/schemas/CrupdateGrade'
       responses:
         '200':
           description: The specified participant with his grade
@@ -4931,15 +4931,15 @@ components:
         update_date:
           type: string
           format: date-time
-    CreateGrade:
+    CrupdateGrade:
       type: object
       properties:
+        id:
+          type: string
         score:
           type: number
           format: double
           example: 12.5
-        student_id:
-          type: string
     GetStudentGrade:
       properties:
         grade:
