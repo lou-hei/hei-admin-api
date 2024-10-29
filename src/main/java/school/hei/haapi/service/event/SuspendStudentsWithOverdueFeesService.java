@@ -4,6 +4,7 @@ import static school.hei.haapi.model.User.Status.SUSPENDED;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,13 @@ public class SuspendStudentsWithOverdueFeesService
   // Suspends students with overdue fees if it hasn't been done already.
   public void suspendStudentsWithUnpaidOrLateFee() {
     List<User> students = userService.getStudentsWithUnpaidOrLateFee();
-    log.info("list of student with unpaid or late fee : {} ", students);
+    log.info(
+        "List of student references with unpaid or late fees: {} ",
+        students.stream().map(User::getRef).collect(Collectors.toList()));
     for (User student : students) {
       if (!SUSPENDED.equals(student.getStatus())) {
         userManagerDao.updateUserStatusById(SUSPENDED, student.getId());
-        log.info("suspended student : {} ", userService.findById(student.getId()));
+        log.info("suspended student reference : {} ", student.getRef());
       }
     }
   }
