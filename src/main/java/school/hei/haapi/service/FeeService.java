@@ -130,7 +130,7 @@ public class FeeService {
     if (status != null) {
       return feeRepository.getFeesByStudentIdAndStatus(studentId, status, pageable);
     }
-    return feeRepository.getByStudentId(studentId, pageable);
+    return feeRepository.getFeesByStudentId(studentId, pageable).getContent();
   }
 
   private Fee updateFeeStatus(Fee initialFee) {

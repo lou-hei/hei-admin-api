@@ -16,18 +16,21 @@ import school.hei.haapi.endpoint.rest.model.CreatePayment;
 import school.hei.haapi.endpoint.rest.model.Payment;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
+import school.hei.haapi.service.FeeService;
 import school.hei.haapi.service.PaymentService;
 
 @RestController
 @AllArgsConstructor
 public class PaymentController {
-
   private final PaymentService paymentService;
   private final PaymentMapper paymentMapper;
+  private final FeeService feeService;
 
   @PostMapping("/students/{studentId}/fees/{feeId}/payments")
   public List<Payment> createPayments(
-      @PathVariable String feeId, @RequestBody List<CreatePayment> toCreate) {
+      @PathVariable String feeId,
+      @RequestBody List<CreatePayment> toCreate,
+      @PathVariable(name = "studentId") String studentId) {
     return paymentService.saveAll(paymentMapper.toDomainPayment(feeId, toCreate)).stream()
         .map(paymentMapper::toRestPayment)
         .collect(toUnmodifiableList());
