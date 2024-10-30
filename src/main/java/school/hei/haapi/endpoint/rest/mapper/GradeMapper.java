@@ -5,13 +5,18 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import school.hei.haapi.endpoint.rest.model.GetStudentGrade;
 import school.hei.haapi.endpoint.rest.model.Grade;
+import school.hei.haapi.endpoint.rest.model.Student;
 import school.hei.haapi.model.Exam;
 import school.hei.haapi.model.User;
+import school.hei.haapi.service.ExamService;
+import school.hei.haapi.service.UserService;
 
 @Component
 @AllArgsConstructor
 public class GradeMapper {
   private final UserMapper userMapper;
+  private final ExamService examService;
+  private final UserService userService;
 
   // todo: to review all class
   public school.hei.haapi.model.Grade toDomain(Grade grade) {
@@ -59,4 +64,23 @@ public class GradeMapper {
   //        .participants(
   //            grades.stream().map(grade -> this.toRestStudentGrade(grade)).collect(toList()));
   //  }
+
+  public school.hei.haapi.model.Grade toRest(Grade grade, String examId, String studentId){
+    User student = userService.findById(studentId);
+    Exam exam = examService.getExamById(examId);
+    return school.hei.haapi.model.Grade.builder()
+            .id(grade.getId())
+            .exam(exam)
+            .student(student)
+            .creationDatetime(grade.getCreatedAt())
+            .score(grade.getScore().intValue())
+            .build();
+  }
+
+  public Grade toRestGrade(Grade grade){
+    Grade grade1 = new Grade();
+    grade1.id(grade.getId());
+    grade1.score(grade.getScore());
+    return grade1;
+  }
 }
