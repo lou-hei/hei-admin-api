@@ -55,11 +55,14 @@ public class MpbsVerificationService {
 
     // TIPS: do not use exception to continue script
     if (mobileTransactionResponseDetails.isPresent()) {
+      log.info("mobile transaction found = {}", mobileTransactionResponseDetails.get());
       TransactionDetails transactionDetails =
           externalResponseMapper.toExternalTransactionDetails(
               mobileTransactionResponseDetails.get());
+      log.info("mapped transaction details = {}", transactionDetails);
       return saveTheVerifiedMpbs(mpbs, transactionDetails, toCompare);
     }
+    log.info("mobile transaction not found");
     saveTheUnverifiedMpbs(mpbs, toCompare);
     return null;
   }
@@ -139,9 +142,11 @@ public class MpbsVerificationService {
   private MpbsStatus defineMpbsStatusWithoutOrangeTransactionDetails(Mpbs mpbs, Instant toCompare) {
     long dayValidity = mpbs.getCreationDatetime().until(toCompare, ChronoUnit.DAYS);
     if (dayValidity > 2) {
-      notifyStudentForFailedPayment(mpbs);
+      // notifyStudentForFailedPayment(mpbs);
+      log.info("failed transaction");
       return FAILED;
     }
+    log.info("pending transaction");
     return PENDING;
   }
 
