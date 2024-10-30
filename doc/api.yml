@@ -1450,8 +1450,7 @@ paths:
         content:
           application/json:
             schema:
-              items:
-                $ref: '#/components/schemas/CrupdateGrade'
+              $ref: '#/components/schemas/CrupdateGrade'
       responses:
         '200':
           description: The specified participant with his grade
