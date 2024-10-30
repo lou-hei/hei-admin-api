@@ -2,9 +2,7 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import school.hei.haapi.endpoint.rest.mapper.AwardedCourseMapper;
 import school.hei.haapi.endpoint.rest.mapper.GradeMapper;
 import school.hei.haapi.endpoint.rest.model.AwardedCourseExam;
@@ -58,5 +56,12 @@ public class GradeController {
       @PathVariable("exam_id") String examId, @PathVariable("student_id") String studentId) {
     Grade grade = gradeService.getGradeByExamIdAndStudentId(examId, studentId);
     return gradeMapper.toRestStudentGrade(grade);
+  }
+
+  @PutMapping(value = "/exams/{exam_id}/students/{student_id}/grade")
+  public school.hei.haapi.endpoint.rest.model.Grade crupdateParticipantGrade(
+          @PathVariable("exam_id") String examId, @PathVariable("student_id") String studentId,
+          @RequestBody school.hei.haapi.endpoint.rest.model.Grade grade) {
+    return new school.hei.haapi.endpoint.rest.model.Grade();
   }
 }
