@@ -1511,6 +1511,54 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/students/{student_id}/courses/{course_id}/grades':
+    get:
+      tags:
+        - Teaching
+      summary: Get all student grades for a specific course
+      parameters:
+        - name: students_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: course_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+          description: Set value to 1 by default if null is provided
+          required: false
+        - name: page_size
+          in: query
+          description: Set value to 15 by default if null is provided
+          schema:
+            $ref: '#/components/schemas/PageSize'
+          required: false
+      operationId: getGradesByStudentAndCourse
+      responses:
+        '200':
+          description: The list of found grades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Grade'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
   '/teachers/{id}':
     get:
