@@ -1,3 +1,15 @@
+# [1.73.0](https://github.com/hei-school/hei-admin-api/compare/v1.72.1...v1.73.0) (2024-10-30)
+
+
+### Features
+
+* disable group students for STUDENT role  ([3437ddc](https://github.com/hei-school/hei-admin-api/commit/3437ddc9843043243d2d1b8f54efa39942342f04))
+* filter fee order by LATE, UNPAID, PAID  ([2b045e7](https://github.com/hei-school/hei-admin-api/commit/2b045e717aa46902bd5f04db8d80c62b74d937f2))
+* get monthly fee statistics and list monthly fees  ([d7984b6](https://github.com/hei-school/hei-admin-api/commit/d7984b628dead25624b3b67723b6196c2be4c57c))
+* **not-implemented:** events stats ([7db7ed0](https://github.com/hei-school/hei-admin-api/commit/7db7ed0868d1705d4725990110e78947d5f00eda))
+
+
+
 ## [1.72.1](https://github.com/hei-school/hei-admin-api/compare/v1.72.0...v1.72.1) (2024-10-25)
 
 
@@ -92,15 +104,6 @@
 
 * change request body in monitor put endpoint ([37782c3](https://github.com/hei-school/hei-admin-api/commit/37782c305688ac4ac8dee765766f56e9da1b5b88))
 * **not-implemented:** generate xlsx file for students in promotion ([e439a83](https://github.com/hei-school/hei-admin-api/commit/e439a83ecc1500982ac0f6aeca91d971dbb36886))
-
-
-
-# [1.64.0](https://github.com/hei-school/hei-admin-api/compare/v1.63.0...v1.64.0) (2024-10-11)
-
-
-### Features
-
-* manager crupdate student fee endpoint ([af5a204](https://github.com/hei-school/hei-admin-api/commit/af5a2049db4d6b7ea65f25f56f347d7b38d2c815))
 
 
 
