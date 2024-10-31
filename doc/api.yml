@@ -1529,7 +1529,7 @@ paths:
           application/json:
             schema:
               items:
-                $ref: '#/components/schemas/Grade'
+                $ref: '#/components/schemas/CrupdateStudentGrade'
       responses:
         '200':
           description: The list of found grades
@@ -5032,6 +5032,15 @@ components:
           $ref: '#/components/schemas/Grade'
         student:
           $ref: '#/components/schemas/Student'
+    CrupdateStudentGrade:
+      required:
+        - id
+        - student_id
+      allOf:
+        - $ref: '#/components/schemas/Grade'
+      properties:
+        student_id:
+          type: string
     CrupdateStudentExamGrade:
       required:
         - id
