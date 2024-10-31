@@ -1511,6 +1511,44 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Teaching
+      parameters:
+        - name: exam_id
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: crupdateGradesByExamId
+      description: Crupdate grade for a specific student
+      summary: Crupdate grade for a specific student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/Grade'
+      responses:
+        '200':
+          description: The list of found grades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetStudentGrade'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   '/students/{student_id}/courses/{course_id}/grades':
     get:
       tags:
