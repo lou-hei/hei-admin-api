@@ -1555,7 +1555,7 @@ paths:
         - Teaching
       summary: Get all student grades for a specific course
       parameters:
-        - name: students_id
+        - name: student_id
           in: path
           schema:
             type: string
