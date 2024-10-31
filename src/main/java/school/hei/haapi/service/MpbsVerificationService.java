@@ -38,6 +38,7 @@ public class MpbsVerificationService {
   private final FeeService feeService;
   private final MobilePaymentService mobilePaymentService;
   private final PaymentService paymentService;
+  private final UserService userService;
   private final ExternalResponseMapper externalResponseMapper;
   private final MobileTransactionDetailsRepository mobileTransactionDetailsRepository;
   private final EventProducer<PojaEvent> eventProducer;
@@ -105,6 +106,10 @@ public class MpbsVerificationService {
     paymentService.savePaymentFromMpbs(
         successfullyVerifiedMpbs, correspondingMobileTransaction.getPspTransactionAmount());
     log.info("Creating corresponding payment = {}", successfullyVerifiedMpbs.toString());
+
+    // ... then update student status
+    paymentService.computeUserStatusAfterPayingFee(mpbs.getStudent());
+    log.info("Student computed status: {}", (userService.findById(mpbs.getStudent().getId())).getStatus());
 
     // ... then update fee remaining amount
     feeService.debitAmount(fee, verifiedMobileTransaction.getAmountInPsp());

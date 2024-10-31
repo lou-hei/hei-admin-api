@@ -109,7 +109,7 @@ Resources:
       FlexibleTimeWindow:
         Mode: "OFF"
       Name: !Join [ '', [ !Ref Env, -CheckSuspendedStudentsStatusScheduler ] ]
-      ScheduleExpression: "cron(0 0 * * ? *)"
+      ScheduleExpression: "cron(0 0/1 * * ? *)"
       Target:
         Arn: !Sub '{{resolve:ssm:/haapi/${Env}/eventbridge/bus-arn}}'
         RoleArn: !GetAtt ScheduledEventExecutionRole.Arn
@@ -125,7 +125,7 @@ Resources:
       FlexibleTimeWindow:
         Mode: "OFF"
       Name: !Join [ '', [ !Ref Env, -SuspendStudentsWithOverdueFeesScheduler ] ]
-      ScheduleExpression: "cron(0 0 * * ? *)"
+      ScheduleExpression: "cron(0 0/1 * * ? *)"
       Target:
         Arn: !Sub '{{resolve:ssm:/haapi/${Env}/eventbridge/bus-arn}}'
         RoleArn: !GetAtt ScheduledEventExecutionRole.Arn
