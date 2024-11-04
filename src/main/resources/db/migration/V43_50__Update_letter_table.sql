@@ -1,0 +1,1 @@
+alter table "letter" alter column reason_for_refusal TYPE TEXT;
