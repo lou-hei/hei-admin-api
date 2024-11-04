@@ -32,6 +32,7 @@ public class UpdateLetterEmailService implements Consumer<UpdateLetterEmail> {
 
     initial.setVariable("emailSignature", base64Converter.apply(emailSignatureImage));
     initial.setVariable("description", letter.getDescription());
+    initial.setVariable("ref", letter.getRef());
     initial.setVariable("reason", letter.getReason());
     return initial;
   }
