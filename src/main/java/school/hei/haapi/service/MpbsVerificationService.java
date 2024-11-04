@@ -109,7 +109,9 @@ public class MpbsVerificationService {
 
     // ... then update student status
     paymentService.computeUserStatusAfterPayingFee(mpbs.getStudent());
-    log.info("Student computed status: {}", (userService.findById(mpbs.getStudent().getId())).getStatus());
+    log.info(
+        "Student computed status: {}",
+        (userService.findById(mpbs.getStudent().getId())).getStatus());
 
     // ... then update fee remaining amount
     feeService.debitAmount(fee, verifiedMobileTransaction.getAmountInPsp());
