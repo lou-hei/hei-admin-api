@@ -49,11 +49,18 @@ public class ExamService {
       String courseCode,
       String groupRef,
       Instant examinationDateStart,
-      Instant examinationDateEnd) {
+      Instant examinationDateEnd,
+      String awardedCourseId) {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "examinationDate"));
     return examDao.findByCriteria(
-        pageable, title, courseCode, groupRef, examinationDateStart, examinationDateEnd);
+        pageable,
+        title,
+        courseCode,
+        groupRef,
+        examinationDateStart,
+        examinationDateEnd,
+        awardedCourseId);
   }
 
   public Exam createOrUpdateExamsInfos(Exam exam) {

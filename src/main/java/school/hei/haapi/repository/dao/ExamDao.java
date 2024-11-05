@@ -25,7 +25,8 @@ public class ExamDao {
       String courseCode,
       String groupRef,
       Instant examinationDateStart,
-      Instant examinationDateEnd) {
+      Instant examinationDateEnd,
+      String awardedCourseId) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Exam> query = builder.createQuery(Exam.class);
     Root<Exam> root = query.from(Exam.class);
@@ -34,7 +35,9 @@ public class ExamDao {
     Join<Exam, AwardedCourse> awardedCourseJoin = root.join("awardedCourse", JoinType.LEFT);
     Join<AwardedCourse, Course> courseJoin = awardedCourseJoin.join("course", JoinType.LEFT);
     Join<AwardedCourse, Group> groupJoin = awardedCourseJoin.join("group", JoinType.LEFT);
-
+    if (awardedCourseId != null && !awardedCourseId.isEmpty()) {
+      predicates.add(builder.equal(awardedCourseJoin.get("id"), awardedCourseId));
+    }
     if (title != null && !title.isEmpty()) {
       predicates.add(builder.like(root.get("title"), "%" + title.toLowerCase() + "%"));
     }

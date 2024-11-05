@@ -46,10 +46,18 @@ public class ExamController {
       @RequestParam(value = "course_code", required = false) String courseCode,
       @RequestParam(value = "group_ref", required = false) String groupRef,
       @RequestParam(value = "examination_date_from", required = false) Instant examinationDateFrom,
-      @RequestParam(value = "examination_date_to", required = false) Instant examinationDateTo) {
+      @RequestParam(value = "examination_date_to", required = false) Instant examinationDateTo,
+      @RequestParam(value = "awarded_course_id", required = false) String awardedCourseId) {
     return examMapper.toRestList(
         examService.getAllExams(
-            page, pageSize, title, courseCode, groupRef, examinationDateFrom, examinationDateTo));
+            page,
+            pageSize,
+            title,
+            courseCode,
+            groupRef,
+            examinationDateFrom,
+            examinationDateTo,
+            awardedCourseId));
   }
 
   @PutMapping("/exams")
