@@ -81,7 +81,6 @@ class FeeIT extends MockedThirdParties {
   }
 
   @Test
-  @Disabled
   void update_fee_status_payment_is_persisted()
       throws InterruptedException, JsonProcessingException {
     UpdateFeesStatusToLateTriggered feesStatusToLateTriggered =
@@ -113,7 +112,7 @@ class FeeIT extends MockedThirdParties {
   }
 
   @Test
-  @Disabled
+  @Disabled("Fix after deployement is ok")
   void student_read_ok() throws ApiException {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     PayingApi api = new PayingApi(student1Client);

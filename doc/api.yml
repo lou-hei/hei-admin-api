@@ -1398,7 +1398,7 @@ paths:
     get:
       tags:
         - Teaching
-      summary: Return a participant with his exam grades
+      summary: Return a participant with his exam grade
       operationId: getParticipantGrade
       parameters:
         - name: exam_id
@@ -1428,7 +1428,6 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /exams/{exam_id}/student/grade:
     put:
       tags:
         - Teaching
@@ -1440,14 +1439,18 @@ paths:
           required: true
           schema:
             type: string
+        - name: student_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         description: Crupdate grade for a specific student
         required: true
         content:
           application/json:
             schema:
-              items:
-                $ref: '#/components/schemas/CreateGrade'
+              $ref: '#/components/schemas/CrupdateGrade'
       responses:
         '200':
           description: The specified participant with his grade
@@ -1465,7 +1468,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /exams/{exam_id}/students/grades:
+  /exams/{exam_id}/grades:
     get:
       tags:
         - Teaching
@@ -4927,15 +4930,15 @@ components:
         update_date:
           type: string
           format: date-time
-    CreateGrade:
+    CrupdateGrade:
       type: object
       properties:
+        id:
+          type: string
         score:
           type: number
           format: double
           example: 12.5
-        student_id:
-          type: string
     GetStudentGrade:
       properties:
         grade:

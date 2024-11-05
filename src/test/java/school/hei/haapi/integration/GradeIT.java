@@ -1,5 +1,6 @@
 package school.hei.haapi.integration;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -7,6 +8,8 @@ import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.*;
 
 import java.util.List;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,6 +20,8 @@ import school.hei.haapi.endpoint.rest.api.TeachingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.AwardedCourseExam;
+import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
+import school.hei.haapi.endpoint.rest.model.Grade;
 import school.hei.haapi.integration.conf.AbstractContextInitializer;
 import school.hei.haapi.integration.conf.MockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
@@ -47,6 +52,7 @@ class GradeIT extends MockedThirdParties {
 
     assertEquals(5, actualAwardedCourseExamGrades.size());
     assertTrue(actualAwardedCourseExamGrades.contains(awardedCourseExam1()));
+
     assertTrue(actualAwardedCourseExamGrades.contains(awardedCourseExam2()));
     assertTrue(actualAwardedCourseExamGrades.contains(awardedCourseExam4()));
   }
@@ -59,6 +65,7 @@ class GradeIT extends MockedThirdParties {
     List<AwardedCourseExam> actual = api.getStudentGrades(STUDENT1_ID, 1, 10);
 
     assertEquals(5, actual.size());
+    System.out.println(actual);
     assertTrue(actual.contains(awardedCourseExam1()));
     assertTrue(actual.contains(awardedCourseExam2()));
     assertTrue(actual.contains(awardedCourseExam4()));
@@ -71,6 +78,7 @@ class GradeIT extends MockedThirdParties {
 
     List<AwardedCourseExam> actual = api.getStudentGrades(STUDENT1_ID, 1, 10);
 
+    System.out.println(actual);
     assertEquals(5, actual.size());
     assertTrue(actual.contains(awardedCourseExam1()));
     assertTrue(actual.contains(awardedCourseExam2()));
@@ -116,6 +124,42 @@ class GradeIT extends MockedThirdParties {
   //            List.of(createGrade(STUDENT1_ID, EXAM1_ID, AWARDED_COURSE1_ID)));
   //    assertEquals(1, actual.size());
   //  }
+
+  @Test
+  void manager_crupdate_grade_ok() throws ApiException {
+    ApiClient managerClient = anApiClient(MANAGER1_TOKEN);
+    TeachingApi api = new TeachingApi(managerClient);
+
+    CrupdateGrade newGrade = new CrupdateGrade();
+    newGrade.setScore(18.2);
+    Grade actualGrade = api.crupdateParticipantGrade(EXAM1_ID, STUDENT3_ID, newGrade);
+
+    Assertions.assertNotNull(actualGrade.getId());
+    assertEquals(36.4, actualGrade.getScore());
+  }
+
+  @Test
+  void teacher_crupdate_grade_ok() throws ApiException {
+    ApiClient teacherClient = anApiClient(TEACHER1_TOKEN);
+    TeachingApi api = new TeachingApi(teacherClient);
+
+    CrupdateGrade newGrade = new CrupdateGrade();
+    newGrade.setScore(15.25);
+    Grade actualGrade = api.crupdateParticipantGrade(EXAM2_ID, STUDENT3_ID, newGrade);
+
+    assertEquals(45.75, actualGrade.getScore());
+  }
+
+  @Test
+  void student_crupdate_grade_forbidden() {
+    ApiClient studentClient = anApiClient(STUDENT1_TOKEN);
+    TeachingApi api = new TeachingApi(studentClient);
+
+    CrupdateGrade newCrupdateGrade = new CrupdateGrade();
+    newCrupdateGrade.setScore(90.0);
+
+    assertThrowsForbiddenException(() -> api.crupdateParticipantGrade(EXAM1_ID, STUDENT1_ID, newCrupdateGrade));
+  }
 
   static class ContextInitializer extends AbstractContextInitializer {
     public static final int SERVER_PORT = anAvailableRandomPort();

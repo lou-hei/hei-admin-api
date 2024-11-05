@@ -1,22 +1,30 @@
 package school.hei.haapi.endpoint.rest.mapper;
 
+import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
 import school.hei.haapi.endpoint.rest.model.GetStudentGrade;
 import school.hei.haapi.endpoint.rest.model.Grade;
 import school.hei.haapi.model.Exam;
 import school.hei.haapi.model.User;
+import school.hei.haapi.service.ExamService;
+import school.hei.haapi.service.GradeService;
+import school.hei.haapi.service.UserService;
 
 @Component
 @AllArgsConstructor
 public class GradeMapper {
   private final UserMapper userMapper;
+  private final GradeService service;
+  private final UserService userService;
+  private final ExamService examService;
 
   // todo: to review all class
   public school.hei.haapi.model.Grade toDomain(Grade grade) {
     return school.hei.haapi.model.Grade.builder()
-        .score(grade.getScore().intValue())
+        .score(grade.getScore())
         .creationDatetime(grade.getCreatedAt())
         .build();
   }
@@ -59,4 +67,16 @@ public class GradeMapper {
   //        .participants(
   //            grades.stream().map(grade -> this.toRestStudentGrade(grade)).collect(toList()));
   //  }
+
+  public school.hei.haapi.model.Grade toDomain(CrupdateGrade grade, String examId, String studentId) {
+    school.hei.haapi.model.Grade grade1 = service.getByStudentId(studentId);
+    Exam exam = examService.getExamById(examId);
+    double scoreFinal = 0.0;
+
+    if (exam.getCoefficient() > 0 && grade.getScore() != null && grade.getScore() >= 0) {
+      scoreFinal = grade.getScore() * exam.getCoefficient();
+    }
+    grade1.setScore(scoreFinal);
+    return grade1;
+  }
 }
