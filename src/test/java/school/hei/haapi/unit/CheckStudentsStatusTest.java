@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.integration.conf.TestUtils.FEE4_ID;
 import static school.hei.haapi.integration.conf.TestUtils.FEE5_ID;
+import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.model.User.Sex.F;
@@ -25,6 +26,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import school.hei.haapi.integration.conf.AbstractContextInitializer;
 import school.hei.haapi.integration.conf.MockedThirdParties;
 import school.hei.haapi.model.User;
 import school.hei.haapi.repository.UserRepository;
@@ -36,7 +38,7 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = PaymentServiceUnitTest.ContextInitializer.class)
+@ContextConfiguration(initializers = CheckStudentsStatusTest.ContextInitializer.class)
 @AutoConfigureMockMvc
 @Transactional
 public class CheckStudentsStatusTest extends MockedThirdParties {
@@ -118,5 +120,14 @@ public class CheckStudentsStatusTest extends MockedThirdParties {
     assertEquals(2, studentsWithUnpaidOrLateFee.size());
     assertTrue(studentsWithUnpaidOrLateFee.contains(student1()));
     assertTrue(studentsWithUnpaidOrLateFee.contains(student2()));
+  }
+
+  static class ContextInitializer extends AbstractContextInitializer {
+    public static final int SERVER_PORT = anAvailableRandomPort();
+
+    @Override
+    public int getServerPort() {
+      return SERVER_PORT;
+    }
   }
 }

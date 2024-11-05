@@ -151,8 +151,6 @@ public class PaymentService {
             .creationDatetime(Instant.now())
             .comment(correspondingFee.getComment())
             .build();
-    computeUserStatusAfterPayingFee(correspondingFee.getStudent());
-    log.info("Student computed status: {}", correspondingFee.getStudent().getStatus().toString());
     eventProducer.accept(List.of(PaidFeeByMpbsNotificationBody.from(paymentFromMpbs)));
     return paymentRepository.save(paymentFromMpbs);
   }

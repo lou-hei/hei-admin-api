@@ -20,6 +20,8 @@ import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +42,7 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 @ContextConfiguration(initializers = PaymentServiceTest.ContextInitializer.class)
 @AutoConfigureMockMvc
 class PaymentServiceTest extends MockedThirdParties {
+  private static final Logger log = LoggerFactory.getLogger(PaymentServiceTest.class);
   @Autowired private PaymentService subject;
   @Autowired private MpbsService mpbsService;
   @MockBean private EventBridgeClient eventBridgeClientMock;
