@@ -65,7 +65,6 @@ class GradeIT extends MockedThirdParties {
     List<AwardedCourseExam> actual = api.getStudentGrades(STUDENT1_ID, 1, 10);
 
     assertEquals(5, actual.size());
-    System.out.println(actual);
     assertTrue(actual.contains(awardedCourseExam1()));
     assertTrue(actual.contains(awardedCourseExam2()));
     assertTrue(actual.contains(awardedCourseExam4()));
@@ -78,7 +77,6 @@ class GradeIT extends MockedThirdParties {
 
     List<AwardedCourseExam> actual = api.getStudentGrades(STUDENT1_ID, 1, 10);
 
-    System.out.println(actual);
     assertEquals(5, actual.size());
     assertTrue(actual.contains(awardedCourseExam1()));
     assertTrue(actual.contains(awardedCourseExam2()));
