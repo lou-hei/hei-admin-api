@@ -69,7 +69,8 @@ class ExamIT extends MockedThirdParties {
   void manager_read_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     TeachingApi api = new TeachingApi(manager1Client);
-    List<ExamInfo> actual = api.getAllExams(null, null, null, null, Instant.parse("2022-10-09T08:25:24Z"), null, 1, 10);
+    List<ExamInfo> actual =
+        api.getAllExams(null, null, null, null, Instant.parse("2022-10-09T08:25:24Z"), null, 1, 10);
 
     assertEquals(5, actual.size());
     assertTrue(actual.contains(exam1()));
