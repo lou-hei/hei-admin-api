@@ -23,8 +23,6 @@ public class EventService {
   private final EventRepository eventRepository;
   private final EventDao eventDao;
   private final EventParticipantService eventParticipantService;
-  private final UserService userService;
-  private final GroupService groupService;
 
   public List<Event> createOrUpdateEvent(List<Event> eventToCrupdate) {
     List<Event> eventsCreated = eventRepository.saveAll(eventToCrupdate);

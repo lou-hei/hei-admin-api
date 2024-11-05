@@ -3588,36 +3588,6 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/students/{id}/event':
-    get:
-      tags:
-        - Events
-      operationId: getEventsByStudentId
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Get status of each event in which the student participate
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/StudentEventParticipant'
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '429':
-          $ref: '#/components/responses/429'
-        '500':
-          $ref: '#/components/responses/500'
   '/comments':
     get:
       tags:
@@ -5310,28 +5280,6 @@ components:
           type: integer
         total:
           type: integer
-    StudentEventParticipant:
-      type: object
-      properties:
-        event:
-          type: object
-          properties:
-            id:
-              type: string
-            type:
-              $ref: '#/components/schemas/EventType'
-            title:
-              type: string
-            begin_datetime:
-              type: string
-              format: date-time
-            end_datetime:
-              type: string
-              format: date-time
-        status:
-          $ref: '#/components/schemas/AttendanceStatus'
-        event_participant_id:
-          type: string
     CrupdatePromotion:
       type: object
       properties:

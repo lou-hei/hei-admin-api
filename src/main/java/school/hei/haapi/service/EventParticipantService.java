@@ -1,7 +1,7 @@
 package school.hei.haapi.service;
 
 import static org.springframework.data.domain.Sort.Direction.ASC;
-import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.MISSING;
+import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.Event;
 import school.hei.haapi.model.EventParticipant;
@@ -35,8 +36,8 @@ public class EventParticipantService {
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(ASC, "participant.ref"));
 
     return Objects.isNull(groupRef)
-        ? eventParticipantRepository.findAllByEventId(eventId, pageable)
-        : eventParticipantRepository.findAllByEventIdAndGroupRef(eventId, groupRef, pageable);
+        ? findByEventId(eventId, pageable)
+        : findByEventIdAndGroupRef(eventId, groupRef, pageable);
   }
 
   public List<EventParticipant> updateEventParticipants(List<EventParticipant> eventParticipants) {
@@ -70,5 +71,30 @@ public class EventParticipantService {
         .findById(id)
         .orElseThrow(
             () -> new NotFoundException("Event participant with id #" + id + "does not exist"));
+  }
+
+  public List<EventParticipant> findByEventId(String eventId, Pageable pageable) {
+    return eventParticipantRepository
+        .findAllByEventId(eventId, pageable)
+        .orElseThrow(() -> new NotFoundException("Event with id #" + eventId + " does not exist"));
+  }
+
+  public List<EventParticipant> findByEventIdAndGroupRef(
+      String eventId, String groupRef, Pageable pageable) {
+    return eventParticipantRepository
+        .findAllByEventIdAndGroupRef(eventId, groupRef, pageable)
+        .orElseThrow(() -> new NotFoundException("Event with id #" + eventId + " does not exist"));
+  }
+
+  public EventStats getEventParticipantsStats(String eventId) {
+    Integer missing = eventParticipantRepository.countByEventIdAndStatus(eventId, MISSING);
+    Integer late = eventParticipantRepository.countByEventIdAndStatus(eventId, LATE);
+    Integer present = eventParticipantRepository.countByEventIdAndStatus(eventId, PRESENT);
+
+    return new EventStats()
+        .late(late)
+        .missing(missing)
+        .present(present)
+        .total(missing + present + late);
   }
 }
