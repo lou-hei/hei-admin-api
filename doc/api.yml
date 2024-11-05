@@ -980,13 +980,13 @@ paths:
           required: false
           schema:
             type: string
-            format: date
+            format: date-time
         - name: examination_date_to
           in: query
           required: false
           schema:
             type: string
-            format: date
+            format: date-time
         - name: page
           in: query
           schema:
