@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.model.Fee;
@@ -40,14 +39,14 @@ public class FeeDao {
           builder, root, predicates, status, studentRef, monthFrom, monthTo, isMpbs, query);
     }
 
-    CriteriaBuilder.Case<Object> statusOrder = builder.selectCase()
-            .when(builder.equal(root.get("status"), "LATE"), 1)
-            .when(builder.equal(root.get("status"), "UNPAID"), 2)
-            .when(builder.equal(root.get("status"), "PAID"), 3);
+    CriteriaBuilder.Case<Object> statusOrder =
+        builder
+            .selectCase()
+            .when(builder.equal(root.get("status"), FeeStatusEnum.LATE), 1)
+            .when(builder.equal(root.get("status"), FeeStatusEnum.UNPAID), 2)
+            .when(builder.equal(root.get("status"), FeeStatusEnum.PAID), 3);
 
-    query
-        .where(predicates.toArray(new Predicate[0]))
-        .orderBy(builder.asc(statusOrder));
+    query.where(predicates.toArray(new Predicate[0])).orderBy(builder.asc(statusOrder));
 
     return entityManager
         .createQuery(query)
