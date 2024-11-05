@@ -10,10 +10,17 @@ import school.hei.haapi.repository.GradeRepository;
 public class GradeService {
   // todo: to review all class
   private final GradeRepository gradeRepository;
-
   public Grade getGradeByExamIdAndStudentId(String examId, String studentId) {
     return gradeRepository.getGradeByExamIdAndStudentIdAndAwardedCourseIdAndGroupId(
         examId, studentId);
+  }
+
+  public Grade getById(String id){
+    return gradeRepository.getById(id);
+  }
+
+  public Grade getByStudentId(String id){
+    return gradeRepository.getByStudentId(id);
   }
 
   public Grade crupdateParticipantGrade(Grade grade){
