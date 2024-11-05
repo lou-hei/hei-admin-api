@@ -1,6 +1,5 @@
 package school.hei.haapi.endpoint.rest.mapper;
 
-import java.util.Objects;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -68,7 +67,8 @@ public class GradeMapper {
   //            grades.stream().map(grade -> this.toRestStudentGrade(grade)).collect(toList()));
   //  }
 
-  public school.hei.haapi.model.Grade toDomain(CrupdateGrade grade, String examId, String studentId) {
+  public school.hei.haapi.model.Grade toDomain(
+      CrupdateGrade grade, String examId, String studentId) {
     school.hei.haapi.model.Grade grade1 = service.getByStudentId(studentId);
     Exam exam = examService.getExamById(examId);
     double scoreFinal = 0.0;

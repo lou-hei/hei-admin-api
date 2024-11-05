@@ -45,7 +45,7 @@ public class ExamService {
     return examRepository.findAll(pageable).stream().toList();
   }
 
-  public Exam getExamById(String examId){
+  public Exam getExamById(String examId) {
     return examRepository.getById(examId);
   }
 

@@ -59,8 +59,9 @@ public class GradeController {
 
   @PutMapping(value = "/exams/{exam_id}/students/{student_id}/grade")
   public school.hei.haapi.endpoint.rest.model.Grade crupdateParticipantGrade(
-          @PathVariable("exam_id") String examId, @PathVariable("student_id") String studentId,
-          @RequestBody CrupdateGrade grade) {
+      @PathVariable("exam_id") String examId,
+      @PathVariable("student_id") String studentId,
+      @RequestBody CrupdateGrade grade) {
     Grade to_save = gradeMapper.toDomain(grade, examId, studentId);
     return gradeMapper.toRest(gradeService.crupdateParticipantGrade(to_save));
   }

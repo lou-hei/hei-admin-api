@@ -1,6 +1,5 @@
 package school.hei.haapi.integration;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -8,7 +7,6 @@ import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.*;
 
 import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -156,7 +154,8 @@ class GradeIT extends MockedThirdParties {
     CrupdateGrade newCrupdateGrade = new CrupdateGrade();
     newCrupdateGrade.setScore(90.0);
 
-    assertThrowsForbiddenException(() -> api.crupdateParticipantGrade(EXAM1_ID, STUDENT1_ID, newCrupdateGrade));
+    assertThrowsForbiddenException(
+        () -> api.crupdateParticipantGrade(EXAM1_ID, STUDENT1_ID, newCrupdateGrade));
   }
 
   static class ContextInitializer extends AbstractContextInitializer {
