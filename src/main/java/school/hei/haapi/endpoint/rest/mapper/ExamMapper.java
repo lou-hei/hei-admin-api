@@ -45,7 +45,7 @@ public class ExamMapper {
         .build();
   }
 
-  public List<ExamInfo> toDomainList(List<Exam> examList) {
+  public List<ExamInfo> toRestList(List<Exam> examList) {
     return examList.stream().map(this::toRest).toList();
   }
 }
