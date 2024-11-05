@@ -111,6 +111,7 @@ public class LetterService {
     fileService.uploadObjectToS3Bucket(bucketKey, fileToSave);
 
     eventProducer.accept(List.of(toSendLetterEmail(letterToSave)));
+
     return letterRepository.save(letterToSave);
   }
 
