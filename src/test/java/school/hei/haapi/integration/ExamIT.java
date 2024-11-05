@@ -5,7 +5,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -84,7 +83,8 @@ class ExamIT extends MockedThirdParties {
   void student_read_ko() {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     TeachingApi api = new TeachingApi(student1Client);
-    assertThrowsForbiddenException(() -> api.getAllExams(null, null, null, null, null, null, 1, 10));
+    assertThrowsForbiddenException(
+        () -> api.getAllExams(null, null, null, null, null, null, 1, 10));
   }
 
   @Test

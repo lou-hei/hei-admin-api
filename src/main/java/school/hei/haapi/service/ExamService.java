@@ -42,11 +42,18 @@ public class ExamService {
     return examRepository.saveAll(exams);
   }
 
-  public List<Exam> getAllExams(PageFromOne page, BoundedPageSize pageSize, String title, String courseCode, String groupRef,
-                                Instant examinationDateStart, Instant examinationDateEnd) {
+  public List<Exam> getAllExams(
+      PageFromOne page,
+      BoundedPageSize pageSize,
+      String title,
+      String courseCode,
+      String groupRef,
+      Instant examinationDateStart,
+      Instant examinationDateEnd) {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "examinationDate"));
-    return examDao.findByCriteria(pageable, title, courseCode, groupRef, examinationDateStart, examinationDateEnd);
+    return examDao.findByCriteria(
+        pageable, title, courseCode, groupRef, examinationDateStart, examinationDateEnd);
   }
 
   public Exam createOrUpdateExamsInfos(Exam exam) {
