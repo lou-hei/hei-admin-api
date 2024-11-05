@@ -963,6 +963,30 @@ paths:
           required: false
           schema:
             type: string
+        - name: course_code
+          in: query
+          required: false
+          example: PROG1
+          schema:
+            type: string
+        - name: group_ref
+          in: query
+          example: G1
+          required: false
+          schema:
+            type: string
+        - name: examination_date_from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: examination_date_to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
         - name: page
           in: query
           schema:
@@ -2424,10 +2448,10 @@ paths:
       description: |
         The payload has no `amount` field
         since a MPBS implicitly pays the remaining unpaid amount of the fee.
-        
+
         In case the amount paid by the student differs,
         then the (scheduled) verifications will fail and manual fix from a manager is required.
-        
+
         When the verification succeeds, and only then,
         a `Fee.Payment` object is automatically created to reflect the `Fee.Mbps`.
       operationId: createMpbs
