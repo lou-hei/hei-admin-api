@@ -51,8 +51,8 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
     ORDER BY
       CASE
         WHEN f.status = 'LATE' THEN 1
-        WHEN f.status = 'PAID' THEN 2
-        WHEN f.status = 'UNPAID' THEN 3
+        WHEN f.status = 'UNPAID' THEN 2
+        WHEN f.status = 'PAID' THEN 3
       END,
       f.dueDatetime DESC
       """)

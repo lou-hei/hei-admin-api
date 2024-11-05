@@ -40,9 +40,14 @@ public class FeeDao {
           builder, root, predicates, status, studentRef, monthFrom, monthTo, isMpbs, query);
     }
 
+    CriteriaBuilder.Case<Object> statusOrder = builder.selectCase()
+            .when(builder.equal(root.get("status"), "LATE"), 1)
+            .when(builder.equal(root.get("status"), "UNPAID"), 2)
+            .when(builder.equal(root.get("status"), "PAID"), 3);
+
     query
         .where(predicates.toArray(new Predicate[0]))
-        .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));
+        .orderBy(builder.asc(statusOrder));
 
     return entityManager
         .createQuery(query)
