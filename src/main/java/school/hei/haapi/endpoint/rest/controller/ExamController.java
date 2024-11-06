@@ -1,6 +1,6 @@
 package school.hei.haapi.endpoint.rest.controller;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 import java.time.Instant;
 import java.util.List;
