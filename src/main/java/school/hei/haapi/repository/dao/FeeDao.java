@@ -29,7 +29,6 @@ public class FeeDao {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Fee> query = builder.createQuery(Fee.class);
     Root<Fee> root = query.from(Fee.class);
-
     List<Predicate> predicates = new ArrayList<>();
 
     if (isCriteriaEmpty(status, studentRef, monthFrom, monthTo, isMpbs)) {

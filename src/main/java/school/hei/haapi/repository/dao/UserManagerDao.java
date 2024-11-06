@@ -39,10 +39,7 @@ public class UserManagerDao {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<User> query = builder.createQuery(User.class);
     Root<User> root = query.from(User.class);
-    Join<User, WorkDocument> workDocumentJoin = root.join("workDocuments", LEFT);
-    Join<User, AwardedCourse> awardedCourseJoin = root.join("awardedCourses", LEFT);
-    Join<AwardedCourse, Course> courseJoin = awardedCourseJoin.join("course", LEFT);
-
+    Join<User, WorkDocument> workDocumentJoin = null;
     Predicate predicate = builder.conjunction();
 
     Predicate hasUserRef =
@@ -63,11 +60,14 @@ public class UserManagerDao {
     Predicate hasUserRole = builder.equal(root.get("role"), role);
 
     if (courseId != null && !courseId.isEmpty() && !courseId.isBlank()) {
+      Join<User, AwardedCourse> awardedCourseJoin = root.join("awardedCourses", LEFT);
+      Join<AwardedCourse, Course> courseJoin = awardedCourseJoin.join("course", LEFT);
       Expression<String> courseIdExpression = courseJoin.get("id");
       predicate = builder.and(predicate, builder.equal(courseIdExpression, courseId));
     }
 
     if (commitmentBeginDate != null) {
+      workDocumentJoin = root.join("workDocuments", LEFT);
       Expression<Instant> commitmentBeginExpression = workDocumentJoin.get("commitmentBegin");
       predicate =
           builder.and(
@@ -88,6 +88,7 @@ public class UserManagerDao {
     }
 
     if (WORKING.equals(workStatus)) {
+      workDocumentJoin = root.join("workDocuments", LEFT);
       predicate =
           builder.and(
               predicate,
@@ -95,6 +96,7 @@ public class UserManagerDao {
                   workDocumentJoin.get("commitmentBegin"), commitmentComparison));
     }
     if (HAVE_BEEN_WORKING.equals(workStatus)) {
+      workDocumentJoin = root.join("workDocuments", LEFT);
       predicate =
           builder.and(
               predicate,
@@ -102,6 +104,7 @@ public class UserManagerDao {
                   workDocumentJoin.get("commitmentEnd"), commitmentComparison));
     }
     if (WILL_BE_WORKING.equals(workStatus)) {
+      workDocumentJoin = root.join("workDocuments", LEFT);
       predicate =
           builder.and(
               predicate,
