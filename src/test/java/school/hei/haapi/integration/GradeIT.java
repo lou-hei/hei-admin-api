@@ -1,7 +1,6 @@
 package school.hei.haapi.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.*;
@@ -135,12 +134,28 @@ class GradeIT extends MockedThirdParties {
   }
 
   @Test
+  void manager_crupdate_grade_ko() throws ApiException {
+    ApiClient managerClient = anApiClient(MANAGER1_TOKEN);
+    TeachingApi api = new TeachingApi(managerClient);
+
+    CrupdateGrade newGrade = new CrupdateGrade();
+    newGrade.setScore(28.2);
+
+    ApiException illegalArgumentException = assertThrows(ApiException.class, () -> api.crupdateParticipantGrade(EXAM1_ID, STUDENT3_ID, newGrade));
+
+    String exceptedMessage = "score must be between 0 and 20";
+    String actualMessage = illegalArgumentException.getMessage();
+
+    assertTrue(actualMessage.contains(exceptedMessage));
+  }
+
+  @Test
   void teacher_crupdate_grade_ok() throws ApiException {
     ApiClient teacherClient = anApiClient(TEACHER1_TOKEN);
     TeachingApi api = new TeachingApi(teacherClient);
 
     CrupdateGrade newGrade = new CrupdateGrade();
-    newGrade.setScore(15.25);
+    newGrade.setScore(5.25);
     Grade actualGrade = api.crupdateParticipantGrade(EXAM2_ID, STUDENT3_ID, newGrade);
 
     assertEquals(45.75, actualGrade.getScore());
