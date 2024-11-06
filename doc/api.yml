@@ -3473,34 +3473,6 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /events/{id}/stats:
-    get:
-      tags:
-        - Events
-      operationId: Get stats for the given event
-      parameters:
-        - name: id
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Events stats
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EventStats'
-        '400':
-          $ref: '#/components/responses/400'
-        '403':
-          $ref: '#/components/responses/403'
-        '404':
-          $ref: '#/components/responses/404'
-        '429':
-          $ref: '#/components/responses/429'
-        '500':
-          $ref: '#/components/responses/500'
   /events/{id}/participants:
     get:
       tags:
@@ -5269,6 +5241,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GroupIdentifier'
+        count:
+          $ref: '#/components/schemas/EventStats'
     EventStats:
       type: object
       properties:
