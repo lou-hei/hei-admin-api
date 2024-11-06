@@ -1,7 +1,9 @@
 package school.hei.haapi.service;
 
 import static org.springframework.data.domain.Sort.Direction.ASC;
-import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.*;
+import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.LATE;
+import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.MISSING;
+import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.PRESENT;
 
 import java.util.ArrayList;
 import java.util.List;

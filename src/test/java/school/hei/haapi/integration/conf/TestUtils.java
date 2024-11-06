@@ -84,6 +84,7 @@ import school.hei.haapi.endpoint.rest.model.CrupdateTeacher;
 import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
+import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.endpoint.rest.model.ExamInfo;
 import school.hei.haapi.endpoint.rest.model.Fee;
 import school.hei.haapi.endpoint.rest.model.FeeTemplate;
@@ -1205,6 +1206,7 @@ public class TestUtils {
         .description("Prog1 course")
         .title("PROG1")
         .planner(planner1())
+        .count(new EventStats().late(0).missing(1).present(1).total(2))
         .groups(List.of(createGroupIdentifier(group1())));
   }
 
@@ -1217,6 +1219,7 @@ public class TestUtils {
         .endDatetime(Instant.parse("2022-12-08T12:00:00.00Z"))
         .course(null)
         .title("Integration Day")
+        .count(new EventStats().total(3).missing(1).present(2).late(0))
         .description("HEI students integration day")
         .groups(List.of(createGroupIdentifier(group1()), createGroupIdentifier(group2())));
   }
@@ -1238,6 +1241,7 @@ public class TestUtils {
         .endDatetime(Instant.parse("2022-12-09T12:00:00.00Z"))
         .title("December Seminar")
         .course(null)
+        .count(new EventStats().late(0).present(0).missing(0).total(0))
         .groups(List.of());
   }
 

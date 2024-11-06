@@ -77,6 +77,8 @@ public class EventIT extends MockedThirdParties {
 
     List<Event> actual = api.getEvents(1, 15, null, null, null, null);
 
+    log.info(actual.toString());
+
     assertTrue(actual.containsAll(List.of(event1(), event2(), event3())));
 
     List<Event> eventsBeginAfterAnInstant =
