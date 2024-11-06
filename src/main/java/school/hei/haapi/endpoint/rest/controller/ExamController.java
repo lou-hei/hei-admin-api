@@ -60,6 +60,11 @@ public class ExamController {
             awardedCourseId));
   }
 
+  @GetMapping("/exams/{id}")
+  public ExamInfo getExam(@PathVariable(name = "id") String id) {
+    return examMapper.toRest(examService.getExamById(id));
+  }
+
   @PutMapping("/exams")
   public ExamInfo createOrUpdateExamsInfos(@RequestBody CrupdateExam examInfo) {
     return examMapper.toRest(examService.createOrUpdateExamsInfos(examMapper.toDomain(examInfo)));

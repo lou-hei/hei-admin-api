@@ -42,6 +42,12 @@ public class ExamService {
     return examRepository.saveAll(exams);
   }
 
+  public Exam getExamById(String id) {
+    return examRepository
+        .findById(id)
+        .orElseThrow(() -> new NotFoundException("Exam with id #" + id + " not found"));
+  }
+
   public List<Exam> getAllExams(
       PageFromOne page,
       BoundedPageSize pageSize,
