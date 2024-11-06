@@ -1047,6 +1047,35 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /exams/{id}:
+    get:
+      tags:
+        - Teaching
+      summary: Get exam by id
+      operationId: getExamById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A specific exam
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamInfo'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /awarded_courses/{awarded_course_id}/exams/{exam_id}:
     get:
       tags:
