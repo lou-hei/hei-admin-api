@@ -66,6 +66,48 @@ class ExamIT extends MockedThirdParties {
     //  }
   */
   @Test
+  void student_read_exam_ko() {
+    ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
+    TeachingApi api = new TeachingApi(student1Client);
+    String exam1Id = exam1().getId();
+    assertThrowsApiException(
+        "{\"type\":\"403 FORBIDDEN\",\"message\":\"Access is denied\"}",
+        () -> api.getExamOneExamById(exam1Id));
+  }
+
+  @Test
+  void manager_read_exam_ko() {
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    TeachingApi api = new TeachingApi(manager1Client);
+    String nonExistentExamId = "NON_EXISTENT_EXAM";
+    assertThrowsApiException(
+        "{\"type\":\"404 NOT_FOUND\",\"message\":\"Exam with id #"
+            + nonExistentExamId
+            + " not found\"}",
+        () -> api.getExamOneExamById(nonExistentExamId));
+  }
+
+  @Test
+  void manager_read_exam_ok() throws ApiException {
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    TeachingApi api = new TeachingApi(manager1Client);
+    String exam1Id = exam1().getId();
+    ExamInfo actual = api.getExamOneExamById(exam1Id);
+    assertDoesNotThrow(() -> api.getExamOneExamById(exam1Id));
+    assertEquals(actual, exam1());
+  }
+
+  @Test
+  void teacher_read_exam_ok() throws ApiException {
+    ApiClient teacher1Client = anApiClient(TEACHER1_TOKEN);
+    TeachingApi api = new TeachingApi(teacher1Client);
+    String exam1Id = exam1().getId();
+    ExamInfo actual = api.getExamOneExamById(exam1Id);
+    assertDoesNotThrow(() -> api.getExamOneExamById(exam1Id));
+    assertEquals(actual, exam1());
+  }
+
+  @Test
   void manager_read_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     TeachingApi api = new TeachingApi(manager1Client);
