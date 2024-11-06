@@ -2,12 +2,17 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 import school.hei.haapi.endpoint.rest.mapper.AwardedCourseMapper;
 import school.hei.haapi.endpoint.rest.mapper.GradeMapper;
 import school.hei.haapi.endpoint.rest.model.AwardedCourseExam;
 import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
 import school.hei.haapi.endpoint.rest.model.GetStudentGrade;
+import school.hei.haapi.endpoint.rest.validator.GradeValidator;
 import school.hei.haapi.model.AwardedCourse;
 import school.hei.haapi.model.Grade;
 import school.hei.haapi.model.User;
@@ -21,6 +26,7 @@ public class GradeController {
   private final UserService userService;
   private final AwardedCourseService awardedCourseService;
   private final AwardedCourseMapper awardedCourseMapper;
+  private final GradeValidator validator;
   private final GradeService gradeService;
   private final GradeMapper gradeMapper;
 
@@ -62,7 +68,8 @@ public class GradeController {
       @PathVariable("exam_id") String examId,
       @PathVariable("student_id") String studentId,
       @RequestBody CrupdateGrade grade) {
-    Grade to_save = gradeMapper.toDomain(grade, examId, studentId);
-    return gradeMapper.toRest(gradeService.crupdateParticipantGrade(to_save));
+      validator.accept(grade);
+      Grade to_save = gradeMapper.toDomain(grade, examId, studentId);
+      return gradeMapper.toRest(gradeService.crupdateParticipantGrade(to_save));
   }
 }
