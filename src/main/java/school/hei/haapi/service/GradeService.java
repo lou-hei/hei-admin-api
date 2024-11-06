@@ -21,7 +21,7 @@ public class GradeService {
   }
 
   public Grade getByStudentId(String id) {
-    return gradeRepository.getByStudentId(id);
+    return gradeRepository.findByStudentId(id);
   }
 
   public Grade crupdateParticipantGrade(Grade grade) {
