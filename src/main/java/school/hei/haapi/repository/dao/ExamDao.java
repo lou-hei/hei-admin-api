@@ -37,23 +37,22 @@ public class ExamDao {
     Root<Exam> root = query.from(Exam.class);
     ArrayList<Predicate> predicates = new ArrayList<>();
 
-    Join<Exam, AwardedCourse> awardedCourseJoin = root.join("awardedCourse", JoinType.LEFT);
-    Join<AwardedCourse, Course> courseJoin = awardedCourseJoin.join("course", JoinType.LEFT);
-    Join<AwardedCourse, Group> groupJoin = awardedCourseJoin.join("group", JoinType.LEFT);
-    if (awardedCourseId != null && !awardedCourseId.isEmpty()) {
-      predicates.add(builder.equal(awardedCourseJoin.get("id"), awardedCourseId));
-    }
     if (title != null && !title.isEmpty()) {
       predicates.add(builder.like(root.get("title"), "%" + title.toLowerCase() + "%"));
     }
 
+    Join<Exam, AwardedCourse> awardedCourseJoin = root.join("awardedCourse", JoinType.LEFT);
     if (courseCode != null && !courseCode.isEmpty()) {
+      Join<AwardedCourse, Course> courseJoin = awardedCourseJoin.join("course", JoinType.LEFT);
       predicates.add(
           builder.like(
               builder.lower(courseJoin.get("code")), "%" + courseCode.toLowerCase() + "%"));
     }
-
+    if (awardedCourseId != null && !awardedCourseId.isEmpty()) {
+      predicates.add(builder.equal(awardedCourseJoin.get("id"), awardedCourseId));
+    }
     if (groupRef != null && !groupRef.isEmpty()) {
+      Join<AwardedCourse, Group> groupJoin = awardedCourseJoin.join("group", JoinType.LEFT);
       predicates.add(
           builder.like(builder.lower(groupJoin.get("ref")), "%" + groupRef.toLowerCase() + "%"));
     }
