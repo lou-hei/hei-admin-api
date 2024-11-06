@@ -197,6 +197,8 @@ public class UserService {
       WorkStudyStatus workStatus,
       Instant commitmentBeginDate,
       List<String> excludeGroupIds) {
+    log.info("Page = {}", page.getValue());
+    log.info("PageSize = {}", pageSize.getValue());
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(ASC, "ref"));
     return userManagerDao.findByCriteria(
