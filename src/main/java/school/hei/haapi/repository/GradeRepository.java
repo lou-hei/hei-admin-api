@@ -12,5 +12,5 @@ public interface GradeRepository extends JpaRepository<Grade, String> {
   Grade getGradeByExamIdAndStudentIdAndAwardedCourseIdAndGroupId(
       @Param("exam_id") String examId, @Param("student_id") String studentId);
 
-  Grade getByStudentId(String studentId);
+  Grade findByStudentId(String studentId);
 }
