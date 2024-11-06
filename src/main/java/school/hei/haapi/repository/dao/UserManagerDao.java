@@ -67,7 +67,7 @@ public class UserManagerDao {
     }
 
     if (commitmentBeginDate != null) {
-       workDocumentJoin = root.join("workDocuments", LEFT);
+      workDocumentJoin = root.join("workDocuments", LEFT);
       Expression<Instant> commitmentBeginExpression = workDocumentJoin.get("commitmentBegin");
       predicate =
           builder.and(
