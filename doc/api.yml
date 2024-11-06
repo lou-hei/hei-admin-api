@@ -1052,7 +1052,7 @@ paths:
       tags:
         - Teaching
       summary: Get exam by id
-      operationId: getExamById
+      operationId: getExamOneExamById
       parameters:
         - name: id
           in: path
