@@ -141,7 +141,10 @@ class GradeIT extends MockedThirdParties {
     CrupdateGrade newGrade = new CrupdateGrade();
     newGrade.setScore(28.2);
 
-    ApiException illegalArgumentException = assertThrows(ApiException.class, () -> api.crupdateParticipantGrade(EXAM1_ID, STUDENT3_ID, newGrade));
+    ApiException illegalArgumentException =
+        assertThrows(
+            ApiException.class,
+            () -> api.crupdateParticipantGrade(EXAM1_ID, STUDENT3_ID, newGrade));
 
     String exceptedMessage = "score must be between 0 and 20";
     String actualMessage = illegalArgumentException.getMessage();
