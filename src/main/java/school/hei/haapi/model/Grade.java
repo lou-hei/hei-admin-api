@@ -40,6 +40,6 @@ public class Grade implements Serializable {
   @JoinColumn(name = "exam_id")
   private Exam exam;
 
-  private Integer score;
+  private Double score;
   private Instant creationDatetime;
 }
