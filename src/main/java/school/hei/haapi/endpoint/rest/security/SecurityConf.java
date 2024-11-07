@@ -172,6 +172,8 @@ public class SecurityConf {
                     antMatcher(GET, "/exams"),
                     antMatcher(GET, "/exams/*"),
                     antMatcher(PUT, "/exams"),
+                    antMatcher(GET, "/exams/*/students/*/grade"),
+                    antMatcher(PUT, "/exams/*/students/*/grade"),
                     antMatcher(GET, "/groups/*/students"),
                     antMatcher(GET, "/groups/*/students/raw"),
                     antMatcher(GET, "/groups/**"),
@@ -497,6 +499,10 @@ public class SecurityConf {
                     .hasAnyRole(STUDENT.getRole())
                     .requestMatchers(GET, "/students/*/grades")
                     .hasAnyRole(TEACHER.getRole(), MANAGER.getRole())
+                    .requestMatchers(GET, "/exams/*/students/*/grade")
+                    .hasAnyRole(TEACHER.getRole(), MANAGER.getRole())
+                    .requestMatchers(PUT, "/exams/*/students/*/grade")
+                    .hasAnyRole(TEACHER.getRole(), MANAGER.getRole())
                     .requestMatchers(GET, "/fees")
                     .hasAnyRole(MANAGER.getRole())
                     .requestMatchers(GET, "/teachers")
@@ -706,6 +712,7 @@ public class SecurityConf {
         // Eg if all clients are non-browser then no csrf
         // https://docs.spring.io/spring-security/site/docs/3.2.0.CI-SNAPSHOT/reference/html/csrf.html,
         // Sec 13.3
+        .cors(AbstractHttpConfigurer::disable)
         .csrf(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .logout(AbstractHttpConfigurer::disable);
