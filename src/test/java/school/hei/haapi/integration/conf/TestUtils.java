@@ -75,9 +75,9 @@ import school.hei.haapi.endpoint.rest.model.CreateAwardedCourse;
 import school.hei.haapi.endpoint.rest.model.CreateComment;
 import school.hei.haapi.endpoint.rest.model.CreateEvent;
 import school.hei.haapi.endpoint.rest.model.CreateFee;
-import school.hei.haapi.endpoint.rest.model.CreateGrade;
 import school.hei.haapi.endpoint.rest.model.CrupdateExam;
 import school.hei.haapi.endpoint.rest.model.CrupdateFeeTemplate;
+import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
 import school.hei.haapi.endpoint.rest.model.CrupdatePromotion;
 import school.hei.haapi.endpoint.rest.model.CrupdateStudentFee;
 import school.hei.haapi.endpoint.rest.model.CrupdateTeacher;
@@ -379,8 +379,8 @@ public class TestUtils {
         .awardedCourse(awardedCourse1());
   }
 
-  public static CreateGrade createGrade(String studentId) {
-    return new CreateGrade().score(20.0).studentId(studentId);
+  public static CrupdateGrade createGrade() {
+    return new CrupdateGrade().score(20.0);
   }
 
   public static List<CrupdateTeacher> someCreatableTeacherList(int nbOfTeacher) {
