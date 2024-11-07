@@ -15,4 +15,16 @@ public class GradeService {
     return gradeRepository.getGradeByExamIdAndStudentIdAndAwardedCourseIdAndGroupId(
         examId, studentId);
   }
+
+  public Grade getById(String id) {
+    return gradeRepository.getById(id);
+  }
+
+  public Grade getByStudentId(String id) {
+    return gradeRepository.findByStudentId(id);
+  }
+
+  public Grade crupdateParticipantGrade(Grade grade) {
+    return gradeRepository.save(grade);
+  }
 }
