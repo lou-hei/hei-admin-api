@@ -55,7 +55,16 @@ public class FeeService {
   public byte[] generateFeesAsXlsx(FeeStatusEnum feeStatus) {
     XlsxCellsGenerator<Fee> xlsxCellsGenerator = new XlsxCellsGenerator<>();
     List<Fee> feeList = feeRepository.findAllByStatus(feeStatus);
-    return xlsxCellsGenerator.apply(feeList, List.of("student.ref", "status", "type", "totalAmount", "remainingAmount", "comment", "dueDatetime"));
+    return xlsxCellsGenerator.apply(
+        feeList,
+        List.of(
+            "student.ref",
+            "status",
+            "type",
+            "totalAmount",
+            "remainingAmount",
+            "comment",
+            "dueDatetime"));
   }
 
   public Fee debitAmount(Fee toUpdate, int amountToDebit) {

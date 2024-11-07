@@ -58,20 +58,19 @@ public class XlsxCellsGenerator<T> implements BiFunction<List<T>, List<String>, 
 
   @SneakyThrows
   private Object getNestedFieldValue(Object obj, String fieldPath) {
-      String[] fields = fieldPath.split("\\.");
-      Object currentObject = obj;
+    String[] fields = fieldPath.split("\\.");
+    Object currentObject = obj;
 
-      for (String fieldName : fields) {
-        var field = currentObject.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        currentObject = field.get(currentObject);
+    for (String fieldName : fields) {
+      var field = currentObject.getClass().getDeclaredField(fieldName);
+      field.setAccessible(true);
+      currentObject = field.get(currentObject);
 
-        if (currentObject == null) break;
-      }
+      if (currentObject == null) break;
+    }
 
-      return currentObject;
+    return currentObject;
   }
-
 
   private void generateHeadedRow(Row row0, List<String> fieldsToBePrinted) {
     for (int i = 0; i < fieldsToBePrinted.size(); i++) {

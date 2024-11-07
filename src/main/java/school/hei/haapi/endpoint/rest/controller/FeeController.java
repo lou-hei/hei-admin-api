@@ -3,6 +3,7 @@ package school.hei.haapi.endpoint.rest.controller;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -82,6 +83,12 @@ public class FeeController {
     return feeService.getFeesByStudentId(studentId, page, pageSize, status).stream()
         .map(feeMapper::toRestFee)
         .collect(toUnmodifiableList());
+  }
+
+  @GetMapping(value = "/fees/raw", produces = "application/vnd.ms-excel")
+  public byte[] generateFeesListAsXlsx(@RequestParam(name = "status") FeeStatusEnum status)
+      throws IOException {
+    return feeService.generateFeesAsXlsx(status);
   }
 
   @GetMapping("/fees")
