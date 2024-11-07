@@ -69,6 +69,10 @@ public class ExamService {
         awardedCourseId);
   }
 
+  public Exam getExamById(String examId) {
+    return examRepository.findById(examId).orElseThrow(() -> new NotFoundException("Exam with id "+examId+" not found"));
+  }
+
   public Exam createOrUpdateExamsInfos(Exam exam) {
     return examRepository.save(exam);
   }
