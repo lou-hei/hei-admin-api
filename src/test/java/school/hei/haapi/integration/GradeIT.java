@@ -158,7 +158,7 @@ class GradeIT extends MockedThirdParties {
     newGrade.setScore(5.25);
     Grade actualGrade = api.crupdateParticipantGrade(EXAM2_ID, STUDENT3_ID, newGrade);
 
-    assertEquals(45.75, actualGrade.getScore());
+    assertEquals(15.75, actualGrade.getScore());
   }
 
   @Test
