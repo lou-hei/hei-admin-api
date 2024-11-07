@@ -49,16 +49,29 @@ public class XlsxCellsGenerator<T> implements BiFunction<List<T>, List<String>, 
 
   @SneakyThrows
   private void generateBodiesRow(Row rowi, T objectToPrint, List<String> fieldsToBePrinted) {
-    var objectClazz = objectToPrint.getClass();
-
     for (int i = 0; i < fieldsToBePrinted.size(); i++) {
-      var fieldValue = objectClazz.getDeclaredField(fieldsToBePrinted.get(i));
-      fieldValue.setAccessible(true);
-      Object value = fieldValue.get(objectToPrint);
-      String formatedValue = formatValue(value);
-      rowi.createCell(i).setCellValue(formatedValue != null ? formatedValue : "");
+      Object value = getNestedFieldValue(objectToPrint, fieldsToBePrinted.get(i));
+      String formattedValue = formatValue(value);
+      rowi.createCell(i).setCellValue(formattedValue != null ? formattedValue : "");
     }
   }
+
+  @SneakyThrows
+  private Object getNestedFieldValue(Object obj, String fieldPath) {
+      String[] fields = fieldPath.split("\\.");
+      Object currentObject = obj;
+
+      for (String fieldName : fields) {
+        var field = currentObject.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        currentObject = field.get(currentObject);
+
+        if (currentObject == null) break;
+      }
+
+      return currentObject;
+  }
+
 
   private void generateHeadedRow(Row row0, List<String> fieldsToBePrinted) {
     for (int i = 0; i < fieldsToBePrinted.size(); i++) {
