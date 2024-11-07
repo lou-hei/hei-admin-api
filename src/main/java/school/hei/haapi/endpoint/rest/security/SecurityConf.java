@@ -700,7 +700,6 @@ public class SecurityConf {
         // Eg if all clients are non-browser then no csrf
         // https://docs.spring.io/spring-security/site/docs/3.2.0.CI-SNAPSHOT/reference/html/csrf.html,
         // Sec 13.3
-        .cors(AbstractHttpConfigurer::disable)
         .csrf(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .logout(AbstractHttpConfigurer::disable);
