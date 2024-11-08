@@ -92,5 +92,7 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
           AND s.status IN :statuses
           """)
   List<Object[]> getMonthlyFeeStatistics(
-          @Param(value = "from") Instant monthFrom, @Param(value = "to") Instant monthTo, @Param(value = "statuses")List<User.Status> statuses);
+      @Param(value = "from") Instant monthFrom,
+      @Param(value = "to") Instant monthTo,
+      @Param(value = "statuses") List<User.Status> statuses);
 }

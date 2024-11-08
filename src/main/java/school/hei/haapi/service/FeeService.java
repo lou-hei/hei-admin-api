@@ -127,7 +127,7 @@ public class FeeService {
     monthFrom = defaultRange[0];
     monthTo = defaultRange[1];
     List<User.Status> statuses = List.of(User.Status.ENABLED, User.Status.SUSPENDED);
-            Object[] stats = feeRepository.getMonthlyFeeStatistics(monthFrom, monthTo, statuses).get(0);
+    Object[] stats = feeRepository.getMonthlyFeeStatistics(monthFrom, monthTo, statuses).get(0);
 
     return new FeesStatistics()
         .totalFees(toInt(stats[0]))
