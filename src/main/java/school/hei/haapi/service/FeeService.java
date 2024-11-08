@@ -126,7 +126,8 @@ public class FeeService {
     Instant[] defaultRange = dateUtils.getDefaultMonthRange(monthFrom, monthTo);
     monthFrom = defaultRange[0];
     monthTo = defaultRange[1];
-    Object[] stats = feeRepository.getMonthlyFeeStatistics(monthFrom, monthTo).get(0);
+    List<User.Status> statuses = List.of(User.Status.ENABLED, User.Status.SUSPENDED);
+            Object[] stats = feeRepository.getMonthlyFeeStatistics(monthFrom, monthTo, statuses).get(0);
 
     return new FeesStatistics()
         .totalFees(toInt(stats[0]))

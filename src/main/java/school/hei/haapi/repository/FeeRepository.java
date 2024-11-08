@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.model.Fee;
+import school.hei.haapi.model.User;
 
 @Repository
 public interface FeeRepository extends JpaRepository<Fee, String> {
@@ -86,8 +87,10 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
             SUM(CASE WHEN f.status = 'PAID' THEN 1 ELSE 0 END) AS paidFees,
             SUM(CASE WHEN f.status = 'UNPAID' THEN 1 ELSE 0 END) AS unpaidFees
           FROM Fee f
+          JOIN User s ON f.student = s
           WHERE f.dueDatetime BETWEEN :from AND :to
+          AND s.status IN :statuses
           """)
   List<Object[]> getMonthlyFeeStatistics(
-      @Param(value = "from") Instant monthFrom, @Param(value = "to") Instant monthTo);
+          @Param(value = "from") Instant monthFrom, @Param(value = "to") Instant monthTo, @Param(value = "statuses")List<User.Status> statuses);
 }

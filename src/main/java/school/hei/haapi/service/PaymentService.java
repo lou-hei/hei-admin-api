@@ -133,9 +133,13 @@ public class PaymentService {
     Instant now = Instant.now();
     List<Fee> unpaidFeesBeforeNow =
         feeRepository.getStudentFeesUnpaidOrLateFrom(now, userToResetStatus.getId(), LATE);
+    log.info("unpaid student fees size = {}", unpaidFeesBeforeNow.size());
+    log.info("user corresponding = {}", userToResetStatus.toString());
     if (!unpaidFeesBeforeNow.isEmpty()) {
+      log.info("SUSPENDED");
       userManagerDao.updateUserStatusById(SUSPENDED, userToResetStatus.getId());
     } else {
+      log.info("RE - ENABLED");
       userManagerDao.updateUserStatusById(ENABLED, userToResetStatus.getId());
     }
   }
