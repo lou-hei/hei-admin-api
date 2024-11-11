@@ -45,7 +45,7 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
     FROM
         Fee f
     JOIN
-        User u ON f.student = u
+        User u ON f.student.id = u.id
     WHERE
         f.student.id = :studentId
     ORDER BY
