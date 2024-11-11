@@ -152,4 +152,12 @@ public class UserManagerDao {
         .setMaxResults(pageable.getPageSize())
         .getResultList();
   }
+
+  public void updateUserStatusById(User.Status status, String userId) {
+    User user = entityManager.find(User.class, userId);
+    if (user != null) {
+      user.setStatus(status);
+      entityManager.merge(user);
+    }
+  }
 }

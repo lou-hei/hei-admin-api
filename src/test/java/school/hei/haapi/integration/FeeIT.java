@@ -113,13 +113,12 @@ class FeeIT extends MockedThirdParties {
   }
 
   @Test
-  @Disabled
   void student_read_ok() throws ApiException {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     PayingApi api = new PayingApi(student1Client);
 
     Fee actualFee = api.getStudentFeeById(STUDENT1_ID, FEE1_ID);
-    List<Fee> actual = api.getStudentFees(STUDENT1_ID, 1, 5, null);
+    List<Fee> actual = api.getStudentFees(STUDENT1_ID, 1, 10, null);
 
     assertEquals(fee1(), actualFee);
     assertTrue(actual.contains(fee1()));
