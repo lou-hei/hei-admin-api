@@ -41,7 +41,7 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
   @Query(
       value =
           """
-    SELECT
+    SELECT DISTINCT
         f
     FROM
         Fee f
@@ -82,7 +82,7 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
 
   @Query(
       """
-          SELECT
+          SELECTw
             COUNT(f) AS totalFees,
             SUM(CASE WHEN f.status = 'PAID' THEN 1 ELSE 0 END) AS paidFees,
             SUM(CASE WHEN f.status = 'UNPAID' THEN 1 ELSE 0 END) AS unpaidFees

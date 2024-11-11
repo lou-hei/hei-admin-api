@@ -152,33 +152,4 @@ public class UserManagerDao {
         .setMaxResults(pageable.getPageSize())
         .getResultList();
   }
-
-  public List<User> findByLinkedCourse(User.Role role, String courseId, Pageable pageable) {
-    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<User> query = builder.createQuery(User.class);
-    Root<User> root = query.from(User.class);
-    Join<User, AwardedCourse> awardedCourse = root.join("awardedCourses");
-    Join<AwardedCourse, Course> course = awardedCourse.join("course");
-
-    Predicate hasCourseId = builder.equal(course.get("id"), courseId);
-    Predicate hasUserRole = builder.equal(root.get("role"), role);
-    query
-        .distinct(true)
-        .where(builder.and(hasUserRole, hasCourseId))
-        .orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));
-
-    return entityManager
-        .createQuery(query)
-        .setFirstResult((pageable.getPageNumber()) * pageable.getPageSize())
-        .setMaxResults(pageable.getPageSize())
-        .getResultList();
-  }
-
-  public void updateUserStatusById(User.Status status, String userId) {
-    User user = entityManager.find(User.class, userId);
-    if (user != null) {
-      user.setStatus(status);
-      entityManager.merge(user);
-    }
-  }
 }
