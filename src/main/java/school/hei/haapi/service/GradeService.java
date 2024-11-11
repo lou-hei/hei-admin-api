@@ -18,8 +18,9 @@ public class GradeService {
   }
 
   public Grade getById(String id) {
-    return gradeRepository.findById(id).orElseThrow(
-            ()-> new NotFoundException("grade with id "+id+" not found"));
+    return gradeRepository
+        .findById(id)
+        .orElseThrow(() -> new NotFoundException("grade with id " + id + " not found"));
   }
 
   public Grade getByStudentId(String id) {

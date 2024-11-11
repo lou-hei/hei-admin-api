@@ -69,7 +69,7 @@ public class GradeController {
       @PathVariable("student_id") String studentId,
       @RequestBody CrupdateGrade grade) {
     validator.accept(grade);
-    Grade to_save = gradeMapper.toDomain(grade, examId, studentId);
-    return gradeMapper.toRest(gradeService.crupdateParticipantGrade(to_save));
+    Grade toSave = gradeMapper.toDomain(grade, examId, studentId);
+    return gradeMapper.toRest(gradeService.crupdateParticipantGrade(toSave));
   }
 }

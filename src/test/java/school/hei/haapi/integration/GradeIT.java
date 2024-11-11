@@ -1,9 +1,26 @@
 package school.hei.haapi.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.integration.StudentIT.student1;
-import static school.hei.haapi.integration.conf.TestUtils.*;
+import static school.hei.haapi.integration.conf.TestUtils.EXAM1_ID;
+import static school.hei.haapi.integration.conf.TestUtils.EXAM2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.GROUP1_ID;
+import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT3_ID;
+import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
+import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
+import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam1;
+import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam2;
+import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam4;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
+import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
