@@ -4,8 +4,6 @@ import static java.util.UUID.randomUUID;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.*;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
-import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.MONTHLY;
-import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.YEARLY;
 import static school.hei.haapi.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
 
 import jakarta.transaction.Transactional;
@@ -144,7 +142,7 @@ public class FeeService {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "dueDatetime"));
     if (status != null) {
-      return feeRepository.getFeesByStudentIdAndStatus(studentId, status, pageable);
+      return feeRepository.findAllByStudentIdAndStatus(studentId, status, pageable);
     }
     return feeRepository.getFeesByStudentId(studentId, pageable).getContent();
   }
