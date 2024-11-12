@@ -1,7 +1,6 @@
 package school.hei.haapi.service;
 
 import static java.util.UUID.randomUUID;
-import static org.springframework.data.domain.Sort.Direction.DESC;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.*;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
 import static school.hei.haapi.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
@@ -16,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import school.hei.haapi.endpoint.event.EventProducer;
 import school.hei.haapi.endpoint.event.model.LateFeeVerified;
@@ -115,8 +113,7 @@ public class FeeService {
       Instant monthTo,
       boolean isMpbs,
       String studentRef) {
-    Pageable pageable =
-        PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "dueDatetime"));
+    Pageable pageable = PageRequest.of(page.getValue() - 1, pageSize.getValue());
     return feeDao.getByCriteria(status, studentRef, monthFrom, monthTo, isMpbs, pageable);
   }
 

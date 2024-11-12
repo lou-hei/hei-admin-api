@@ -1,5 +1,9 @@
 package school.hei.haapi.repository.dao;
 
+import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
+import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
+import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.UNPAID;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import java.time.Instant;
@@ -31,21 +35,21 @@ public class FeeDao {
     Root<Fee> root = query.from(Fee.class);
     List<Predicate> predicates = new ArrayList<>();
 
-    if (isCriteriaEmpty(status, studentRef, monthFrom, monthTo, isMpbs)) {
-      predicates.add(builder.equal(root.get("status"), FeeStatusEnum.LATE));
-    } else {
-      buildPredicates(
-          builder, root, predicates, status, studentRef, monthFrom, monthTo, isMpbs, query);
-    }
+    getPredicate(root, query, status, studentRef, monthFrom, monthTo, isMpbs, predicates, builder);
 
     CriteriaBuilder.Case<Object> statusOrder =
         builder
             .selectCase()
-            .when(builder.equal(root.get("status"), FeeStatusEnum.LATE), 1)
-            .when(builder.equal(root.get("status"), FeeStatusEnum.UNPAID), 2)
-            .when(builder.equal(root.get("status"), FeeStatusEnum.PAID), 3);
+            .when(builder.equal(root.get("status"), LATE), 1)
+            .when(builder.equal(root.get("status"), UNPAID), 2)
+            .when(builder.equal(root.get("status"), PAID), 3);
 
-    query.where(predicates.toArray(new Predicate[0])).orderBy(builder.asc(statusOrder));
+    query
+        .where(predicates.toArray(new Predicate[0]))
+        .orderBy(
+            builder.asc(statusOrder),
+            builder.desc(root.get("dueDatetime")),
+            builder.asc(root.get("id")));
 
     return entityManager
         .createQuery(query)
@@ -89,6 +93,24 @@ public class FeeDao {
       Join<Fee, Mpbs> mpbsJoin = root.join("mpbs");
       predicates.add(builder.isNotNull(mpbsJoin));
       query.orderBy(builder.desc(mpbsJoin.get("creationDatetime")));
+    }
+  }
+
+  private void getPredicate(
+      Root<Fee> root,
+      CriteriaQuery<Fee> query,
+      FeeStatusEnum status,
+      String studentRef,
+      Instant monthFrom,
+      Instant monthTo,
+      Boolean isMpbs,
+      List<Predicate> predicates,
+      CriteriaBuilder builder) {
+    if (isCriteriaEmpty(status, studentRef, monthFrom, monthTo, isMpbs)) {
+      predicates.add(builder.equal(root.get("status"), LATE));
+    } else {
+      buildPredicates(
+          builder, root, predicates, status, studentRef, monthFrom, monthTo, isMpbs, query);
     }
   }
 
