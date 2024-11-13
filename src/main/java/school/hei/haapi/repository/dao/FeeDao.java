@@ -20,7 +20,6 @@ import school.hei.haapi.model.User;
 @Repository
 @AllArgsConstructor
 public class FeeDao {
-
   private final EntityManager entityManager;
 
   public List<Fee> getByCriteria(
@@ -33,9 +32,8 @@ public class FeeDao {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Fee> query = builder.createQuery(Fee.class);
     Root<Fee> root = query.from(Fee.class);
-    List<Predicate> predicates = new ArrayList<>();
-
-    getPredicate(root, query, status, studentRef, monthFrom, monthTo, isMpbs, predicates, builder);
+    List<Predicate> predicates =
+        getPredicate(root, query, status, studentRef, monthFrom, monthTo, isMpbs, builder);
 
     CriteriaBuilder.Case<Object> statusOrder =
         builder
@@ -67,7 +65,7 @@ public class FeeDao {
         && Boolean.FALSE.equals(isMpbs);
   }
 
-  private void buildPredicates(
+  private List<Predicate> buildPredicates(
       CriteriaBuilder builder,
       Root<Fee> root,
       List<Predicate> predicates,
@@ -77,7 +75,6 @@ public class FeeDao {
       Instant monthTo,
       Boolean isMpbs,
       CriteriaQuery<Fee> query) {
-
     if (status != null) {
       predicates.add(builder.equal(root.get("status"), status));
     }
@@ -94,9 +91,10 @@ public class FeeDao {
       predicates.add(builder.isNotNull(mpbsJoin));
       query.orderBy(builder.desc(mpbsJoin.get("creationDatetime")));
     }
+    return predicates;
   }
 
-  private void getPredicate(
+  private List<Predicate> getPredicate(
       Root<Fee> root,
       CriteriaQuery<Fee> query,
       FeeStatusEnum status,
@@ -104,14 +102,15 @@ public class FeeDao {
       Instant monthFrom,
       Instant monthTo,
       Boolean isMpbs,
-      List<Predicate> predicates,
       CriteriaBuilder builder) {
+    List<Predicate> predicates = new ArrayList<>();
     if (isCriteriaEmpty(status, studentRef, monthFrom, monthTo, isMpbs)) {
       predicates.add(builder.equal(root.get("status"), LATE));
     } else {
       buildPredicates(
           builder, root, predicates, status, studentRef, monthFrom, monthTo, isMpbs, query);
     }
+    return predicates;
   }
 
   private void addDatePredicates(
