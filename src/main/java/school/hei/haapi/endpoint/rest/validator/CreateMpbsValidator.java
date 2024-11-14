@@ -1,12 +1,12 @@
 package school.hei.haapi.endpoint.rest.validator;
 
 import org.springframework.stereotype.Component;
-import school.hei.haapi.endpoint.rest.model.CreateMpbs;
+import school.hei.haapi.endpoint.rest.model.CrupdateMpbs;
 import school.hei.haapi.model.exception.BadRequestException;
 
 @Component
 public class CreateMpbsValidator {
-  public void accept(String studentId, String feeId, CreateMpbs payload) {
+  public void accept(String studentId, String feeId, CrupdateMpbs payload) {
     String pspId = payload.getPspId();
 
     if (payload.getStudentId() == null

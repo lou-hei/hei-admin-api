@@ -4,7 +4,7 @@ import static school.hei.haapi.endpoint.rest.model.MpbsStatus.PENDING;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import school.hei.haapi.endpoint.rest.model.CreateMpbs;
+import school.hei.haapi.endpoint.rest.model.CrupdateMpbs;
 import school.hei.haapi.endpoint.rest.model.Mpbs;
 import school.hei.haapi.service.FeeService;
 import school.hei.haapi.service.UserService;
@@ -17,6 +17,7 @@ public class MpbsMapper {
 
   public Mpbs toRest(school.hei.haapi.model.Mpbs.Mpbs domain) {
     return new Mpbs()
+        .id(domain.getId())
         .studentId(domain.getStudent().getId())
         .creationDatetime(domain.getCreationDatetime())
         .feeId(domain.getFee().getId())
@@ -29,9 +30,10 @@ public class MpbsMapper {
         .status(domain.getStatus());
   }
 
-  public school.hei.haapi.model.Mpbs.Mpbs toDomain(CreateMpbs rest) {
+  public school.hei.haapi.model.Mpbs.Mpbs toDomain(CrupdateMpbs rest) {
     school.hei.haapi.model.Mpbs.Mpbs domain = new school.hei.haapi.model.Mpbs.Mpbs();
 
+    domain.setId(rest.getId());
     domain.setStudent(userService.findById(rest.getStudentId()));
     domain.setFee(feeService.getById(rest.getFeeId()));
     domain.setPspId(rest.getPspId());

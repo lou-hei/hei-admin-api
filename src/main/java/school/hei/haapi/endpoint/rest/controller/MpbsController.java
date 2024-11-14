@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import school.hei.haapi.endpoint.rest.mapper.MpbsMapper;
-import school.hei.haapi.endpoint.rest.model.CreateMpbs;
+import school.hei.haapi.endpoint.rest.model.CrupdateMpbs;
 import school.hei.haapi.endpoint.rest.model.Mpbs;
 import school.hei.haapi.endpoint.rest.validator.CreateMpbsValidator;
 import school.hei.haapi.service.MpbsService;
@@ -20,10 +20,10 @@ public class MpbsController {
   private final MpbsMapper mapper;
 
   @PutMapping(value = "/students/{student_id}/fees/{fee_id}/mpbs")
-  public Mpbs createMpbs(
+  public Mpbs crupdateMpbs(
       @PathVariable(name = "student_id") String studentId,
       @PathVariable(name = "fee_id") String feeId,
-      @RequestBody CreateMpbs mpbsToSave) {
+      @RequestBody CrupdateMpbs mpbsToSave) {
     validator.accept(studentId, feeId, mpbsToSave);
     school.hei.haapi.model.Mpbs.Mpbs mappedMpbsToSave = mapper.toDomain(mpbsToSave);
     return mapper.toRest(mpbsService.saveMpbs(mappedMpbsToSave));
