@@ -2486,7 +2486,7 @@ paths:
 
         When the verification succeeds, and only then,
         a `Fee.Payment` object is automatically created to reflect the `Fee.Mbps`.
-      operationId: createMpbs
+      operationId: crupdateMpbs
       parameters:
         - name: student_id
           in: path
@@ -2504,7 +2504,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateMpbs'
+              $ref: '#/components/schemas/CrupdateMpbs'
       responses:
         '200':
           description: The created MPBS
@@ -5179,9 +5179,11 @@ components:
         creation_datetime:
           type: string
           format: date-time
-    CreateMpbs:
+    CrupdateMpbs:
       type: object
       properties:
+        id:
+          type: string
         student_id:
           type: string
         fee_id:
@@ -5193,7 +5195,7 @@ components:
           $ref: '#/components/schemas/MobileMoneyType'
     Mpbs:
       allOf:
-        - $ref: '#/components/schemas/CreateMpbs'
+        - $ref: '#/components/schemas/CrupdateMpbs'
       type: object
       properties:
         amount:
@@ -5214,7 +5216,7 @@ components:
           $ref: '#/components/schemas/MpbsStatus'
     MpbsVerification:
       allOf:
-        - $ref: '#/components/schemas/CreateMpbs'
+        - $ref: '#/components/schemas/CrupdateMpbs'
       type: object
       properties:
         amount_of_fee_remaining_payment:
