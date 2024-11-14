@@ -21,17 +21,20 @@ import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 
 import java.time.Instant;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.PayingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
-import school.hei.haapi.endpoint.rest.model.CreateMpbs;
+import school.hei.haapi.endpoint.rest.model.CrupdateMpbs;
+import school.hei.haapi.endpoint.rest.model.Fee;
 import school.hei.haapi.endpoint.rest.model.Mpbs;
 import school.hei.haapi.integration.conf.AbstractContextInitializer;
 import school.hei.haapi.integration.conf.MockedThirdParties;
@@ -99,11 +102,38 @@ public class MpbsIT extends MockedThirdParties {
   }
 
   @Test
+  @DirtiesContext
+  void student_update_mobile_payment_ok() throws ApiException {
+    ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
+    PayingApi api = new PayingApi(student1Client);
+
+    Mpbs actual0 = api.getMpbs(STUDENT1_ID, FEE1_ID);
+    assertEquals(expectedMpbs1(), actual0);
+
+    Mpbs inUpdate = api.crupdateMpbs(STUDENT1_ID, FEE1_ID, updatableMpbs1());
+    var updated = expectedMpbs1();
+    updated.setPspId("MP240726.1541.D88426");
+    updated.setPspType(ORANGE_MONEY);
+    assertEquals(updated.getStudentId(), inUpdate.getStudentId());
+    assertEquals(updated.getPspId(), inUpdate.getPspId());
+    assertEquals(updated.getFeeId(), inUpdate.getFeeId());
+    assertEquals(updated.getPspType(), inUpdate.getPspType());
+
+    // Assert that one fee has only one mpbs
+    Mpbs actual1 = api.getMpbs(STUDENT1_ID, FEE1_ID);
+    assertEquals(actual1, inUpdate);
+
+    // Assert that when we get fees it not throws error 500
+    List<Fee> actualFee = api.getStudentFees(STUDENT1_ID, 1, 10, null);
+    assertEquals(7, actualFee.size());
+  }
+
+  @Test
   void student_create_mobile_payment_ok() throws ApiException {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     PayingApi api = new PayingApi(student1Client);
 
-    Mpbs actual = api.createMpbs(STUDENT1_ID, FEE2_ID, createableMpbs1());
+    Mpbs actual = api.crupdateMpbs(STUDENT1_ID, FEE2_ID, createableMpbs1());
 
     assertEquals(createableMpbs1().getStudentId(), actual.getStudentId());
     assertEquals(createableMpbs1().getPspId(), actual.getPspId());
@@ -111,8 +141,18 @@ public class MpbsIT extends MockedThirdParties {
     assertEquals(createableMpbs1().getPspType(), actual.getPspType());
   }
 
+  public static CrupdateMpbs updatableMpbs1() {
+    return new CrupdateMpbs()
+        .id("mpbs1_id")
+        .studentId(STUDENT1_ID)
+        .feeId(FEE1_ID)
+        .pspId("MP240726.1541.D88426")
+        .pspType(ORANGE_MONEY);
+  }
+
   public static Mpbs expectedMpbs1() {
     return new Mpbs()
+        .id("mpbs1_id")
         .pspId("psp2_id")
         .studentId(STUDENT1_ID)
         .feeId(FEE1_ID)
@@ -123,16 +163,16 @@ public class MpbsIT extends MockedThirdParties {
         .status(PENDING);
   }
 
-  public static CreateMpbs createableMpbs1() {
-    return new CreateMpbs()
+  public static CrupdateMpbs createableMpbs1() {
+    return new CrupdateMpbs()
         .studentId(STUDENT1_ID)
         .feeId(FEE2_ID)
         .pspType(MVOLA)
         .pspId("MP240726.1541.D88425");
   }
 
-  public static CreateMpbs createableMpbsFromFeeIdWithStudent1(String feeId) {
-    return new CreateMpbs()
+  public static CrupdateMpbs createableMpbsFromFeeIdWithStudent1(String feeId) {
+    return new CrupdateMpbs()
         .studentId(STUDENT1_ID)
         .feeId(feeId)
         .pspType(ORANGE_MONEY)

@@ -16,7 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import school.hei.haapi.endpoint.rest.model.CreateMpbs;
+import school.hei.haapi.endpoint.rest.model.CrupdateMpbs;
 import school.hei.haapi.integration.conf.AbstractContextInitializer;
 import school.hei.haapi.integration.conf.MockedThirdParties;
 import school.hei.haapi.model.exception.ApiException;
@@ -65,12 +65,12 @@ public class CreateMpbsValidatorIT extends MockedThirdParties {
     assertTrue(actualMessage.contains(expectedMessage));
   }
 
-  private CreateMpbs pspIdMissed() {
-    return new CreateMpbs().pspType(ORANGE_MONEY).feeId("fee1_id").studentId("student1_id");
+  private CrupdateMpbs pspIdMissed() {
+    return new CrupdateMpbs().pspType(ORANGE_MONEY).feeId("fee1_id").studentId("student1_id");
   }
 
-  private CreateMpbs pspIdWasWrong() {
-    return new CreateMpbs()
+  private CrupdateMpbs pspIdWasWrong() {
+    return new CrupdateMpbs()
         .pspType(ORANGE_MONEY)
         .feeId("fee1_id")
         .studentId("student1_id")

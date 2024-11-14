@@ -76,7 +76,7 @@ class PaymentServiceTest extends MockedThirdParties {
     var correspondingFee =
         payingApi.createStudentFees(STUDENT1_ID, List.of(creatableFee1())).getFirst();
     var correspondingMpbs =
-        payingApi.createMpbs(
+        payingApi.crupdateMpbs(
             STUDENT1_ID,
             correspondingFee.getId(),
             createableMpbsFromFeeIdWithStudent1(correspondingFee.getId()));
