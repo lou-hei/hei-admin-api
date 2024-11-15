@@ -180,7 +180,7 @@ public class LetterIT extends MockedThirdParties {
     assertEquals(createdLetter2.getId(), updatedLetter2.getId());
 
     // Check if the file info is saved
-    List<FileInfo> fileInfos = filesApi.getStudentFiles(STUDENT1_ID, 1, 15, OTHER);
+    List<FileInfo> fileInfos = filesApi.getUserFiles(STUDENT1_ID, 1, 15, OTHER);
     assertEquals(2, fileInfos.size());
 
     // Test fee payment

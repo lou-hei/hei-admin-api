@@ -27,7 +27,7 @@ import school.hei.haapi.service.StudentFileService;
 
 @RestController
 @AllArgsConstructor
-public class StudentFileController {
+public class UserFileController {
   private final StudentFileService fileService;
   private final FileInfoMapper fileInfoMapper;
   private final WorkDocumentMapper workDocumentMapper;
@@ -50,14 +50,14 @@ public class StudentFileController {
     return fileService.generatePaidFeeReceipt(feeId, paymentId, "paidFeeReceipt");
   }
 
-  @PostMapping(value = "/students/{student_id}/files/raw", consumes = MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/users/{user_id}/files/raw", consumes = MULTIPART_FORM_DATA_VALUE)
   public FileInfo uploadStudentFile(
-      @PathVariable(name = "student_id") String studentId,
+      @PathVariable(name = "user_id") String userId,
       @RequestParam(name = "filename") String fileName,
       @RequestParam(name = "file_type") FileType fileType,
       @RequestPart(name = "file_to_upload") MultipartFile fileToUpload) {
     return fileInfoMapper.toRest(
-        fileService.uploadStudentFile(fileName, fileType, studentId, fileToUpload));
+        fileService.uploadUserFile(fileName, fileType, userId, fileToUpload));
   }
 
   @PostMapping(
@@ -99,13 +99,13 @@ public class StudentFileController {
         .collect(toUnmodifiableList());
   }
 
-  @GetMapping(value = "/students/{student_id}/files")
+  @GetMapping(value = "/users/{user_id}/files")
   public List<FileInfo> getStudentFiles(
-      @PathVariable(name = "student_id") String studentId,
+      @PathVariable(name = "user_id") String userId,
       @RequestParam(name = "file_type", required = false) FileType fileType,
       @RequestParam(name = "page") PageFromOne page,
       @RequestParam(name = "page_size") BoundedPageSize pageSize) {
-    return fileService.getStudentFiles(studentId, fileType, page, pageSize).stream()
+    return fileService.getUserFiles(userId, fileType, page, pageSize).stream()
         .map(fileInfoMapper::toRest)
         .collect(toUnmodifiableList());
   }
@@ -116,10 +116,9 @@ public class StudentFileController {
     return workDocumentMapper.toRest(fileService.getStudentWorkFileById(id));
   }
 
-  @GetMapping(value = "/students/{student_id}/files/{id}")
+  @GetMapping(value = "/users/{user_id}/files/{id}")
   public FileInfo getStudentFilesById(
-      @PathVariable(name = "student_id") String studentId,
-      @PathVariable(name = "id") String fileId) {
-    return fileInfoMapper.toRest(fileService.getStudentFileById(studentId, fileId));
+      @PathVariable(name = "user_id") String userId, @PathVariable(name = "id") String fileId) {
+    return fileInfoMapper.toRest(fileService.getUserFileById(userId, fileId));
   }
 }
