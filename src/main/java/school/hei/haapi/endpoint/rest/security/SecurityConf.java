@@ -206,8 +206,8 @@ public class SecurityConf {
                     antMatcher(GET, "/letters"),
                     antMatcher(PUT, "/letters"),
                     antMatcher(GET, "/letters/*"),
-                    antMatcher(GET, "/students/*/letters"),
-                    antMatcher(POST, "/students/*/letters"),
+                    antMatcher(GET, "/users/*/letters"),
+                    antMatcher(POST, "/users/*/letters"),
                     antMatcher(PUT, STUDENT_COURSE),
                     nonAccessibleBySuspendedUserPath)),
             AnonymousAuthenticationFilter.class)
@@ -638,13 +638,13 @@ public class SecurityConf {
                     .hasAnyRole(MANAGER.getRole())
                     .requestMatchers(GET, "/letters/*")
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole())
-                    .requestMatchers(new SelfMatcher(POST, "/students/*/letters", "students"))
-                    .hasAnyRole(STUDENT.getRole())
-                    .requestMatchers(new SelfMatcher(GET, "/students/*/letters", "students"))
-                    .hasAnyRole(STUDENT.getRole())
-                    .requestMatchers(GET, "/students/*/letters")
-                    .hasAnyRole(MANAGER.getRole(), TEACHER.getRole())
-                    .requestMatchers(POST, "/students/*/letters")
+                    .requestMatchers(new SelfMatcher(POST, "/users/*/letters", "users"))
+                    .hasAnyRole(STUDENT.getRole(), TEACHER.getRole())
+                    .requestMatchers(new SelfMatcher(GET, "/users/*/letters", "users"))
+                    .hasAnyRole(STUDENT.getRole(), TEACHER.getRole())
+                    .requestMatchers(GET, "/users/*/letters")
+                    .hasAnyRole(MANAGER.getRole())
+                    .requestMatchers(POST, "/users/*/letters")
                     .hasAnyRole(MANAGER.getRole())
                     //
                     // Event resources

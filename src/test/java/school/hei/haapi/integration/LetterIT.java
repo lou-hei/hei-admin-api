@@ -106,17 +106,17 @@ public class LetterIT extends MockedThirdParties {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     LettersApi api = new LettersApi(apiClient);
 
-    List<Letter> actual = api.getLettersByStudentId(STUDENT1_ID, 1, 15, null);
+    List<Letter> actual = api.getLettersByUserId(STUDENT1_ID, 1, 15, null);
     assertTrue(actual.contains(letter1()));
     assertTrue(actual.contains(letter2()));
     assertFalse(actual.contains(letter3()));
 
-    List<Letter> actual2 = api.getLettersByStudentId(STUDENT2_ID, 1, 15, null);
+    List<Letter> actual2 = api.getLettersByUserId(STUDENT2_ID, 1, 15, null);
     assertFalse(actual2.contains(letter1()));
     assertFalse(actual2.contains(letter2()));
     assertTrue(actual2.contains(letter3()));
 
-    List<Letter> actual3 = api.getLettersByStudentId(STUDENT1_ID, 1, 15, PENDING);
+    List<Letter> actual3 = api.getLettersByUserId(STUDENT1_ID, 1, 15, PENDING);
     assertFalse(actual3.contains(letter1()));
     assertTrue(actual3.contains(letter2()));
     assertFalse(actual3.contains(letter3()));
@@ -261,10 +261,44 @@ public class LetterIT extends MockedThirdParties {
     ApiClient apiClient = anApiClient(STUDENT1_TOKEN);
     LettersApi api = new LettersApi(apiClient);
 
-    List<Letter> actual = api.getLettersByStudentId(STUDENT1_ID, 1, 15, null);
+    List<Letter> actual = api.getLettersByUserId(STUDENT1_ID, 1, 15, null);
     assertTrue(actual.contains(letter1()));
     assertTrue(actual.contains(letter2()));
     assertFalse(actual.contains(letter3()));
+  }
+
+  @Test
+  void teacher_read_others_letter_ko() throws ApiException {
+    ApiClient apiClient = anApiClient(TEACHER1_TOKEN);
+    LettersApi api = new LettersApi(apiClient);
+
+    assertThrowsForbiddenException(() -> api.getLettersByUserId(STUDENT1_ID, 1, 15, null));
+  }
+
+  @Test
+  void teacher_upload_letter_for_fee_ko() throws ApiException {
+    ApiClient apiClient = anApiClient(TEACHER1_TOKEN);
+    LettersApi api = new LettersApi(apiClient);
+
+    assertThrowsForbiddenException(
+        () ->
+            api.createLetter(
+                TEACHER1_ID,
+                "filename",
+                "description",
+                "feeId",
+                null,
+                null,
+                getMockedFile("img", ".png")));
+  }
+
+  @Test
+  void teacher_read_self_ok() throws ApiException {
+    ApiClient apiClient = anApiClient(TEACHER1_TOKEN);
+    LettersApi api = new LettersApi(apiClient);
+
+    List<Letter> actual = api.getLettersByUserId(TEACHER1_ID, 1, 15, null);
+    assertEquals(actual.size(), 1);
   }
 
   @Test
@@ -272,7 +306,7 @@ public class LetterIT extends MockedThirdParties {
     ApiClient apiClient = anApiClient(STUDENT1_TOKEN);
     LettersApi api = new LettersApi(apiClient);
 
-    assertThrowsForbiddenException(() -> api.getLettersByStudentId(STUDENT2_ID, 1, 15, null));
+    assertThrowsForbiddenException(() -> api.getLettersByUserId(STUDENT2_ID, 1, 15, null));
     assertThrowsForbiddenException(
         () ->
             api.updateLettersStatus(

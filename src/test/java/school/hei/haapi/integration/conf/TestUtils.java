@@ -1072,7 +1072,7 @@ public class TestUtils {
             fileBytes,
             requestBodySuffix.getBytes());
 
-    String path = basePath + String.format("/students/%s/letters?filename=%s", subjectId, filename);
+    String path = basePath + String.format("/users/%s/letters?filename=%s", subjectId, filename);
 
     if (Objects.nonNull(feeId)) {
       path = path + "&fee_id=" + feeId;

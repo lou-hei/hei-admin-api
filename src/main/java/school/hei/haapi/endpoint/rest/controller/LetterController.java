@@ -3,7 +3,6 @@ package school.hei.haapi.endpoint.rest.controller;
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 import java.util.List;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +10,7 @@ import school.hei.haapi.endpoint.rest.mapper.LetterMapper;
 import school.hei.haapi.endpoint.rest.model.*;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
-import school.hei.haapi.model.exception.BadRequestException;
+import school.hei.haapi.model.validator.LetterValidator;
 import school.hei.haapi.service.LetterService;
 
 @RestController
@@ -20,6 +19,7 @@ public class LetterController {
 
   private final LetterService letterService;
   private final LetterMapper letterMapper;
+  private final LetterValidator validator;
 
   @GetMapping(value = "/letters")
   public List<Letter> getLetters(
@@ -53,37 +53,29 @@ public class LetterController {
     return letterMapper.toRest(letterService.getLetterById(id));
   }
 
-  @GetMapping(value = "/students/{student_id}/letters")
+  @GetMapping(value = "/users/{user_id}/letters")
   public List<Letter> getStudentLetters(
-      @PathVariable(name = "student_id") String studentId,
+      @PathVariable(name = "user_id") String userId,
       @RequestParam(name = "status", required = false) LetterStatus status,
       @RequestParam(name = "page") PageFromOne page,
       @RequestParam(name = "page_size") BoundedPageSize pageSize) {
-    return letterService.getLettersByStudentId(studentId, status, page, pageSize).stream()
+    return letterService.getLettersByStudentId(userId, status, page, pageSize).stream()
         .map(letterMapper::toRest)
         .toList();
   }
 
-  @PostMapping(value = "/students/{student_id}/letters", consumes = MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(value = "/users/{user_id}/letters", consumes = MULTIPART_FORM_DATA_VALUE)
   public Letter createLetter(
-      @PathVariable(name = "student_id") String studentId,
+      @PathVariable(name = "user_id") String userId,
       @RequestParam(name = "amount", required = false) Integer amount,
       @RequestParam(name = "fee_id", required = false) String feeId,
       @RequestParam(name = "event_participant_id", required = false) String eventParticipantId,
       @RequestParam(name = "description") String description,
       @RequestParam(name = "filename") String filename,
       @RequestPart(name = "file_to_upload") MultipartFile file) {
-
-    if (Objects.nonNull(feeId) && Objects.nonNull(eventParticipantId)) {
-      throw new BadRequestException("Cannot link letter with both fee and event participant");
-    }
-
-    if (Objects.nonNull(feeId) && Objects.isNull(amount)) {
-      throw new BadRequestException("Cannot create a letter for a fee without a given amount");
-    }
-
+    validator.accept(feeId, eventParticipantId, amount);
     return letterMapper.toRest(
         letterService.createLetter(
-            studentId, description, filename, file, feeId, amount, eventParticipantId));
+            userId, description, filename, file, feeId, amount, eventParticipantId));
   }
 }

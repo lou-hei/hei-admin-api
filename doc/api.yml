@@ -3941,14 +3941,14 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/students/{student_id}/letters':
+  '/users/{user_id}/letters':
     get:
       tags:
         - Letters
-      summary: Letters by the given student id
-      operationId: getLettersByStudentId
+      summary: Letters by the given user id
+      operationId: getLettersByUserId
       parameters:
-        - name: student_id
+        - name: user_id
           in: path
           required: true
           schema:
@@ -3991,10 +3991,10 @@ paths:
     post:
       tags:
         - Letters
-      summary: Create a letter for the given student id
+      summary: Create a letter for the given user id
       operationId: createLetter
       parameters:
-        - name: student_id
+        - name: user_id
           in: path
           required: true
           schema:

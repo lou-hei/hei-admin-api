@@ -23,7 +23,7 @@ public class LetterMapper {
             ? fileService.getPresignedUrl(domain.getFilePath(), ONE_DAY_DURATION_AS_LONG)
             : null;
 
-    User student = domain.getStudent();
+    User student = domain.getUser();
     String picUrl =
         student.getProfilePictureKey() != null
             ? fileService.getPresignedUrl(student.getProfilePictureKey(), ONE_DAY_DURATION_AS_LONG)
