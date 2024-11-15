@@ -64,6 +64,16 @@ public class FeeService {
             "dueDatetime"));
   }
 
+  public Fee debitAmountFromMpbs(Fee toUpdate, int amountToDebit) {
+    int remainingAmount = toUpdate.getRemainingAmount();
+
+    if (remainingAmount == 0) {
+      throw new ApiException(SERVER_EXCEPTION, "Remaining amount is already 0");
+    }
+    toUpdate.setRemainingAmount(remainingAmount - amountToDebit);
+    return updateFeeStatus(toUpdate);
+  }
+
   public Fee debitAmount(Fee toUpdate, int amountToDebit) {
     int remainingAmount = toUpdate.getRemainingAmount();
 
