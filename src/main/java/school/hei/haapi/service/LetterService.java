@@ -93,7 +93,7 @@ public class LetterService {
             .id(uuid)
             .status(PENDING)
             .description(description)
-            .user(user)
+            .student(user)
             .ref(generateRef(uuid))
             .filePath(bucketKey)
             .amount(amount)
@@ -116,12 +116,12 @@ public class LetterService {
   }
 
   public List<Letter> getLettersByStudentId(
-      String userId, LetterStatus status, PageFromOne page, BoundedPageSize pageSize) {
+      String studentId, LetterStatus status, PageFromOne page, BoundedPageSize pageSize) {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "creationDatetime"));
     return Objects.isNull(status)
-        ? letterRepository.findAllByUserId(userId, pageable)
-        : letterRepository.findAllByUserIdAndStatus(userId, status, pageable);
+        ? letterRepository.findAllByStudentId(studentId, pageable)
+        : letterRepository.findAllByStudentIdAndStatus(studentId, status, pageable);
   }
 
   public List<Letter> updateLetter(List<UpdateLettersStatus> letters) {
@@ -146,7 +146,7 @@ public class LetterService {
                         .fileType(OTHER)
                         .creationDatetime(Instant.now())
                         .name(letterToUpdate.getDescription())
-                        .user(letterToUpdate.getUser())
+                        .user(letterToUpdate.getStudent())
                         .filePath(letterToUpdate.getFilePath())
                         .build();
                 fileInfoRepository.save(fileInfo);
@@ -195,8 +195,8 @@ public class LetterService {
     return SendLetterEmail.builder()
         .description(letter.getDescription())
         .id(letter.getId())
-        .studentRef(letter.getUser().getRef())
-        .studentEmail(letter.getUser().getEmail())
+        .studentRef(letter.getStudent().getRef())
+        .studentEmail(letter.getStudent().getEmail())
         .build();
   }
 
@@ -204,8 +204,8 @@ public class LetterService {
     return UpdateLetterEmail.builder()
         .id(letter.getId())
         .description(letter.getDescription())
-        .ref(letter.getUser().getRef())
-        .email(letter.getUser().getEmail())
+        .ref(letter.getStudent().getRef())
+        .email(letter.getStudent().getEmail())
         .reason(letter.getReasonForRefusal())
         .status(letter.getStatus())
         .build();

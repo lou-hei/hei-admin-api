@@ -76,20 +76,21 @@ public class StudentFileService {
     return workDocumentService.getStudentWorkFileById(workFileId);
   }
 
-  public FileInfo uploadUserFile(
-      String fileName, FileType fileType, String userId, MultipartFile fileToUpload) {
-    return fileInfoService.uploadFile(fileName, fileType, userId, fileToUpload);
+  public FileInfo uploadStudentFile(
+      String fileName, FileType fileType, String studentId, MultipartFile fileToUpload) {
+    return fileInfoService.uploadFile(fileName, fileType, studentId, fileToUpload);
   }
 
-  public List<FileInfo> getUserFiles(
+  public List<FileInfo> getStudentFiles(
       String userId, FileType fileType, PageFromOne page, BoundedPageSize pageSize) {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "creationDatetime"));
     return fileInfoDao.findAllByCriteria(userId, fileType, pageable);
   }
 
-  public FileInfo getUserFileById(String userId, String id) {
-    return fileInfoRepository.getByUserIdAndId(userId, id);
+  public FileInfo getStudentFileById(String studentId, String id) {
+    User user = userService.findById(studentId);
+    return fileInfoRepository.getByUserIdAndId(studentId, id);
   }
 
   public byte[] generatePdf(String studentId, String template) {

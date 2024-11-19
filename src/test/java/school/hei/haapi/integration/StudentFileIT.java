@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.endpoint.rest.model.FileType.TRANSCRIPT;
 import static school.hei.haapi.integration.SchoolFileIT.setUpRestTemplate;
+import static school.hei.haapi.integration.StudentFileIT.ContextInitializer.SERVER_PORT;
 import static school.hei.haapi.integration.StudentIT.student1;
-import static school.hei.haapi.integration.UserFileIT.ContextInitializer.SERVER_PORT;
 import static school.hei.haapi.integration.conf.TestUtils.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,9 +40,9 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = UserFileIT.ContextInitializer.class)
+@ContextConfiguration(initializers = StudentFileIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-public class UserFileIT extends MockedThirdParties {
+public class StudentFileIT extends MockedThirdParties {
   @MockBean private EventBridgeClient eventBridgeClientMock;
   @MockBean RestTemplate restTemplateMock;
   @Autowired ObjectMapper objectMapper;
@@ -144,24 +144,7 @@ public class UserFileIT extends MockedThirdParties {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     FilesApi api = new FilesApi(student1Client);
 
-    assertThrowsForbiddenException(() -> api.getUserFiles(STUDENT2_ID, 1, 15, null));
-  }
-
-  @Test
-  void teacher_load_other_files_ko() throws ApiException {
-    ApiClient student1Client = anApiClient(TEACHER1_TOKEN);
-    FilesApi api = new FilesApi(student1Client);
-
-    assertThrowsForbiddenException(() -> api.getUserFiles(STUDENT2_ID, 1, 15, null));
-  }
-
-  @Test
-  void teacher_read_own_files_ok() throws ApiException {
-    ApiClient student1Client = anApiClient(TEACHER1_TOKEN);
-    FilesApi api = new FilesApi(student1Client);
-
-    List<FileInfo> actual = api.getUserFiles(TEACHER1_ID, 1, 15, null);
-    assertEquals(1, actual.size());
+    assertThrowsForbiddenException(() -> api.getStudentFiles(STUDENT2_ID, 1, 15, null));
   }
 
   @Test
@@ -169,7 +152,7 @@ public class UserFileIT extends MockedThirdParties {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     FilesApi api = new FilesApi(student1Client);
 
-    List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, null);
+    List<FileInfo> documents = api.getStudentFiles(STUDENT1_ID, 1, 15, null);
 
     assertEquals(2, documents.size());
     assertTrue(documents.contains(file1()));
@@ -180,8 +163,8 @@ public class UserFileIT extends MockedThirdParties {
     ApiClient monitor1Client = anApiClient(MONITOR1_TOKEN);
     FilesApi api = new FilesApi(monitor1Client);
 
-    List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, null);
-    FileInfo document = api.getUserFilesById(STUDENT1_ID, "file1_id");
+    List<FileInfo> documents = api.getStudentFiles(STUDENT1_ID, 1, 15, null);
+    FileInfo document = api.getStudentFilesById(STUDENT1_ID, "file1_id");
 
     assertEquals(2, documents.size());
     assertTrue(documents.contains(file1()));
@@ -193,8 +176,8 @@ public class UserFileIT extends MockedThirdParties {
     ApiClient monitor1Client = anApiClient(MONITOR1_TOKEN);
     FilesApi api = new FilesApi(monitor1Client);
 
-    assertThrowsForbiddenException(() -> api.getUserFiles(STUDENT2_ID, 1, 15, null));
-    assertThrowsForbiddenException(() -> api.getUserFilesById(STUDENT2_ID, "file_id"));
+    assertThrowsForbiddenException(() -> api.getStudentFiles(STUDENT2_ID, 1, 15, null));
+    assertThrowsForbiddenException(() -> api.getStudentFilesById(STUDENT2_ID, "file_id"));
   }
 
   @Test
@@ -202,7 +185,7 @@ public class UserFileIT extends MockedThirdParties {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     FilesApi api = new FilesApi(student1Client);
 
-    List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, TRANSCRIPT);
+    List<FileInfo> documents = api.getStudentFiles(STUDENT1_ID, 1, 15, TRANSCRIPT);
 
     assertEquals(1, documents.size());
     assertTrue(documents.contains(file1()));
@@ -213,7 +196,7 @@ public class UserFileIT extends MockedThirdParties {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     FilesApi api = new FilesApi(manager1Client);
 
-    List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, null);
+    List<FileInfo> documents = api.getStudentFiles(STUDENT1_ID, 1, 15, null);
 
     assertEquals(2, documents.size());
     assertTrue(documents.contains(file1()));
@@ -228,7 +211,7 @@ public class UserFileIT extends MockedThirdParties {
   }
 
   private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, UserFileIT.ContextInitializer.SERVER_PORT);
+    return TestUtils.anApiClient(token, StudentFileIT.ContextInitializer.SERVER_PORT);
   }
 
   static class ContextInitializer extends AbstractContextInitializer {
