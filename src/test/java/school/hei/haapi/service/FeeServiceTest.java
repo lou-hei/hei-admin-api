@@ -11,7 +11,6 @@ import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.UNPAID;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.HARDWARE;
 import static school.hei.haapi.endpoint.rest.model.Payment.TypeEnum.CASH;
-import static school.hei.haapi.integration.conf.TestUtils.FEE1_ID;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -69,7 +68,7 @@ class FeeServiceTest {
   static Fee fee(int paymentAmount) {
     Instant today = Instant.now();
     Instant tomorrow = today.plus(1, ChronoUnit.DAYS);
-    return createSomeFee(FEE1_ID, paymentAmount, UNPAID, tomorrow, today);
+    return createSomeFee(TestUtils.FEE1_ID, paymentAmount, UNPAID, tomorrow, today);
   }
 
   static Fee createMockedFee(
@@ -90,7 +89,7 @@ class FeeServiceTest {
   }
 
   static Fee fee1(boolean isMocked) {
-    return createMockedFee(isMocked, FEE1_ID, remainingAmount(), 0, PAID);
+    return createMockedFee(isMocked, TestUtils.FEE1_ID, remainingAmount(), 0, PAID);
   }
 
   static Fee fee2(boolean isMocked) {
@@ -99,7 +98,7 @@ class FeeServiceTest {
 
   static Fee fee3(boolean isMocked) {
     int rest = 1;
-    return createMockedFee(isMocked, FEE1_ID, remainingAmount() - rest, rest, LATE);
+    return createMockedFee(isMocked, TestUtils.FEE1_ID, remainingAmount() - rest, rest, LATE);
   }
 
   static Payment payment1(int amount, Instant creationDatetime) {
@@ -133,26 +132,14 @@ class FeeServiceTest {
   }
 
   @Test
-  void fee_status_is_paid_with_overpaid_mpbs() {
-    Fee initial = fee(0);
-    when(feeRepository.save(any(Fee.class)))
-        .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-
-    Fee actual = subject.debitAmountFromMpbs(initial, 5000);
-
-    assertEquals(PAID, actual.getStatus());
-    assertEquals(0, actual.getRemainingAmount());
-  }
-
-  @Test
   void fee_status_is_paid() {
     Fee initial = fee(remainingAmount());
     when(feeRepository.save(any(Fee.class)))
         .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-    when(feeRepository.getById(FEE1_ID))
+    when(feeRepository.getById(TestUtils.FEE1_ID))
         .thenReturn(initial.toBuilder().remainingAmount(0).status(PAID).build());
 
-    Fee actual = subject.getById(FEE1_ID);
+    Fee actual = subject.getById(TestUtils.FEE1_ID);
 
     assertEquals(UNPAID, initial.getStatus());
     assertEquals(remainingAmount(), initial.getRemainingAmount());
@@ -167,14 +154,14 @@ class FeeServiceTest {
     Fee initial = fee(paymentAmount);
     when(feeRepository.save(any(Fee.class)))
         .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-    when(feeRepository.getById(FEE1_ID))
+    when(feeRepository.getById(TestUtils.FEE1_ID))
         .thenReturn(
             initial.toBuilder()
                 .remainingAmount(remainingAmount() - paymentAmount)
                 .status(UNPAID)
                 .build());
 
-    Fee actual = subject.getById(FEE1_ID);
+    Fee actual = subject.getById(TestUtils.FEE1_ID);
 
     assertEquals(UNPAID, actual.getStatus());
     assertEquals(rest, actual.getRemainingAmount());
@@ -190,14 +177,14 @@ class FeeServiceTest {
     initial.setDueDatetime(yesterday);
     when(feeRepository.save(any(Fee.class)))
         .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-    when(feeRepository.getById(FEE1_ID))
+    when(feeRepository.getById(TestUtils.FEE1_ID))
         .thenReturn(
             initial.toBuilder()
                 .remainingAmount(remainingAmount() - paymentAmount)
                 .status(LATE)
                 .build());
 
-    Fee actual = subject.getById(FEE1_ID);
+    Fee actual = subject.getById(TestUtils.FEE1_ID);
 
     assertEquals(LATE, actual.getStatus());
     assertEquals(rest, actual.getRemainingAmount());

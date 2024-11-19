@@ -37,8 +37,7 @@ public class Letter {
 
   @ManyToOne
   @JoinColumn(name = "student_id", nullable = false)
-  // student_id in the database, user here
-  private User user;
+  private User student;
 
   @Column(unique = true)
   private String ref;
