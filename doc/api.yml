@@ -3044,14 +3044,14 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/students/{student_id}/files/{id}':
+  '/users/{user_id}/files/{id}':
     get:
       tags:
         - Files
-      summary: Get student file by identifier
-      operationId: getStudentFilesById
+      summary: Get user file by identifier
+      operationId: getUserFilesById
       parameters:
-        - name: student_id
+        - name: user_id
           in: path
           required: true
           schema:
@@ -3225,13 +3225,13 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/students/{student_id}/files/raw':
+  '/users/{user_id}/files/raw':
     post:
       tags:
         - Files
-      summary: Upload student file
+      summary: Upload user file
       parameters:
-        - name: student_id
+        - name: user_id
           required: true
           schema:
             type: string
@@ -3246,7 +3246,7 @@ paths:
           schema:
             type: string
           in: query
-      operationId: uploadStudentFile
+      operationId: uploadUserFile
       requestBody:
         required: true
         content:
@@ -3270,14 +3270,14 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/students/{student_id}/files':
+  '/users/{user_id}/files':
     get:
       tags:
         - Files
-      summary: Get student files
-      operationId: getStudentFiles
+      summary: Get user files
+      operationId: getUserFiles
       parameters:
-        - name: student_id
+        - name: user_id
           in: path
           required: true
           schema:
@@ -3301,7 +3301,7 @@ paths:
             $ref: '#/components/schemas/PageSize'
       responses:
         '200':
-          description: List of student files
+          description: List of user files
           content:
             application/json:
               schema:
@@ -3941,14 +3941,14 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/students/{student_id}/letters':
+  '/users/{user_id}/letters':
     get:
       tags:
         - Letters
-      summary: Letters by the given student id
-      operationId: getLettersByStudentId
+      summary: Letters by the given user id
+      operationId: getLettersByUserId
       parameters:
-        - name: student_id
+        - name: user_id
           in: path
           required: true
           schema:
@@ -3991,10 +3991,10 @@ paths:
     post:
       tags:
         - Letters
-      summary: Create a letter for the given student id
+      summary: Create a letter for the given user id
       operationId: createLetter
       parameters:
-        - name: student_id
+        - name: user_id
           in: path
           required: true
           schema:

@@ -114,7 +114,7 @@ public class MpbsVerificationService {
         (userService.findById(mpbs.getStudent().getId())).getStatus());
 
     // ... then update fee remaining amount
-    feeService.debitAmount(fee, verifiedMobileTransaction.getAmountInPsp());
+    feeService.debitAmountFromMpbs(fee, verifiedMobileTransaction.getAmountInPsp());
 
     return verifiedMobileTransaction;
   }
