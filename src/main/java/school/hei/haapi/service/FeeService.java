@@ -197,6 +197,24 @@ public class FeeService {
         .toInstant();
   }
 
+  public Fee debitAmountFromMpbs(Fee toUpdate, int amountToDebit) {
+    int remainingAmount = toUpdate.getRemainingAmount();
+    log.info("actual remaining amount before computing = {}", remainingAmount);
+    if (remainingAmount == 0) {
+      throw new ApiException(SERVER_EXCEPTION, "Remaining amount is already 0");
+    }
+    toUpdate.setRemainingAmount(remainingAmount - amountToDebit);
+    int actualRemainingAmount = toUpdate.getRemainingAmount();
+    log.info("actual remaining amount = {}", actualRemainingAmount);
+    if (actualRemainingAmount <= 0) {
+      log.info("if student paid over than expected = {}", actualRemainingAmount);
+      toUpdate.setRemainingAmount(0);
+      log.info(
+          "set remaining amount even if student paid more = {}", toUpdate.getRemainingAmount());
+    }
+    return updateFeeStatus(toUpdate);
+  }
+
   @Transactional
   public List<Fee> updateFeesStatusToLate() {
     Instant now = Instant.now();
