@@ -148,6 +148,16 @@ class FeeServiceTest {
   }
 
   @Test
+  void fee_status_is_paid_with_overpaid_mpbs() {
+    Fee initial = fee(0);
+    when(feeRepository.save(any(Fee.class)))
+        .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+    Fee actual = subject.debitAmountFromMpbs(initial, 5000);
+    assertEquals(PAID, actual.getStatus());
+    assertEquals(0, actual.getRemainingAmount());
+  }
+
+  @Test
   void fee_status_is_unpaid() {
     int rest = 1000;
     int paymentAmount = remainingAmount() - rest;
