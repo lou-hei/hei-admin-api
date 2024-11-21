@@ -11,10 +11,9 @@ import school.hei.haapi.model.Letter;
 
 @Repository
 public interface LetterRepository extends JpaRepository<Letter, String> {
-  List<Letter> findAllByStudentId(String studentId, Pageable pageable);
+  List<Letter> findAllByUserId(String studentId, Pageable pageable);
 
-  List<Letter> findAllByStudentIdAndStatus(
-      String studentId, LetterStatus status, Pageable pageable);
+  List<Letter> findAllByUserIdAndStatus(String studentId, LetterStatus status, Pageable pageable);
 
   Integer countByStatus(LetterStatus status);
 
