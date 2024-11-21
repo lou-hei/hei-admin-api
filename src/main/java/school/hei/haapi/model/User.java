@@ -122,7 +122,7 @@ public class User implements Serializable {
 
   private String highSchoolOrigin;
 
-  @OneToMany(mappedBy = "student", fetch = LAZY)
+  @OneToMany(mappedBy = "user", fetch = LAZY)
   private List<Letter> letters;
 
   @Override

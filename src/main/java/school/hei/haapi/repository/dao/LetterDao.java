@@ -23,7 +23,7 @@ public class LetterDao {
 
   public List<Letter> findByCriteria(
       String ref,
-      String studentRef,
+      String userRef,
       LetterStatus status,
       String name,
       String feeId,
@@ -32,14 +32,14 @@ public class LetterDao {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Letter> query = builder.createQuery(Letter.class);
     Root<Letter> root = query.from(Letter.class);
-    Join<Letter, User> userJoin = root.join("student", INNER);
+    Join<Letter, User> userJoin = root.join("user", INNER);
     List<Predicate> predicates = new ArrayList<>();
 
-    if (studentRef != null) {
+    if (userRef != null) {
       predicates.add(
           builder.or(
-              builder.like(builder.lower(userJoin.get("ref")), "%" + studentRef + "%"),
-              builder.like(userJoin.get("ref"), "%" + studentRef + "%")));
+              builder.like(builder.lower(userJoin.get("ref")), "%" + userRef + "%"),
+              builder.like(userJoin.get("ref"), "%" + userRef + "%")));
     }
 
     if (name != null) {

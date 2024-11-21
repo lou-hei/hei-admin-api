@@ -1,3 +1,26 @@
+# [1.79.0](https://github.com/hei-school/hei-admin-api/compare/v1.78.0...v1.79.0) (2024-11-15)
+
+
+### Features
+
+* teachers have their own files ([39e5331](https://github.com/hei-school/hei-admin-api/commit/39e533142be417f05b8d353387b23f0cabd5b43a))
+
+
+
+# [1.78.0](https://github.com/hei-school/hei-admin-api/compare/v1.77.1...v1.78.0) (2024-11-15)
+
+
+### Bug Fixes
+
+* if payment amount is more than expected remaining amount  ([67cc919](https://github.com/hei-school/hei-admin-api/commit/67cc919f96a947440360da3c77f431262af6493a))
+
+
+### Features
+
+* teacher can upload letter ([6902230](https://github.com/hei-school/hei-admin-api/commit/690223033c50fc43a5efb19ee314784edbaa660d))
+
+
+
 ## [1.77.1](https://github.com/hei-school/hei-admin-api/compare/v1.77.0...v1.77.1) (2024-11-14)
 
 
@@ -91,26 +114,6 @@
 ### Features
 
 * rearrange exams api and refactor code ([2d95115](https://github.com/hei-school/hei-admin-api/commit/2d9511594d32d39e6659128f70d2921bcf0baacc))
-
-
-
-# [1.66.0](https://github.com/hei-school/hei-admin-api/compare/v1.65.0...v1.66.0) (2024-10-17)
-
-
-### Features
-
-* create student fees based on their payment frequency ([d40831f](https://github.com/hei-school/hei-admin-api/commit/d40831fcad9d8d04b1ec912cc0e829dc50b2ff10))
-* **not-implemented:** add payment_frequency ([8da7488](https://github.com/hei-school/hei-admin-api/commit/8da7488ea642117fd49bf520a00bd8dda53db5a1))
-
-
-
-# [1.65.0](https://github.com/hei-school/hei-admin-api/compare/v1.64.0...v1.65.0) (2024-10-11)
-
-
-### Features
-
-* change request body in monitor put endpoint ([37782c3](https://github.com/hei-school/hei-admin-api/commit/37782c305688ac4ac8dee765766f56e9da1b5b88))
-* **not-implemented:** generate xlsx file for students in promotion ([e439a83](https://github.com/hei-school/hei-admin-api/commit/e439a83ecc1500982ac0f6aeca91d971dbb36886))
 
 
 
