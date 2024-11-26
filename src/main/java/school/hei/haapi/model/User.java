@@ -204,6 +204,8 @@ public class User implements Serializable {
   }
 
   public enum Role {
+    STAFF_MEMBER,
+    ADMIN,
     MONITOR,
     STUDENT,
     TEACHER,

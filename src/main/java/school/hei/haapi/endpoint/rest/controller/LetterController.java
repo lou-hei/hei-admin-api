@@ -1,6 +1,7 @@
 package school.hei.haapi.endpoint.rest.controller;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+import static school.hei.haapi.model.User.Role.STUDENT;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -21,8 +22,8 @@ public class LetterController {
   private final LetterMapper letterMapper;
   private final LetterValidator validator;
 
-  @GetMapping(value = "/letters")
-  public List<Letter> getLetters(
+  @GetMapping(value = "/students/letters")
+  public List<Letter> getStudentsLetters(
       @RequestParam(name = "page") PageFromOne page,
       @RequestParam(name = "page_size") BoundedPageSize pageSize,
       @RequestParam(name = "ref", required = false) String ref,
@@ -32,7 +33,34 @@ public class LetterController {
       @RequestParam(name = "fee_id", required = false) String feeId,
       @RequestParam(name = "is_linked_with_fee", required = false) Boolean isLinkedWithFee) {
     return letterService
-        .getLetters(ref, studentRef, status, name, feeId, isLinkedWithFee, page, pageSize)
+        .getLetters(ref, studentRef, status, name, feeId, isLinkedWithFee, STUDENT, page, pageSize)
+        .stream()
+        .map(letterMapper::toRest)
+        .toList();
+  }
+
+  @GetMapping(value = "/letters")
+  public List<Letter> getLetters(
+      @RequestParam(name = "page") PageFromOne page,
+      @RequestParam(name = "page_size") BoundedPageSize pageSize,
+      @RequestParam(name = "ref", required = false) String ref,
+      @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "status", required = false) LetterStatus status,
+      @RequestParam(name = "student_ref", required = false) String studentRef,
+      @RequestParam(name = "fee_id", required = false) String feeId,
+      @RequestParam(name = "role", required = false) String role,
+      @RequestParam(name = "is_linked_with_fee", required = false) Boolean isLinkedWithFee) {
+    return letterService
+        .getLetters(
+            ref,
+            studentRef,
+            status,
+            name,
+            feeId,
+            isLinkedWithFee,
+            letterMapper.toDomainStatus(role),
+            page,
+            pageSize)
         .stream()
         .map(letterMapper::toRest)
         .toList();

@@ -3909,7 +3909,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateComment'
-
       responses:
         '200':
           description: The
@@ -3927,7 +3926,78 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-
+  '/students/letters':
+    get:
+      tags:
+        - Letters
+      summary: All students letters paginated
+      operationId: getStudentsLetters
+      parameters:
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+          description: Set value to 1 by default if null is provided
+          required: false
+        - name: page_size
+          in: query
+          description: Set value to 15 by default if null is provided
+          schema:
+            $ref: '#/components/schemas/PageSize'
+          required: false
+        - name: student_ref
+          in: query
+          description: Filter by student ref
+          schema:
+            type: string
+          required: false
+        - name: ref
+          in: query
+          description: Filter by letter ref
+          schema:
+            type: string
+          required: false
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            $ref: '#/components/schemas/LetterStatus'
+        - name: name
+          in: query
+          description: Filter by student name
+          schema:
+            type: string
+          required: false
+        - name: fee_id
+          in: query
+          description: Filter letter by fee id
+          required: false
+          schema:
+            type: string
+        - name: is_linked_with_fee
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Letters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Letter'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   '/letters':
     get:
       tags:
@@ -3981,6 +4051,15 @@ paths:
           required: false
           schema:
             type: boolean
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - STUDENT
+              - TEACHER
+              - STAFF_MEMBER
       responses:
         '200':
           description: Letters
@@ -4689,6 +4768,8 @@ components:
             - STUDENT
             - TEACHER
             - MANAGER
+            - ADMIN
+            - STAFF_MEMBER
         bearer:
           type: string
     UserIdentifier:
@@ -5740,7 +5821,7 @@ components:
               type: integer
             type:
               $ref: '#/components/schemas/FeeTypeEnum'
-        student:
+        user:
           allOf:
             - $ref: '#/components/schemas/UserIdentifier'
           properties:

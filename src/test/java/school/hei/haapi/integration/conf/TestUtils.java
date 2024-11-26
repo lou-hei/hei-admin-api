@@ -93,7 +93,7 @@ import school.hei.haapi.endpoint.rest.model.Grade;
 import school.hei.haapi.endpoint.rest.model.Group;
 import school.hei.haapi.endpoint.rest.model.GroupIdentifier;
 import school.hei.haapi.endpoint.rest.model.Letter;
-import school.hei.haapi.endpoint.rest.model.LetterStudent;
+import school.hei.haapi.endpoint.rest.model.LetterUser;
 import school.hei.haapi.endpoint.rest.model.Manager;
 import school.hei.haapi.endpoint.rest.model.Monitor;
 import school.hei.haapi.endpoint.rest.model.Observer;
@@ -160,6 +160,8 @@ public class TestUtils {
   public static final String TEACHER1_TOKEN = "teacher1_token";
   public static final String MONITOR1_TOKEN = "monitor1_token";
   public static final String MANAGER1_TOKEN = "manager1_token";
+  public static final String STAFF_MEMBER1_TOKEN = "staff1_token";
+  public static final String ADMIN1_TOKEN = "admin1_token";
   public static final String SUSPENDED_TOKEN = "suspended_token";
   public static final String FEE_TEMPLATE1_ID = "fee_template1";
   public static final String FEE_TEMPLATE2_ID = "fee_template2";
@@ -187,6 +189,7 @@ public class TestUtils {
   public static final String LETTER1_ID = "letter1_id";
   public static final String LETTER2_ID = "letter2_id";
   public static final String LETTER3_ID = "letter3_id";
+  public static final String LETTER5_ID = "letter5_id";
 
   public static final String LETTER1_REF = "letter1_ref";
   public static final String LETTER2_REF = "letter2_ref";
@@ -219,6 +222,9 @@ public class TestUtils {
         .thenReturn("test+repeating2@hei" + ".school");
     when(cognitoComponent.getEmailByIdToken(TEACHER1_TOKEN)).thenReturn("test+teacher1@hei.school");
     when(cognitoComponent.getEmailByIdToken(MANAGER1_TOKEN)).thenReturn("test+manager1@hei.school");
+    when(cognitoComponent.getEmailByIdToken(STAFF_MEMBER1_TOKEN))
+        .thenReturn("test+staff@hei.school");
+    when(cognitoComponent.getEmailByIdToken(ADMIN1_TOKEN)).thenReturn("test+admin@hei.school");
     when(cognitoComponent.getEmailByIdToken(SUSPENDED_TOKEN))
         .thenReturn("test+suspended@hei.school");
   }
@@ -1445,8 +1451,8 @@ public class TestUtils {
         .groups(List.of());
   }
 
-  public static LetterStudent toLetterStudent(Student student) {
-    return new LetterStudent()
+  public static LetterUser toLetterStudent(Student student) {
+    return new LetterUser()
         .id(student.getId())
         .email(student.getEmail())
         .ref(student.getRef())
@@ -1456,11 +1462,33 @@ public class TestUtils {
         .profilePicture(student.getProfilePicture());
   }
 
+  public static LetterUser teacherLetter() {
+    return new LetterUser()
+        .id(teacher1().getId())
+        .email(teacher1().getEmail())
+        .ref(teacher1().getRef())
+        .lastName(teacher1().getLastName())
+        .firstName(teacher1().getFirstName())
+        .nic(teacher1().getNic())
+        .profilePicture(teacher1().getProfilePicture());
+  }
+
+  public static Letter letter5() {
+    return new Letter()
+        .id(LETTER5_ID)
+        .user(teacherLetter())
+        .status(RECEIVED)
+        .fileUrl(null)
+        .description("Teacher file")
+        .approvalDatetime(Instant.parse("2021-12-08T08:25:24.00Z"))
+        .creationDatetime(Instant.parse("2021-11-08T08:25:24.00Z"));
+  }
+
   public static Letter letter1() {
     return new Letter()
         .id(LETTER1_ID)
         .ref(LETTER1_REF)
-        .student(toLetterStudent(student1()))
+        .user(toLetterStudent(student1()))
         .status(RECEIVED)
         .approvalDatetime(Instant.parse("2021-12-08T08:25:24.00Z"))
         .creationDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
@@ -1472,7 +1500,7 @@ public class TestUtils {
     return new Letter()
         .id(LETTER2_ID)
         .ref(LETTER2_REF)
-        .student(toLetterStudent(student1()))
+        .user(toLetterStudent(student1()))
         .status(PENDING)
         .approvalDatetime(null)
         .creationDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
@@ -1484,7 +1512,7 @@ public class TestUtils {
     return new Letter()
         .id(LETTER3_ID)
         .ref(LETTER3_REF)
-        .student(toLetterStudent(student2()))
+        .user(toLetterStudent(student2()))
         .status(PENDING)
         .approvalDatetime(null)
         .creationDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))

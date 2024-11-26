@@ -6,10 +6,7 @@ import static org.springframework.http.HttpMethod.OPTIONS;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
-import static school.hei.haapi.endpoint.rest.security.model.Role.MANAGER;
-import static school.hei.haapi.endpoint.rest.security.model.Role.MONITOR;
-import static school.hei.haapi.endpoint.rest.security.model.Role.STUDENT;
-import static school.hei.haapi.endpoint.rest.security.model.Role.TEACHER;
+import static school.hei.haapi.endpoint.rest.security.model.Role.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -204,6 +201,7 @@ public class SecurityConf {
                     antMatcher(GET, "/attendance"),
                     antMatcher(POST, "/attendance/movement"),
                     antMatcher(GET, "/letters"),
+                    antMatcher(GET, "/students/letters"),
                     antMatcher(PUT, "/letters"),
                     antMatcher(GET, "/letters/*"),
                     antMatcher(GET, "/users/*/letters"),
@@ -630,10 +628,12 @@ public class SecurityConf {
                     //
                     // Letter resources
                     //
+                    .requestMatchers(GET, "/students/letters")
+                    .hasAnyRole(MANAGER.getRole(), ADMIN.getRole())
                     .requestMatchers(GET, "/letters")
-                    .hasAnyRole(MANAGER.getRole(), TEACHER.getRole())
+                    .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(PUT, "/letters")
-                    .hasAnyRole(MANAGER.getRole())
+                    .hasAnyRole(MANAGER.getRole(), ADMIN.getRole())
                     .requestMatchers(GET, "/letters/*")
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole())
                     .requestMatchers(new SelfMatcher(POST, "/users/*/letters", "users"))

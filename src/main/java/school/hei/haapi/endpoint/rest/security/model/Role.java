@@ -3,6 +3,7 @@ package school.hei.haapi.endpoint.rest.security.model;
 import org.springframework.security.core.GrantedAuthority;
 
 public enum Role implements GrantedAuthority {
+  ADMIN,
   MONITOR,
   STUDENT,
   TEACHER,

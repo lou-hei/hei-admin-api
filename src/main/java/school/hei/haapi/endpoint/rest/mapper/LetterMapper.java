@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import school.hei.haapi.endpoint.rest.model.Letter;
 import school.hei.haapi.endpoint.rest.model.LetterFee;
-import school.hei.haapi.endpoint.rest.model.LetterStudent;
+import school.hei.haapi.endpoint.rest.model.LetterUser;
 import school.hei.haapi.model.User;
 import school.hei.haapi.service.aws.FileService;
 
@@ -14,8 +14,16 @@ import school.hei.haapi.service.aws.FileService;
 @AllArgsConstructor
 public class LetterMapper {
 
-  private final UserMapper userMapper;
   private final FileService fileService;
+
+  public User.Role toDomainStatus(String role) {
+    return switch (role) {
+      case "STUDENT" -> User.Role.STUDENT;
+      case "TEACHER" -> User.Role.TEACHER;
+      case "STAFF_MEMBER" -> User.Role.STAFF_MEMBER;
+      default -> throw new IllegalStateException("Unexpected value: " + role);
+    };
+  }
 
   public Letter toRest(school.hei.haapi.model.Letter domain) {
     String letterFileUrl =
@@ -36,8 +44,8 @@ public class LetterMapper {
         .approvalDatetime(domain.getApprovalDatetime())
         .status(domain.getStatus())
         .ref(domain.getRef())
-        .student(
-            new LetterStudent()
+        .user(
+            new LetterUser()
                 .id(student.getId())
                 .ref(student.getRef())
                 .email(student.getEmail())

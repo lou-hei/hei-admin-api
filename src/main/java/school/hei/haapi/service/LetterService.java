@@ -54,12 +54,13 @@ public class LetterService {
       String name,
       String feeId,
       Boolean isLinkedWithFee,
+      User.Role role,
       PageFromOne page,
       BoundedPageSize pageSize) {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "creationDatetime"));
     return letterDao.findByCriteria(
-        ref, studentRef, status, name, feeId, isLinkedWithFee, pageable);
+        ref, studentRef, status, name, feeId, isLinkedWithFee, role, pageable);
   }
 
   public List<Letter> getLettersByEventParticipantId(String eventParticipantId) {
