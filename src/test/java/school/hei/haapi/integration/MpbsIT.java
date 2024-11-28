@@ -1,5 +1,6 @@
 package school.hei.haapi.integration;
 
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.endpoint.rest.model.MobileMoneyType.MVOLA;
@@ -121,6 +122,8 @@ public class MpbsIT extends MockedThirdParties {
 
     // Assert that one fee has only one mpbs
     Mpbs actual1 = api.getMpbs(STUDENT1_ID, FEE1_ID);
+    actual1.setCreationDatetime(actual1.getCreationDatetime().truncatedTo(MINUTES));
+    inUpdate.setCreationDatetime(inUpdate.getCreationDatetime().truncatedTo(MINUTES));
     assertEquals(actual1, inUpdate);
 
     // Assert that when we get fees it not throws error 500
