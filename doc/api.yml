@@ -2408,6 +2408,16 @@ paths:
         - Paying
       summary: Get all student fees filtered by status and month
       parameters:
+        - name: transaction_status
+          required: false
+          in: query
+          schema:
+            $ref: '#/components/schemas/MpbsStatus'
+        - name: type
+          required: false
+          in: query
+          schema:
+            $ref: '#/components/schemas/FeeTypeEnum'
         - name: status
           in: query
           description: "See the PaymentStatus object for its value."
