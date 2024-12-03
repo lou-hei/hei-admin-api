@@ -96,7 +96,7 @@ public class FeeController {
       @RequestParam PageFromOne page,
       @RequestParam("page_size") BoundedPageSize pageSize,
       @RequestParam(name = "transaction_status", required = false) MpbsStatus transactionStatus,
-      @RequestParam(name = "type") FeeTypeEnum feeType,
+      @RequestParam(name = "type", required = false) FeeTypeEnum feeType,
       @RequestParam(required = false) FeeStatusEnum status,
       @RequestParam(name = "month_from", required = false) Instant monthFrom,
       @RequestParam(name = "month_to", required = false) Instant monthTo,
