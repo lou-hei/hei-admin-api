@@ -1,4 +1,4 @@
-## [1.83.1](https://github.com/hei-school/hei-admin-api/compare/v1.83.0...v1.83.1) (2024-12-04)
+# [1.84.0](https://github.com/hei-school/hei-admin-api/compare/v1.83.0...v1.84.0) (2024-12-03)
 
 
 ### Bug Fixes
@@ -7,7 +7,15 @@
 * letter stats required param ([05ddfe5](https://github.com/hei-school/hei-admin-api/commit/05ddfe53e701fcd608dd5beb838cc05c44405748))
 * return admin model in admin resources ([838193c](https://github.com/hei-school/hei-admin-api/commit/838193c289d8c73e3045441c1346d2826f4b3ce3))
 * set mpbs creation datetime not null  ([b02447b](https://github.com/hei-school/hei-admin-api/commit/b02447b2e960458df98220dfb52c6c2ccc3c2bd9))
+<<<<<<< HEAD
 * upload staff member profile picture ([40e730b](https://github.com/hei-school/hei-admin-api/commit/40e730b17fde513cd8c3d660df1ad02276629867))
+=======
+
+
+### Features
+
+* **not-implemented:** stats will depend on fees filter  ([bd67560](https://github.com/hei-school/hei-admin-api/commit/bd67560ca03f3a85b5b5cecfe7061fb3dd52b88f))
+>>>>>>> 096a49ad (release: v1.84.0 [skip ci])
 
 
 
