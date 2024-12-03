@@ -7,3 +7,4 @@ ORANGE_SCRAPPER_BASEURL: !Sub '{{resolve:ssm:/haapi/${Env}/scrapper/orange/baseu
 OWNCLOUD_BASE_URL: !Sub '{{resolve:ssm:/haapi/${Env}/oc/url}}'
 OWNCLOUD_USERNAME: !Sub '{{resolve:ssm:/haapi/${Env}/oc/username}}'
 OWNCLOUD_PASSWORD: !Sub '{{resolve:ssm:/haapi/${Env}/oc/password}}'
+SENTRY_DSN: !Sub '{{resolve:ssm:/haapi/sentry/dsn}}'
