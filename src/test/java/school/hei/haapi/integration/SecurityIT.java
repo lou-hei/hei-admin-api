@@ -1,7 +1,6 @@
 package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.endpoint.rest.model.Whoami.RoleEnum.MONITOR;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
@@ -9,7 +8,6 @@ import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.SUSPENDED_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_TOKEN;
-import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 
@@ -20,29 +18,22 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.SecurityApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.Whoami;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = SecurityIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-@Disabled
-class SecurityIT extends MockedThirdParties {
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, ContextInitializer.SERVER_PORT);
+class SecurityIT extends FacadeITMockedThirdParties {
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   public static Whoami whoisStudent1() {
@@ -126,7 +117,7 @@ class SecurityIT extends MockedThirdParties {
   @Test
   void manager_read_unknown_ko() throws IOException, InterruptedException {
     HttpClient unauthenticatedClient = HttpClient.newBuilder().build();
-    String basePath = "http://localhost:" + ContextInitializer.SERVER_PORT;
+    String basePath = "http://localhost:" + localPort;
 
     HttpResponse<String> response =
         unauthenticatedClient.send(
@@ -144,7 +135,7 @@ class SecurityIT extends MockedThirdParties {
   @Test
   void non_authorized_path_for_suspended_user_ko() {
     HttpClient unauthenticatedClient = HttpClient.newBuilder().build();
-    String basePath = "http://localhost:" + ContextInitializer.SERVER_PORT;
+    String basePath = "http://localhost:" + localPort;
     List<String> nonAuthorizedPaths =
         List.of(
             "/school/files",
@@ -184,7 +175,7 @@ class SecurityIT extends MockedThirdParties {
   @Test
   void suspended_read_ko() throws IOException, InterruptedException {
     HttpClient unauthenticatedClient = HttpClient.newBuilder().build();
-    String basePath = "http://localhost:" + ContextInitializer.SERVER_PORT;
+    String basePath = "http://localhost:" + localPort;
 
     HttpResponse<String> response =
         unauthenticatedClient.send(
@@ -197,14 +188,5 @@ class SecurityIT extends MockedThirdParties {
     assertEquals(HttpStatus.FORBIDDEN.value(), response.statusCode());
     assertEquals(
         "{" + "\"type\":\"403 FORBIDDEN\"," + "\"message\":\"Access is denied\"}", response.body());
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }
