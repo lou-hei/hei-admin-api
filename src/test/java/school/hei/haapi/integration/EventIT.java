@@ -1,26 +1,41 @@
 package school.hei.haapi.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.MISSING;
 import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.PRESENT;
 import static school.hei.haapi.endpoint.rest.model.EventType.COURSE;
 import static school.hei.haapi.integration.StudentIT.student1;
-import static school.hei.haapi.integration.conf.TestUtils.*;
+import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
+import static school.hei.haapi.integration.conf.TestUtils.EVENT2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.EVENT_PARTICIPANT1_ID;
+import static school.hei.haapi.integration.conf.TestUtils.EVENT_PARTICIPANT2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
+import static school.hei.haapi.integration.conf.TestUtils.createEventCourse1;
+import static school.hei.haapi.integration.conf.TestUtils.createIntegrationEvent;
+import static school.hei.haapi.integration.conf.TestUtils.event1;
+import static school.hei.haapi.integration.conf.TestUtils.event2;
+import static school.hei.haapi.integration.conf.TestUtils.event3;
+import static school.hei.haapi.integration.conf.TestUtils.expectedCourseEventCreated;
+import static school.hei.haapi.integration.conf.TestUtils.expectedIntegrationEventCreated;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
+import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
+import static school.hei.haapi.integration.conf.TestUtils.student1AttendEvent2;
+import static school.hei.haapi.integration.conf.TestUtils.student1MissEvent1;
+import static school.hei.haapi.integration.conf.TestUtils.student2AttendEvent2;
+import static school.hei.haapi.integration.conf.TestUtils.student3AttendEvent1;
+import static school.hei.haapi.integration.conf.TestUtils.student3MissEvent2;
 
 import java.time.Instant;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.EventsApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
@@ -28,21 +43,16 @@ import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.UpdateEventParticipant;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@Slf4j
 @Testcontainers
-@ContextConfiguration(initializers = EventIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-@Disabled
-public class EventIT extends MockedThirdParties {
+public class EventIT extends FacadeITMockedThirdParties {
 
-  private static final Logger log = LoggerFactory.getLogger(EventIT.class);
-
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, EventIT.ContextInitializer.SERVER_PORT);
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   @BeforeEach
@@ -78,8 +88,6 @@ public class EventIT extends MockedThirdParties {
     EventsApi api = new EventsApi(apiClient);
 
     List<Event> actual = api.getEvents(1, 15, null, null, null, null);
-
-    log.info(actual.toString());
 
     assertTrue(actual.containsAll(List.of(event1(), event2(), event3())));
 
@@ -153,7 +161,7 @@ public class EventIT extends MockedThirdParties {
   }
 
   @Test
-  @DirtiesContext
+  @Disabled("dirty")
   void manager_update_event_participant_ok() throws ApiException {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
@@ -182,14 +190,5 @@ public class EventIT extends MockedThirdParties {
     assertThrowsForbiddenException(() -> api.crupdateEvents(List.of(createEventCourse1())));
     assertThrowsForbiddenException(
         () -> api.updateEventParticipantsStatus(EVENT1_ID, List.of(new UpdateEventParticipant())));
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }
