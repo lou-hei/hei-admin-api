@@ -1786,6 +1786,70 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/admins/{id}':
+    get:
+      tags:
+        - Users
+      summary: Get admin by identifier
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: getAdminById
+      responses:
+        '200':
+          description: The identified admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Users
+      summary: Update admin
+      operationId: updateAdmin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: admin to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrupdateManager'
+      responses:
+        '200':
+          description: updated manager.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Manager'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /managers:
     get:
       tags:
@@ -1852,6 +1916,159 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DelayPenalty'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /staff_members:
+    get:
+      tags:
+        - Users
+      summary: Get all staff members
+      operationId: getStaffMembers
+      parameters:
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+        - name: page_size
+          in: query
+          schema:
+            $ref: '#/components/schemas/PageSize'
+        - name: status
+          required: false
+          in: query
+          description: Filter staff members by status value return all by default
+          schema:
+            $ref: '#/components/schemas/EnableStatus'
+        - name: sex
+          required: false
+          in: query
+          description: Filter staff members by sex value return all by default
+          schema:
+            $ref: '#/components/schemas/Sex'
+        - name: first_name
+          in: query
+          description: Filter staff members by first name, case is ignored
+          schema:
+            type: string
+        - name: last_name
+          in: query
+          description: Filter staff members by last name, case is ignored
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of staff members, ordered by ref.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StaffMember'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Users
+      summary: Create or update staff members
+      operationId: crupdateStaffMembers
+      requestBody:
+        description: staff members
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/StaffMember'
+      responses:
+        '200':
+          description: List of staff members, ordered by ref.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StaffMember'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /staff_members/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get staff member by the given id
+      operationId: getStaffMemberById
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The staff member
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/StaffMember'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Users
+      summary: Update staff member info
+      operationId: updateStaffMember
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: staff member
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffMember'
+      responses:
+        '200':
+          description: List of staff members, ordered by ref.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffMember'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -2827,6 +3044,76 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/admins/{admin_id}/picture/raw':
+    post:
+      tags:
+        - Users
+      summary: Upload admin profile picture
+      operationId: uploadAdminProfilePicture
+      parameters:
+        - name: admin_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadFile"
+      responses:
+        '200':
+          description: Admin updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  '/staff_members/{staff_member_id}/picture/raw':
+    post:
+      tags:
+        - Users
+      summary: Upload staff member profile picture
+      operationId: uploadStaffMemberProfilePicture
+      parameters:
+        - name: staff_member_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadFile"
+      responses:
+        '200':
+          description: Admin updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffMember'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   '/attendance':
     get:
       tags:
@@ -3766,7 +4053,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateComment'
-
       responses:
         '200':
           description: The
@@ -3784,7 +4070,78 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-
+  '/students/letters':
+    get:
+      tags:
+        - Letters
+      summary: All students letters paginated
+      operationId: getStudentsLetters
+      parameters:
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+          description: Set value to 1 by default if null is provided
+          required: false
+        - name: page_size
+          in: query
+          description: Set value to 15 by default if null is provided
+          schema:
+            $ref: '#/components/schemas/PageSize'
+          required: false
+        - name: student_ref
+          in: query
+          description: Filter by student ref
+          schema:
+            type: string
+          required: false
+        - name: ref
+          in: query
+          description: Filter by letter ref
+          schema:
+            type: string
+          required: false
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            $ref: '#/components/schemas/LetterStatus'
+        - name: name
+          in: query
+          description: Filter by student name
+          schema:
+            type: string
+          required: false
+        - name: fee_id
+          in: query
+          description: Filter letter by fee id
+          required: false
+          schema:
+            type: string
+        - name: is_linked_with_fee
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Letters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Letter'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   '/letters':
     get:
       tags:
@@ -3838,6 +4195,11 @@ paths:
           required: false
           schema:
             type: boolean
+        - name: role
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/RoleParamEnum'
       responses:
         '200':
           description: Letters
@@ -3918,12 +4280,41 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/students/letters/stats':
+    get:
+      tags:
+        - Letters
+      summary: Get stats for letters
+      operationId: getStudentsLetterStats
+      responses:
+        '200':
+          description: Some stats for letters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LetterStats'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   '/letters/stats':
     get:
       tags:
         - Letters
       summary: Get stats for letters
       operationId: getLetterStats
+      parameters:
+        - name: role
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/RoleParamEnum'
       responses:
         '200':
           description: Some stats for letters
@@ -4546,6 +4937,8 @@ components:
             - STUDENT
             - TEACHER
             - MANAGER
+            - ADMIN
+            - STAFF_MEMBER
         bearer:
           type: string
     UserIdentifier:
@@ -4766,6 +5159,12 @@ components:
         profile_picture:
           type: string
     Manager:
+      allOf:
+        - $ref: '#/components/schemas/CrupdateUser'
+      properties:
+        profile_picture:
+          type: string
+    Admin:
       allOf:
         - $ref: '#/components/schemas/CrupdateUser'
       properties:
@@ -5014,6 +5413,12 @@ components:
       enum:
         - IVANDRY
         - ANDRAHARO
+    RoleParamEnum:
+      type: string
+      enum:
+        - STUDENT
+        - TEACHER
+        - STAFF_MEMBER
     CreateFee:
       type: object
       properties:
@@ -5567,6 +5972,20 @@ components:
           type: integer
         unpaid_fees:
           type: integer
+        late_fees:
+          type: integer
+        total_monthly_fees:
+          type: integer
+        total_yearly_fees:
+          type: integer
+        total_of_actual_month_fees:
+          type: integer
+        total_paid_of_actual_month_fees:
+          type: integer
+        total_unpaid_of_actual_month_fees:
+          type: integer
+        total_late_of_actual_month_fees:
+          type: integer
     Letter:
       type: object
       properties:
@@ -5597,7 +6016,7 @@ components:
               type: integer
             type:
               $ref: '#/components/schemas/FeeTypeEnum'
-        student:
+        user:
           allOf:
             - $ref: '#/components/schemas/UserIdentifier'
           properties:
@@ -5667,6 +6086,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Letter'
+    StaffMember:
+      allOf:
+        - $ref: '#/components/schemas/Teacher'
+      type: object
+      properties:
+        ending_service:
+          type: string
+          format: date-time
+        cnaps:
+          type: string
+        ostie:
+          type: string
+        function:
+          type: string
+        degree:
+          type: string
     Exception:
       type: object
       properties:

@@ -54,12 +54,13 @@ public class LetterService {
       String name,
       String feeId,
       Boolean isLinkedWithFee,
+      User.Role role,
       PageFromOne page,
       BoundedPageSize pageSize) {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "creationDatetime"));
     return letterDao.findByCriteria(
-        ref, studentRef, status, name, feeId, isLinkedWithFee, pageable);
+        ref, studentRef, status, name, feeId, isLinkedWithFee, role, pageable);
   }
 
   public List<Letter> getLettersByEventParticipantId(String eventParticipantId) {
@@ -171,7 +172,13 @@ public class LetterService {
         .toList();
   }
 
-  public LetterStats getStats() {
+  public LetterStats getStats(User.Role role) {
+    if (Objects.nonNull(role)) {
+      return new LetterStats()
+          .pending(letterRepository.countByStatusAndUserRole(PENDING, role))
+          .rejected(letterRepository.countByStatusAndUserRole(REJECTED, role))
+          .received(letterRepository.countByStatusAndUserRole(RECEIVED, role));
+    }
     return new LetterStats()
         .pending(letterRepository.countByStatus(PENDING))
         .rejected(letterRepository.countByStatus(REJECTED))

@@ -27,5 +27,17 @@ values ('student1_id', 'Ryan', 'Andria', 'test+ryan@hei.school', 'STD21001', 'EN
         '2021-09-08T08:25:29.00Z', '0322411127', 'Adr 5', 'MANAGER', '', '', 55.555, -55.555, null),
         ('manager10_id', 'Two', 'Manager', 'test+manager2@hei.school', 'MGR21002', 'ENABLED', 'M',
          '1890-01-01',
-         '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'MANAGER', '', '', 55.555, -55.555, null)
+         '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'MANAGER', '', '', 55.555, -55.555, null),
+       ('admin1_id', 'Admin', 'Admin', 'test+admin@hei.school', 'ADM21001', 'ENABLED', 'M',
+        '1890-01-01',
+        '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'ADMIN', '', '', 55.555, -55.555, null),
+        ('staff1_id', 'Staff', 'staff', 'test+staff@hei.school', 'STF21001', 'ENABLED', 'M',
+        '1890-01-01',
+        '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'STAFF_MEMBER', '', '', 55.555, -55.555, null),
+        ('staff2_id', 'Staff', 'Two', 'test+staff+1@hei.school', 'STF21002', 'ENABLED', 'M',
+        '1890-01-01',
+        '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'STAFF_MEMBER', '', '', 55.555, -55.555, null),
+        ('staff3_id', 'Staff', 'Three', 'test+staff+2@hei.school', 'STF21003', 'ENABLED', 'M',
+        '1890-01-01',
+        '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'STAFF_MEMBER', '', '', 55.555, -55.555, null)
     ;

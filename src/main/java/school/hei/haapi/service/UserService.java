@@ -180,6 +180,7 @@ public class UserService {
       User.Sex sex) {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(ASC, "ref"));
+
     return userManagerDao.findByCriteria(
         role, ref, firstName, lastName, pageable, status, sex, null, null, null, null, null);
   }

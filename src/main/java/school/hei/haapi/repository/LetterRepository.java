@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import school.hei.haapi.endpoint.rest.model.LetterStatus;
 import school.hei.haapi.model.Letter;
+import school.hei.haapi.model.User;
 
 @Repository
 public interface LetterRepository extends JpaRepository<Letter, String> {
@@ -16,6 +17,8 @@ public interface LetterRepository extends JpaRepository<Letter, String> {
   List<Letter> findAllByUserIdAndStatus(String studentId, LetterStatus status, Pageable pageable);
 
   Integer countByStatus(LetterStatus status);
+
+  Integer countByStatusAndUserRole(LetterStatus status, User.Role userRole);
 
   @Query(value = "SELECT * FROM  letter where fee_id = ?1", nativeQuery = true)
   Optional<Letter> findByFeeId(String feeId);

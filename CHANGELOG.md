@@ -1,3 +1,58 @@
+# [1.83.0](https://github.com/hei-school/hei-admin-api/compare/v1.82.0...v1.83.0) (2024-11-28)
+
+
+### Bug Fixes
+
+* handle role param null case in letter endpoint ([62d78a3](https://github.com/hei-school/hei-admin-api/commit/62d78a33aa71b03bf6e98438e16314252b53e6c4))
+
+
+### Features
+
+* letter stats for admin ([6bccb5e](https://github.com/hei-school/hei-admin-api/commit/6bccb5e83617d1ba3f6e897306ad479522c6b866))
+* update staff members access ([2cce4b1](https://github.com/hei-school/hei-admin-api/commit/2cce4b1b48261ab853b00fbb869e091d1af23f40))
+
+
+
+# [1.82.0](https://github.com/hei-school/hei-admin-api/compare/v1.81.0...v1.82.0) (2024-11-27)
+
+
+### Features
+
+* implement staff members resources ([58f8580](https://github.com/hei-school/hei-admin-api/commit/58f85805776877f672bac1c59d888dc0f416381e))
+
+
+
+# [1.81.0](https://github.com/hei-school/hei-admin-api/compare/v1.80.0...v1.81.0) (2024-11-27)
+
+
+### Features
+
+* **not-implemented:** add new attribute to fees statistics  ([cd945d4](https://github.com/hei-school/hei-admin-api/commit/cd945d49277bcc05a632403498a24d3491643e5c))
+
+
+
+# [1.80.0](https://github.com/hei-school/hei-admin-api/compare/v1.79.0...v1.80.0) (2024-11-26)
+
+
+### Bug Fixes
+
+* overpaid fees by mpbs  ([0044dd1](https://github.com/hei-school/hei-admin-api/commit/0044dd1bc8d05d3974d97c71916a0c45f798a966))
+* revert  ([a4e2442](https://github.com/hei-school/hei-admin-api/commit/a4e24424211a888cabd97ce539f116ca90321e30))
+
+
+### Features
+
+* add admin role and update letter access ([17f792f](https://github.com/hei-school/hei-admin-api/commit/17f792f4033517d645659fb4312e43af59fe6400))
+* admin profile ([77c16d7](https://github.com/hei-school/hei-admin-api/commit/77c16d71807d469da531852fb636032c264d27a5))
+* **not-implemented:** staff member resources ([9042dad](https://github.com/hei-school/hei-admin-api/commit/9042dad655d557b214ec041eb1d60718b85c2815))
+
+
+### Reverts
+
+* move student file controller to user file controller ([738c681](https://github.com/hei-school/hei-admin-api/commit/738c681cbe253a64dbeed19ae3f5d9fb96e8949d))
+
+
+
 # [1.79.0](https://github.com/hei-school/hei-admin-api/compare/v1.78.0...v1.79.0) (2024-11-15)
 
 
@@ -73,47 +128,6 @@
 * **not-implemented:** add endpoint specific for exams creation and retrieve ([56063df](https://github.com/hei-school/hei-admin-api/commit/56063df42d44a2b9447afcd9e28b2a18df39bd6a))
 * **not-implemented:** get monthy fees statistics ([cff0772](https://github.com/hei-school/hei-admin-api/commit/cff07722f3364fcb839366b980a722e56956cceb))
 * stats is available in event model ([c489d9e](https://github.com/hei-school/hei-admin-api/commit/c489d9ed86d3358bbabccc553ba35bcbe441f20f))
-
-
-
-# [1.70.0](https://github.com/hei-school/hei-admin-api/compare/v1.69.0...v1.70.0) (2024-10-23)
-
-
-### Features
-
-* add student id in event participant model ([afb4cb8](https://github.com/hei-school/hei-admin-api/commit/afb4cb8451b5c3d13e96d5aa899f1e697c527e67))
-
-
-
-# [1.69.0](https://github.com/hei-school/hei-admin-api/compare/v1.68.0...v1.69.0) (2024-10-23)
-
-
-### Features
-
-* link letter and event participant for proof of absence ([36de3af](https://github.com/hei-school/hei-admin-api/commit/36de3afd5428e56f4ee7bcf6273eea62957c8f90))
-
-
-
-# [1.68.0](https://github.com/hei-school/hei-admin-api/compare/v1.67.0...v1.68.0) (2024-10-22)
-
-
-### Bug Fixes
-
-* **docs-api:** exam api refactor ([f6eeda4](https://github.com/hei-school/hei-admin-api/commit/f6eeda447580aa479439ee809c32757165990da0))
-
-
-### Features
-
-* **not-implemented:** link letter and event participant ([3522088](https://github.com/hei-school/hei-admin-api/commit/352208894c4bf6dbcdb8ed77c154499b8402b339))
-
-
-
-# [1.67.0](https://github.com/hei-school/hei-admin-api/compare/v1.66.0...v1.67.0) (2024-10-18)
-
-
-### Features
-
-* rearrange exams api and refactor code ([2d95115](https://github.com/hei-school/hei-admin-api/commit/2d9511594d32d39e6659128f70d2921bcf0baacc))
 
 
 

@@ -66,6 +66,10 @@ public class User implements Serializable {
 
   private String phone;
 
+  private String degree;
+
+  private String function;
+
   private LocalDate birthDate;
 
   private String birthPlace;
@@ -204,6 +208,8 @@ public class User implements Serializable {
   }
 
   public enum Role {
+    STAFF_MEMBER,
+    ADMIN,
     MONITOR,
     STUDENT,
     TEACHER,
