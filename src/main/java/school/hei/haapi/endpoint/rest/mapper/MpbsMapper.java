@@ -1,6 +1,5 @@
 package school.hei.haapi.endpoint.rest.mapper;
 
-import static java.time.Instant.now;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.PENDING;
 
 import lombok.AllArgsConstructor;
@@ -39,7 +38,6 @@ public class MpbsMapper {
     domain.setFee(feeService.getById(rest.getFeeId()));
     domain.setPspId(rest.getPspId());
     domain.setMobileMoneyType(rest.getPspType());
-    domain.setCreationDatetime(now());
     domain.setStatus(PENDING);
     return domain;
   }
