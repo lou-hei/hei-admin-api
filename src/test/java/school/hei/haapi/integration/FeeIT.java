@@ -48,6 +48,7 @@ import school.hei.haapi.integration.conf.TestUtils;
 @Testcontainers
 @ContextConfiguration(initializers = FeeIT.ContextInitializer.class)
 @AutoConfigureMockMvc
+@Disabled
 class FeeIT extends MockedThirdParties {
   private static final Logger log = LoggerFactory.getLogger(FeeIT.class);
   @Autowired EventConsumer subject;

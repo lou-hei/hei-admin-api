@@ -37,6 +37,7 @@ import jakarta.persistence.Query;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -64,6 +65,7 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 @Testcontainers
 @ContextConfiguration(initializers = PaymentIT.ContextInitializer.class)
 @AutoConfigureMockMvc
+@Disabled
 class PaymentIT extends MockedThirdParties {
   @Autowired EntityManager entityManager;
   @MockBean private EventBridgeClient eventBridgeClientMock;

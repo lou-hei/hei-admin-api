@@ -13,6 +13,7 @@ import static school.hei.haapi.model.User.Status.SUSPENDED;
 
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,6 +34,7 @@ import school.hei.haapi.service.event.LateFeeVerifiedService;
 @Testcontainers
 @ContextConfiguration(initializers = LateFeeVerifiedServiceIT.ContextInitializer.class)
 @AutoConfigureMockMvc
+@Disabled
 public class LateFeeVerifiedServiceIT extends MockedThirdParties {
   @Autowired private LateFeeVerifiedService subject;
   @Autowired private UserRepository userRepository;

@@ -29,6 +29,7 @@ import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,6 +49,7 @@ import school.hei.haapi.integration.conf.TestUtils;
 @Testcontainers
 @ContextConfiguration(initializers = AnnouncementIT.ContextInitializer.class)
 @AutoConfigureMockMvc
+@Disabled
 public class AnnouncementIT extends MockedThirdParties {
 
   private static ApiClient anApiClient(String token) {

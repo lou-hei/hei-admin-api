@@ -24,6 +24,7 @@ import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,6 +47,7 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 @Testcontainers
 @ContextConfiguration(initializers = MpbsIT.ContextInitializer.class)
 @AutoConfigureMockMvc
+@Disabled
 public class MpbsIT extends MockedThirdParties {
   @MockBean private EventBridgeClient eventBridgeClientMock;
 

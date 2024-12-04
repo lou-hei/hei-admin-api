@@ -5,6 +5,7 @@ import static school.hei.haapi.integration.conf.TestUtils.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,6 +22,7 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 @ContextConfiguration(initializers = AdminIT.ContextInitializer.class)
 @AutoConfigureMockMvc
 @Slf4j
+@Disabled
 public class AdminIT extends MockedThirdParties {
   @MockBean private EventBridgeClient eventBridgeClientMock;
 

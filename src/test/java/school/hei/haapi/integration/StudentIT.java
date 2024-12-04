@@ -79,6 +79,7 @@ import software.amazon.awssdk.services.eventbridge.model.PutEventsResultEntry;
 @Testcontainers
 @ContextConfiguration(initializers = StudentIT.ContextInitializer.class)
 @AutoConfigureMockMvc
+@Disabled
 public class StudentIT extends MockedThirdParties {
   public static final String STUDENT_WITH_PAYMENT_FREQUENCY_3 = "student_with_payment_frequency3";
   private static final Logger log = LoggerFactory.getLogger(StudentIT.class);

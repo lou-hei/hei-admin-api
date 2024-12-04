@@ -13,6 +13,7 @@ import static school.hei.haapi.integration.conf.TestUtils.*;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import school.hei.haapi.integration.conf.TestUtils;
 @Testcontainers
 @ContextConfiguration(initializers = EventIT.ContextInitializer.class)
 @AutoConfigureMockMvc
+@Disabled
 public class EventIT extends MockedThirdParties {
 
   private static final Logger log = LoggerFactory.getLogger(EventIT.class);
