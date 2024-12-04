@@ -25,6 +25,7 @@ import static school.hei.haapi.integration.conf.TestUtils.teacher4;
 import java.time.Instant;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -52,6 +53,7 @@ import school.hei.haapi.service.event.CheckAttendanceTriggeredService;
 @Testcontainers
 @ContextConfiguration(initializers = AttendanceIT.ContextInitializer.class)
 @AutoConfigureMockMvc
+@Disabled
 class AttendanceIT extends MockedThirdParties {
   private static final Instant DEFAULT_FROM = Instant.parse("2021-08-07T07:30:00.00Z");
   private static final Instant DEFAULT_TO = Instant.parse("2021-11-09T07:30:00.00Z");

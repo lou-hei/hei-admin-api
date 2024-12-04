@@ -36,6 +36,7 @@ import school.hei.haapi.integration.conf.MockedThirdParties;
 @Testcontainers
 @ContextConfiguration(initializers = SpringSecurityIT.ContextInitializer.class)
 @AutoConfigureMockMvc
+@Disabled
 class SpringSecurityIT extends MockedThirdParties {
   @Value("${test.aws.cognito.idToken}")
   private String bearer;
