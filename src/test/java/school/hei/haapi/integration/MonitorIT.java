@@ -1,7 +1,6 @@
 package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
 import static school.hei.haapi.endpoint.rest.model.Sex.F;
 import static school.hei.haapi.endpoint.rest.model.Sex.M;
@@ -10,7 +9,6 @@ import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_TOKEN;
-import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
 import static school.hei.haapi.integration.conf.TestUtils.coordinatesWithNullValues;
 import static school.hei.haapi.integration.conf.TestUtils.coordinatesWithValues;
@@ -24,10 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.UsersApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
@@ -37,21 +32,17 @@ import school.hei.haapi.endpoint.rest.model.CrupdateMonitor;
 import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Monitor;
 import school.hei.haapi.endpoint.rest.model.Sex;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = MonitorIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-@Disabled
-public class MonitorIT extends MockedThirdParties {
+public class MonitorIT extends FacadeITMockedThirdParties {
   @MockBean private EventBridgeClient eventBridgeClientMock;
 
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, MonitorIT.ContextInitializer.SERVER_PORT);
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   public static Monitor monitor1() {
@@ -187,7 +178,7 @@ public class MonitorIT extends MockedThirdParties {
   }
 
   @Test
-  @DirtiesContext
+  @Disabled("dirty")
   void manager_update_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
 
@@ -204,7 +195,7 @@ public class MonitorIT extends MockedThirdParties {
     UsersApi api = new UsersApi(manager1Client);
 
     List<Monitor> monitors = api.createOrUpdateMonitors(List.of(someCreatableMonitor2()));
-    Monitor actualCreated = monitors.get(0);
+    Monitor actualCreated = monitors.getFirst();
 
     assertEquals(1, monitors.size());
     assertEquals(expectedCreated().getAddress(), actualCreated.getAddress());
@@ -225,14 +216,5 @@ public class MonitorIT extends MockedThirdParties {
 
     assertEquals(1, actual.size());
     assertEquals(monitor1(), actual.getFirst());
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }
