@@ -174,14 +174,15 @@ class AttendanceIT extends FacadeITMockedThirdParties {
             .student(student1())
             .attendanceMovementType(AttendanceMovementType.IN);
 
-    assertEquals(expected.getCreatedAt(), actual.get(0).getCreatedAt());
-    assertEquals(expected.getAttendanceMovementType(), actual.get(0).getAttendanceMovementType());
-    assertEquals(expected.getPlace(), actual.get(0).getPlace());
-    assertEquals(expected.getStudent(), actual.get(0).getStudent());
+    assertEquals(expected.getCreatedAt(), actual.getFirst().getCreatedAt());
+    assertEquals(
+        expected.getAttendanceMovementType(), actual.getFirst().getAttendanceMovementType());
+    assertEquals(expected.getPlace(), actual.getFirst().getPlace());
+    assertEquals(expected.getStudent(), actual.getFirst().getStudent());
   }
 
   @Test
-  void manager_create_attendance_with_no_student_id() throws ApiException {
+  void manager_create_attendance_with_no_student_id() {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     AttendanceApi api = new AttendanceApi(manager1Client);
 
@@ -197,14 +198,6 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         .course(course2())
         .group(group1())
         .mainTeacher(teacher4());
-  }
-
-  public static AwardedCourse awardedCourse5() {
-    return new AwardedCourse()
-        .id("awarded_course5_id")
-        .course(course3())
-        .group(group2())
-        .mainTeacher(teacher2());
   }
 
   public static CourseSession courseSession1() {
