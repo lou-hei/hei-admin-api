@@ -13,6 +13,7 @@ import school.hei.haapi.endpoint.rest.mapper.SexEnumMapper;
 import school.hei.haapi.endpoint.rest.mapper.StatusEnumMapper;
 import school.hei.haapi.endpoint.rest.mapper.UserMapper;
 import school.hei.haapi.endpoint.rest.model.EnableStatus;
+import school.hei.haapi.endpoint.rest.model.Manager;
 import school.hei.haapi.endpoint.rest.model.Sex;
 import school.hei.haapi.endpoint.rest.model.StaffMember;
 import school.hei.haapi.endpoint.rest.validator.CoordinatesValidator;
@@ -74,5 +75,13 @@ public class StaffMemberController {
     validator.accept(staffMember.getCoordinates());
     return userMapper.toRestStaffMember(
         userService.updateUser(userMapper.toDomain(staffMember), id));
+  }
+
+  @PostMapping(value = "/staff_members/{id}/picture/raw", consumes = MULTIPART_FORM_DATA_VALUE)
+  public StaffMember uploadAdminProfilePicture(
+          @RequestPart("file_to_upload") MultipartFile profilePictureAsMultipartFile,
+          @PathVariable String id) {
+    userService.uploadUserProfilePicture(profilePictureAsMultipartFile, id);
+    return userMapper.toRestStaffMember(userService.findById(id));
   }
 }

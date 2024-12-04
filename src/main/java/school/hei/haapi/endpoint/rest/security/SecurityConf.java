@@ -259,6 +259,8 @@ public class SecurityConf {
                     .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(new SelfMatcher(PUT, "/admins/*", "admins"))
                     .hasAnyRole(ADMIN.getRole())
+                    .requestMatchers(new SelfMatcher(POST, "/admins/*/picture/raw", "admins"))
+                    .hasAnyRole(ADMIN.getRole())
                     //
                     // Announcements resources
                     //

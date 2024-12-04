@@ -3044,7 +3044,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/admins/{admin_id}/picture/raw':
+  '/admin/{admin_id}/picture/raw':
     post:
       tags:
         - Users
@@ -3079,14 +3079,14 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/staff_members/{staff_member_id}/picture/raw':
+  '/staff_members/{admin_id}/picture/raw':
     post:
       tags:
         - Users
       summary: Upload staff member profile picture
       operationId: uploadStaffMemberProfilePicture
       parameters:
-        - name: staff_member_id
+        - name: admin_id
           in: path
           required: true
           schema:
@@ -3099,7 +3099,7 @@ paths:
               $ref: "#/components/schemas/UploadFile"
       responses:
         '200':
-          description: Admin updated
+          description: Staff updated
           content:
             application/json:
               schema:
