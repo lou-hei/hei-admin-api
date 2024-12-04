@@ -2,7 +2,6 @@ package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.*;
 
@@ -11,27 +10,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.TeachingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
-import school.hei.haapi.endpoint.rest.model.*;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.endpoint.rest.model.AwardedCourse;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = AwardedCourseIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-@Disabled
-class AwardedCourseIT extends MockedThirdParties {
+class AwardedCourseIT extends FacadeITMockedThirdParties {
 
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, AwardedCourseIT.ContextInitializer.SERVER_PORT);
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   @BeforeEach
@@ -157,7 +149,6 @@ class AwardedCourseIT extends MockedThirdParties {
     assertEquals(1, awardedCoursesByTeacher.size());
     assertTrue(awardedCoursesByTeacher.contains(awardedCourse1()));
 
-    System.out.println(awardedCoursesByCourse.toString());
     assertEquals(3, awardedCoursesByCourse.size());
     assertTrue(awardedCoursesByCourse.contains(awardedCourse1()));
     assertTrue(awardedCoursesByCourse.contains(awardedCourse2()));
@@ -199,7 +190,7 @@ class AwardedCourseIT extends MockedThirdParties {
   }
 
   @Test
-  @DirtiesContext
+  @Disabled("dirty")
   void manager_create_or_update_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     TeachingApi api = new TeachingApi(manager1Client);
@@ -215,14 +206,5 @@ class AwardedCourseIT extends MockedThirdParties {
 
     assertTrue(awardedCoursesUpdated.contains(updatedAwardedCourse2()));
     assertEquals(2, awardedCoursesUpdated.size());
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }
