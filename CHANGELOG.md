@@ -1,3 +1,16 @@
+## [1.83.1](https://github.com/hei-school/hei-admin-api/compare/v1.83.0...v1.83.1) (2024-12-04)
+
+
+### Bug Fixes
+
+* handle null case in role param ([22a9b89](https://github.com/hei-school/hei-admin-api/commit/22a9b89f63b27d4e44fdc918a5b846617f747633))
+* letter stats required param ([05ddfe5](https://github.com/hei-school/hei-admin-api/commit/05ddfe53e701fcd608dd5beb838cc05c44405748))
+* return admin model in admin resources ([838193c](https://github.com/hei-school/hei-admin-api/commit/838193c289d8c73e3045441c1346d2826f4b3ce3))
+* set mpbs creation datetime not null  ([b02447b](https://github.com/hei-school/hei-admin-api/commit/b02447b2e960458df98220dfb52c6c2ccc3c2bd9))
+* upload staff member profile picture ([40e730b](https://github.com/hei-school/hei-admin-api/commit/40e730b17fde513cd8c3d660df1ad02276629867))
+
+
+
 # [1.83.0](https://github.com/hei-school/hei-admin-api/compare/v1.82.0...v1.83.0) (2024-11-28)
 
 
@@ -105,29 +118,6 @@
 ### Features
 
 * filter exams and get exam by id ([834db9d](https://github.com/hei-school/hei-admin-api/commit/834db9d1fad3e57e3714585be9a1adeb3317a2f9))
-
-
-
-# [1.75.0](https://github.com/hei-school/hei-admin-api/compare/v1.70.0...v1.75.0) (2024-11-07)
-
-
-### Bug Fixes
-
-* course id null while creating an event ([b63feb9](https://github.com/hei-school/hei-admin-api/commit/b63feb901e6536788d61a34159fb8e5583e8b88b))
-* disbale test failing ([34eea1e](https://github.com/hei-school/hei-admin-api/commit/34eea1ec60f05f888926520bfca24643b4ca21bb))
-* security conf for students promotin generation  ([3bb12a0](https://github.com/hei-school/hei-admin-api/commit/3bb12a0ff1a0680da6fe617e69ec3d65eb732a43))
-* update status after mpbs  ([408676a](https://github.com/hei-school/hei-admin-api/commit/408676a1052341e6f38464a166b9931c7d9d50b1))
-* xlsx cell instant format  ([3a7276d](https://github.com/hei-school/hei-admin-api/commit/3a7276d97df5dcdce5cbfa5fdd4d98007f87df15))
-
-
-### Features
-
-* generate fees as xlsx  ([c124501](https://github.com/hei-school/hei-admin-api/commit/c124501336010598be3c802fd395aafd11942abf))
-* generate students group in xlsx ([6922fed](https://github.com/hei-school/hei-admin-api/commit/6922feddd8f07dd3b5aedac9b9476e09cea4a991))
-* generate students promotion in xlsx  ([ca7ef7e](https://github.com/hei-school/hei-admin-api/commit/ca7ef7ebcc478a18907d7184fbe0a28f7cfde393))
-* **not-implemented:** add endpoint specific for exams creation and retrieve ([56063df](https://github.com/hei-school/hei-admin-api/commit/56063df42d44a2b9447afcd9e28b2a18df39bd6a))
-* **not-implemented:** get monthy fees statistics ([cff0772](https://github.com/hei-school/hei-admin-api/commit/cff07722f3364fcb839366b980a722e56956cceb))
-* stats is available in event model ([c489d9e](https://github.com/hei-school/hei-admin-api/commit/c489d9ed86d3358bbabccc553ba35bcbe441f20f))
 
 
 
