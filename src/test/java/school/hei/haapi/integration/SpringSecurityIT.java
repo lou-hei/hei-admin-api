@@ -20,7 +20,6 @@ import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 @Testcontainers
 @AutoConfigureMockMvc
 class SpringSecurityIT extends FacadeITMockedThirdParties {
-  @Value("${test.aws.cognito.idToken}")
+  // @Value("${test.aws.cognito.idToken}")
   private String bearer;
 
   @BeforeEach
