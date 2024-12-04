@@ -364,6 +364,8 @@ public class SecurityConf {
                     .requestMatchers(
                         new SelfMatcher(POST, "/staff_members/*/picture/raw", "staff_members"))
                     .hasRole(STAFF_MEMBER.getRole())
+                    .requestMatchers(POST, "/staff_members/*/picture/raw")
+                    .hasRole(ADMIN.getRole())
                     // STUDENTS
                     .requestMatchers(GET, "/students")
                     .hasAnyRole(
@@ -683,8 +685,7 @@ public class SecurityConf {
                     .requestMatchers(GET, "/staff_members/*")
                     .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(PUT, "/staff_members/*")
-                    .hasAnyRole(ADMIN.getRole())
-
+                    .hasAnyRole(ADMIN.getRole(), STAFF_MEMBER.getRole())
                     //
                     // Letter resources
                     //
