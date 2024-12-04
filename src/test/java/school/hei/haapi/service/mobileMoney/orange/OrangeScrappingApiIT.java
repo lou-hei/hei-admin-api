@@ -5,10 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.endpoint.rest.model.MobileMoneyType.ORANGE_MONEY;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.SUCCESS;
-import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -27,20 +25,15 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.http.model.OrangeDailyTransactionScrappingDetails;
 import school.hei.haapi.http.model.OrangeTransactionScrappingDetails;
 import school.hei.haapi.http.model.TransactionDetails;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = OrangeScrappingApiIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-class OrangeScrappingApiIT extends MockedThirdParties {
+class OrangeScrappingApiIT extends FacadeITMockedThirdParties {
   @Autowired OrangeScrappingApi subject;
   @Autowired ObjectMapper objectMapper;
   private HttpClient httpClientMock;
@@ -142,14 +135,5 @@ class OrangeScrappingApiIT extends MockedThirdParties {
             .pspTransactionAmount(300)
             .status(SUCCESS)
             .build());
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }
