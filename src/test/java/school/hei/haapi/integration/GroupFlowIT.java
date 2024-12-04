@@ -3,43 +3,41 @@ package school.hei.haapi.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.endpoint.rest.model.CreateGroupFlow.MoveTypeEnum.JOIN;
 import static school.hei.haapi.endpoint.rest.model.CreateGroupFlow.MoveTypeEnum.LEAVE;
-import static school.hei.haapi.integration.GroupFlowIT.ContextInitializer.SERVER_PORT;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.StudentIT.student2;
-import static school.hei.haapi.integration.conf.TestUtils.*;
+import static school.hei.haapi.integration.conf.TestUtils.GROUP1_ID;
+import static school.hei.haapi.integration.conf.TestUtils.GROUP2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.assertThrowsApiException;
+import static school.hei.haapi.integration.conf.TestUtils.group1;
+import static school.hei.haapi.integration.conf.TestUtils.group2;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
+import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
+import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.TeachingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.CreateGroupFlow;
-import school.hei.haapi.endpoint.rest.model.GroupFlow;
 import school.hei.haapi.endpoint.rest.model.Student;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = GroupFlowIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-@Slf4j
-@Disabled
-public class GroupFlowIT extends MockedThirdParties {
+public class GroupFlowIT extends FacadeITMockedThirdParties {
   @MockBean private EventBridgeClient eventBridgeClientMock;
 
   @BeforeEach
@@ -47,6 +45,10 @@ public class GroupFlowIT extends MockedThirdParties {
     setUpCognito(cognitoComponentMock);
     setUpEventBridge(eventBridgeClientMock);
     setUpS3Service(fileService, student1());
+  }
+
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   @Test
@@ -103,7 +105,7 @@ public class GroupFlowIT extends MockedThirdParties {
   }
 
   @Test
-  @DirtiesContext
+  @Disabled("dirty")
   void manager_moves_student2_to_group2_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     TeachingApi api = new TeachingApi(manager1Client);
@@ -122,13 +124,6 @@ public class GroupFlowIT extends MockedThirdParties {
                 student2moved, student1().groups(List.of(group1().size(1), group2().size(2))))));
   }
 
-  public GroupFlow student2GroupFlow() {
-    return new GroupFlow()
-        .groupId(GROUP1_ID)
-        .studentId(STUDENT2_ID)
-        .moveType(GroupFlow.MoveTypeEnum.LEAVE);
-  }
-
   public CreateGroupFlow createStudent1LeavesGroup1() {
     return new CreateGroupFlow().groupId(GROUP1_ID).studentId(STUDENT1_ID).moveType(LEAVE);
   }
@@ -139,18 +134,5 @@ public class GroupFlowIT extends MockedThirdParties {
 
   public CreateGroupFlow createStudent2LeavesGroup1() {
     return new CreateGroupFlow().groupId(GROUP1_ID).studentId(STUDENT2_ID).moveType(LEAVE);
-  }
-
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, SERVER_PORT);
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }
