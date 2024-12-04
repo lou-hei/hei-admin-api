@@ -1,9 +1,22 @@
 package school.hei.haapi.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.integration.StudentIT.student1;
-import static school.hei.haapi.integration.conf.TestUtils.*;
+import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.assertThrowsApiException;
+import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
+import static school.hei.haapi.integration.conf.TestUtils.createExam1;
+import static school.hei.haapi.integration.conf.TestUtils.exam1;
+import static school.hei.haapi.integration.conf.TestUtils.exam2;
+import static school.hei.haapi.integration.conf.TestUtils.exam3;
+import static school.hei.haapi.integration.conf.TestUtils.exam4;
+import static school.hei.haapi.integration.conf.TestUtils.exam5;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
+import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 
 import java.time.Instant;
 import java.util.List;
@@ -11,27 +24,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.TeachingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.ExamInfo;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = ExamIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-@Disabled
-class ExamIT extends MockedThirdParties {
+class ExamIT extends FacadeITMockedThirdParties {
   // TODO: some resources are not implemented yet then test failed
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, ExamIT.ContextInitializer.SERVER_PORT);
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   @BeforeEach
@@ -147,7 +153,7 @@ class ExamIT extends MockedThirdParties {
   }
 
   @Test
-  @DirtiesContext
+  @Disabled("dirty")
   void teacher_create_or_update_exam_ok() throws ApiException {
     ApiClient teacher1Client = anApiClient(TEACHER1_TOKEN);
     TeachingApi api = new TeachingApi(teacher1Client);
@@ -157,21 +163,12 @@ class ExamIT extends MockedThirdParties {
   }
 
   @Test
-  @DirtiesContext
+  @Disabled("dirty")
   void manager_create_or_update_exam_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     TeachingApi api = new TeachingApi(manager1Client);
     ExamInfo actualCreat = api.createOrUpdateExamsInfos(createExam1());
 
     assertEquals(exam1(), actualCreat);
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }
