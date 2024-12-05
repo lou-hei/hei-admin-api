@@ -89,7 +89,7 @@ public class SecurityConf {
                     antMatcher(GET, "/staff_members"),
                     antMatcher(PUT, "/staff_members"),
                     antMatcher(GET, "/staff_members/*"),
-                    antMatcher(GET, "/staff_members/*"),
+                    antMatcher(PUT, "/staff_members/*"),
                     antMatcher(GET, "/teachers/announcements"),
                     antMatcher(GET, "/students/announcements"),
                     antMatcher(GET, "/students/announcements/*"),
