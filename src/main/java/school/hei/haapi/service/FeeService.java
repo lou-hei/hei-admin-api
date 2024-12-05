@@ -265,9 +265,8 @@ public class FeeService {
 
   public UnpaidFeesReminder toUnpaidFeesReminder(Fee fee) {
     return UnpaidFeesReminder.builder()
-        .studentEmail(fee.getStudent().getEmail())
+        .user(UnpaidFeesReminder.UnpaidFeesUser.from(fee.getStudent()))
         .remainingAmount(fee.getRemainingAmount())
-        .id(fee.getId())
         .dueDatetime(fee.getDueDatetime())
         .build();
   }
