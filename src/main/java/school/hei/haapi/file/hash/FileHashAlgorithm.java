@@ -1,4 +1,4 @@
-package school.hei.haapi.file;
+package school.hei.haapi.file.hash;
 
 import school.hei.haapi.PojaGenerated;
 

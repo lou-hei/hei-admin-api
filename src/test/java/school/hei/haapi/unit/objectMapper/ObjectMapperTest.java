@@ -8,9 +8,8 @@ import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import school.hei.haapi.conf.FacadeIT;
 
-public class ObjectMapperTest extends FacadeIT {
+public class ObjectMapperTest extends school.hei.haapi.integration.conf.FacadeITMockedThirdParties {
   @Autowired ObjectMapper injectedBean;
   ObjectMapper newInstance = new ObjectMapper();
 

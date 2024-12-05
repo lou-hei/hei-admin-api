@@ -60,45 +60,45 @@ public class SchoolFileIT extends FacadeITMockedThirdParties {
 
   private static final String OCS_MOCKED_RESPONSE =
       """
-          {
-            "ocs": {
-              "meta": {
-                "status": "ok",
-                "statuscode": 100,
-                "message": null,
-                "totalitems": "",
-                "itemsperpage": ""
-              },
-              "data": {
-                "id": "130",
-                "share_type": 3,
-                "uid_owner": "ilo",
-                "displayname_owner": "john",
-                "permissions": 15,
-                "stime": 1719915415,
-                "parent": null,
-                "expiration": "2024-07-03 00:00:00",
-                "token": "vDq5Er8qizxQOEB",
-                "uid_file_owner": "john",
-                "displayname_file_owner": "john",
-                "additional_info_owner": null,
-                "additional_info_file_owner": null,
-                "path": "/Test-api",
-                "mimetype": "httpd/unix-directory",
-                "storage_id": "object::user:john",
-                "storage": 66,
-                "item_type": "folder",
-                "item_source": 22602,
-                "file_source": 22602,
-                "file_parent": 22570,
-                "file_target": "/Test-api",
-                "name": "test",
-                "url": "https://owncloud.example.com/s/vDq5Er8qizxQOEB",
-                "mail_send": 0,
-                "attributes": null
-              }
-            }
-          }""";
+      {
+        "ocs": {
+          "meta": {
+            "status": "ok",
+            "statuscode": 100,
+            "message": null,
+            "totalitems": "",
+            "itemsperpage": ""
+          },
+          "data": {
+            "id": "130",
+            "share_type": 3,
+            "uid_owner": "ilo",
+            "displayname_owner": "john",
+            "permissions": 15,
+            "stime": 1719915415,
+            "parent": null,
+            "expiration": "2024-07-03 00:00:00",
+            "token": "vDq5Er8qizxQOEB",
+            "uid_file_owner": "john",
+            "displayname_file_owner": "john",
+            "additional_info_owner": null,
+            "additional_info_file_owner": null,
+            "path": "/Test-api",
+            "mimetype": "httpd/unix-directory",
+            "storage_id": "object::user:john",
+            "storage": 66,
+            "item_type": "folder",
+            "item_source": 22602,
+            "file_source": 22602,
+            "file_parent": 22570,
+            "file_target": "/Test-api",
+            "name": "test",
+            "url": "https://owncloud.example.com/s/vDq5Er8qizxQOEB",
+            "mail_send": 0,
+            "attributes": null
+          }
+        }
+      }""";
 
   @Test
   void manager_get_share_link() throws ApiException {

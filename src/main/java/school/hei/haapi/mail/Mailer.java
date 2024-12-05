@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import school.hei.haapi.PojaGenerated;
-import school.hei.haapi.file.FileTyper;
+import school.hei.haapi.file.zip.FileTyper;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.ses.model.RawMessage;
 import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;

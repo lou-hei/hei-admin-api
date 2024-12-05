@@ -183,10 +183,10 @@ public class FeeService {
 
     List<Fee> feesToSave =
         switch (frequency) {
-          case MONTHLY -> createFeesFromFeeTemplate(
-              MONTHLY_FEE_TEMPLATE_NAME, user, firstDueDatetime);
-          case YEARLY -> createFeesFromFeeTemplate(
-              YEARLY_FEE_TEMPLATE_NAME, user, firstDueDatetime);
+          case MONTHLY ->
+              createFeesFromFeeTemplate(MONTHLY_FEE_TEMPLATE_NAME, user, firstDueDatetime);
+          case YEARLY ->
+              createFeesFromFeeTemplate(YEARLY_FEE_TEMPLATE_NAME, user, firstDueDatetime);
         };
     return feeRepository.saveAll(feesToSave);
   }

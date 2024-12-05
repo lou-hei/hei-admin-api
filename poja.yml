@@ -1,46 +1,57 @@
-app_name: haapi
-aurora_auto_pause: 'null'
-aurora_max_capacity: null
-aurora_min_capacity: null
-aurora_scale_point: null
-aurora_sleep: 300
-aws_account_id: 057045785189
-cli_version: 15.1.1
-codeartifact_domain_name: npm-hei-lab
-codeartifact_repository_name: hei-store
-custom_java_deps: poja-custom-java-deps.txt
-custom_java_env_vars: poja-custom-java-env-vars.txt
-custom_java_repositories: poja-custom-java-repositories.txt
-database_non_root_password: null
-database_non_root_username: null
-frontal_function_timeout: 600
-frontal_memory: 2048
-frontal_reserved_concurrent_executions_nb: null
-jacoco_min_coverage: '0.7'
-java_facade_it: FacadeIT
-package_full_name: school.hei.haapi
-poja_domain_owner: 088312068315
-poja_python_repository_domain: python-numer-tech
-poja_python_repository_name: numer-python-store
-prod_db_cluster_timeout: '300'
-region: eu-west-3
-ses_source: contact@hei.school
-ssm_sg_id: /haapi/sg/id
-ssm_subnet1_id: /haapi/subnet/private1/id
-ssm_subnet2_id: /haapi/subnet/private2/id
-ts_client_api_url_env_var_name: REACT_APP_API_URL
-ts_client_default_openapi_server_url: api-dev.hei.school
-with_codeql: 'false'
-with_database: non-poja-managed-postgres
-with_gen_clients: 'true'
-with_own_vpc: 'true'
-with_publish_to_npm_registry: 'true'
-with_sentry: 'true'
-with_snapstart: 'true'
-with_sonar: 'false'
-with_swagger_ui: 'true'
-worker_batch: 5
-worker_function_1_timeout: 600
-worker_function_2_timeout: 600
-worker_memory: 1024
-worker_reserved_concurrent_executions_nb: null
+compute:
+  frontal_function_timeout: 600
+  frontal_memory: 2048
+  worker_batch: 5
+  worker_function_1_timeout: 600
+  worker_function_2_timeout: 600
+  worker_memory: 1024
+concurrency:
+  frontal_reserved_concurrent_executions_nb: null
+  worker_reserved_concurrent_executions_nb: null
+database:
+  aurora_auto_pause: 'false'
+  aurora_max_capacity: null
+  aurora_min_capacity: null
+  aurora_scale_point: null
+  aurora_sleep: null
+  database_non_root_password: null
+  database_non_root_username: null
+  prod_db_cluster_timeout: '300'
+  with_database: non-poja-managed-postgres
+emailing:
+  ses_source: contact@hei.school
+gen_api_client:
+  aws_account_id: 057045785189
+  codeartifact_domain_name: npm-hei-lab
+  codeartifact_repository_name: hei-store
+  ts_client_api_url_env_var_name: REACT_APP_API_URL
+  ts_client_default_openapi_server_url: api-dev.hei.school
+  with_gen_clients: 'true'
+  with_publish_to_npm_registry: 'true'
+general:
+  app_name: haapi
+  cli_version: 18.1.2
+  custom_java_deps: poja-custom-java-deps.txt
+  custom_java_env_vars: poja-custom-java-env-vars.txt
+  custom_java_repositories: poja-custom-java-repositories.txt
+  package_full_name: school.hei.haapi
+  poja_domain_owner: 088312068315
+  poja_python_repository_domain: python-numer-tech
+  poja_python_repository_name: numer-python-store
+  with_queues_nb: 2
+  with_snapstart: 'true'
+integration:
+  with_codeql: 'false'
+  with_file_storage: 'true'
+  with_sentry: 'true'
+  with_sonar: 'false'
+  with_swagger_ui: 'false'
+networking:
+  region: eu-west-3
+  ssm_sg_id: /haapi/sg/id
+  ssm_subnet1_id: /haapi/subnet/private1/id
+  ssm_subnet2_id: /haapi/subnet/private2/id
+  with_own_vpc: 'true'
+testing:
+  jacoco_min_coverage: '0.7'
+  java_facade_it: school.hei.haapi.integration.conf.FacadeITMockedThirdParties

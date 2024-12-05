@@ -6,12 +6,11 @@ import static school.hei.haapi.endpoint.rest.controller.health.PingController.OK
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import school.hei.haapi.PojaGenerated;
-import school.hei.haapi.conf.FacadeIT;
 import school.hei.haapi.endpoint.rest.controller.health.HealthDbController;
 import school.hei.haapi.endpoint.rest.controller.health.PingController;
 
 @PojaGenerated
-class HealthControllerIT extends FacadeIT {
+class HealthControllerIT extends school.hei.haapi.integration.conf.FacadeITMockedThirdParties {
 
   @Autowired PingController pingController;
   @Autowired HealthDbController healthDbController;
