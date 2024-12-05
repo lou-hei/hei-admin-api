@@ -2033,7 +2033,7 @@ paths:
           content:
             application/json:
               schema:
-                 $ref: '#/components/schemas/StaffMember'
+                $ref: '#/components/schemas/StaffMember'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -2408,6 +2408,16 @@ paths:
         - Paying
       summary: Get all student fees filtered by status and month
       parameters:
+        - name: transaction_status
+          required: false
+          in: query
+          schema:
+            $ref: '#/components/schemas/MpbsStatus'
+        - name: type
+          required: false
+          in: query
+          schema:
+            $ref: '#/components/schemas/FeeTypeEnum'
         - name: status
           in: query
           description: "See the PaymentStatus object for its value."
@@ -2454,9 +2464,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Fee'
+                $ref: '#/components/schemas/FeesWithStats'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -3079,14 +3087,14 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/staff_members/{staff_member_id}/picture/raw':
+  '/staff_members/{staff_id}/picture/raw':
     post:
       tags:
         - Users
       summary: Upload staff member profile picture
       operationId: uploadStaffMemberProfilePicture
       parameters:
-        - name: staff_member_id
+        - name: staff_id
           in: path
           required: true
           schema:
@@ -3099,7 +3107,7 @@ paths:
               $ref: "#/components/schemas/UploadFile"
       responses:
         '200':
-          description: Admin updated
+          description: Staff updated
           content:
             application/json:
               schema:
@@ -5450,6 +5458,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Payment'
+    FeesWithStats:
+      properties:
+        statistics:
+          $ref: '#/components/schemas/FeesStatistics'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fee'
     Fee:
       allOf:
         - $ref: '#/components/schemas/CreateFee'
@@ -5974,17 +5990,13 @@ components:
           type: integer
         late_fees:
           type: integer
+        pending_transaction:
+          type: integer
+        paid_by_transaction:
+          type: integer
         total_monthly_fees:
           type: integer
         total_yearly_fees:
-          type: integer
-        total_of_actual_month_fees:
-          type: integer
-        total_paid_of_actual_month_fees:
-          type: integer
-        total_unpaid_of_actual_month_fees:
-          type: integer
-        total_late_of_actual_month_fees:
           type: integer
     Letter:
       type: object

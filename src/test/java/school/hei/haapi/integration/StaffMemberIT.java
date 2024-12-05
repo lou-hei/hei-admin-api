@@ -1,39 +1,37 @@
 package school.hei.haapi.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static school.hei.haapi.integration.conf.TestUtils.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.http.HttpResponse;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.UsersApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.StaffMember;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = StaffMemberIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-@Slf4j
-public class StaffMemberIT extends MockedThirdParties {
+public class StaffMemberIT extends FacadeITMockedThirdParties {
 
   @MockBean private EventBridgeClient eventBridgeClientMock;
+  @Autowired ObjectMapper objectMapper;
 
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, StaffMemberIT.ContextInitializer.SERVER_PORT);
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   @BeforeEach
@@ -69,7 +67,7 @@ public class StaffMemberIT extends MockedThirdParties {
   }
 
   @Test
-  void manager_read_ko() throws ApiException {
+  void manager_read_ko() {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     UsersApi api = new UsersApi(apiClient);
 
@@ -77,12 +75,26 @@ public class StaffMemberIT extends MockedThirdParties {
     assertThrowsForbiddenException(() -> api.getStaffMemberById(STAFF_MEMBER1_ID));
   }
 
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
+  @Test
+  void staff_upload_profile_picture() throws IOException, InterruptedException {
 
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
+    HttpResponse<InputStream> response =
+        uploadProfilePicture(localPort, STAFF_MEMBER1_TOKEN, STAFF_MEMBER1_ID, "staff_members");
+
+    StaffMember staffMember = objectMapper.readValue(response.body(), StaffMember.class);
+
+    assertEquals("STF21001", staffMember.getRef());
+    assertEquals(200, response.statusCode());
+  }
+
+  @Test
+  void admin_upload_profile_picture() throws IOException, InterruptedException {
+    HttpResponse<InputStream> response =
+        uploadProfilePicture(localPort, ADMIN1_TOKEN, STAFF_MEMBER1_ID, "staff_members");
+
+    StaffMember staffMember = objectMapper.readValue(response.body(), StaffMember.class);
+
+    assertEquals("STF21001", staffMember.getRef());
+    assertEquals(200, response.statusCode());
   }
 }

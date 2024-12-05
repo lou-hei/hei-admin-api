@@ -1,4 +1,4 @@
-package school.hei.haapi.file;
+package school.hei.haapi.file.bucket;
 
 import static java.io.File.createTempFile;
 
@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import school.hei.haapi.PojaGenerated;
+import school.hei.haapi.file.hash.FileHash;
+import school.hei.haapi.file.hash.FileHashAlgorithm;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;

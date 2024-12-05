@@ -11,11 +11,11 @@ import com.amazonaws.services.lambda.runtime.events.SQSEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import school.hei.haapi.PojaGenerated;
-import school.hei.haapi.conf.FacadeIT;
 import school.hei.haapi.endpoint.event.consumer.model.ConsumableEvent;
 import school.hei.haapi.endpoint.event.consumer.model.ConsumableEventTyper;
 import school.hei.haapi.endpoint.event.consumer.model.TypedEvent;
@@ -24,7 +24,8 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 
 @PojaGenerated
-public class ConsumableEventTyperTest extends FacadeIT {
+public class ConsumableEventTyperTest
+    extends school.hei.haapi.integration.conf.FacadeITMockedThirdParties {
   public static final String UNKNOWN_TYPENAME = "unknown_typename";
   @Autowired ConsumableEventTyper subject;
   @Autowired ObjectMapper om;
@@ -38,6 +39,7 @@ public class ConsumableEventTyperTest extends FacadeIT {
             + "\", \"detail\":"
             + om.writeValueAsString(typedEvent.payload())
             + "}");
+    message.setAttributes(Map.of("ApproximateReceiveCount", "1"));
     return message;
   }
 

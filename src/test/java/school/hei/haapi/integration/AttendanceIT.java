@@ -1,26 +1,11 @@
 package school.hei.haapi.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static school.hei.haapi.integration.StudentIT.*;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.StudentIT.student2;
-import static school.hei.haapi.integration.StudentIT.student3;
-import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
-import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_TOKEN;
-import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
-import static school.hei.haapi.integration.conf.TestUtils.assertThrowsApiException;
-import static school.hei.haapi.integration.conf.TestUtils.awardedCourse1;
-import static school.hei.haapi.integration.conf.TestUtils.course1;
-import static school.hei.haapi.integration.conf.TestUtils.course2;
-import static school.hei.haapi.integration.conf.TestUtils.course3;
-import static school.hei.haapi.integration.conf.TestUtils.group1;
-import static school.hei.haapi.integration.conf.TestUtils.group2;
-import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
-import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
-import static school.hei.haapi.integration.conf.TestUtils.teacher1;
-import static school.hei.haapi.integration.conf.TestUtils.teacher2;
-import static school.hei.haapi.integration.conf.TestUtils.teacher4;
+import static school.hei.haapi.integration.conf.TestUtils.*;
 
 import java.time.Instant;
 import java.util.List;
@@ -28,37 +13,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.event.model.CheckAttendanceTriggered;
 import school.hei.haapi.endpoint.rest.api.AttendanceApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
-import school.hei.haapi.endpoint.rest.model.AttendanceMovementType;
-import school.hei.haapi.endpoint.rest.model.AttendanceStatus;
-import school.hei.haapi.endpoint.rest.model.AwardedCourse;
-import school.hei.haapi.endpoint.rest.model.CourseSession;
-import school.hei.haapi.endpoint.rest.model.CreateAttendanceMovement;
-import school.hei.haapi.endpoint.rest.model.PlaceEnum;
-import school.hei.haapi.endpoint.rest.model.StudentAttendance;
-import school.hei.haapi.endpoint.rest.model.StudentAttendanceMovement;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.endpoint.rest.model.*;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 import school.hei.haapi.service.event.CheckAttendanceTriggeredService;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = AttendanceIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-class AttendanceIT extends MockedThirdParties {
+class AttendanceIT extends FacadeITMockedThirdParties {
   private static final Instant DEFAULT_FROM = Instant.parse("2021-08-07T07:30:00.00Z");
   private static final Instant DEFAULT_TO = Instant.parse("2021-11-09T07:30:00.00Z");
   @Autowired CheckAttendanceTriggeredService checkAttendanceTriggeredService;
 
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, ContextInitializer.SERVER_PORT);
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   @BeforeEach
@@ -163,7 +136,7 @@ class AttendanceIT extends MockedThirdParties {
             DEFAULT_TO,
             List.of(AttendanceStatus.MISSING));
     assertEquals(1, actualWithCourse2IdAndMissing.size());
-    assertTrue(actualWithCourse2IdAndMissing.containsAll(List.of(attendance6Missing())));
+    assertTrue(actualWithCourse2IdAndMissing.contains(attendance6Missing()));
   }
 
   @Test
@@ -201,14 +174,15 @@ class AttendanceIT extends MockedThirdParties {
             .student(student1())
             .attendanceMovementType(AttendanceMovementType.IN);
 
-    assertEquals(expected.getCreatedAt(), actual.get(0).getCreatedAt());
-    assertEquals(expected.getAttendanceMovementType(), actual.get(0).getAttendanceMovementType());
-    assertEquals(expected.getPlace(), actual.get(0).getPlace());
-    assertEquals(expected.getStudent(), actual.get(0).getStudent());
+    assertEquals(expected.getCreatedAt(), actual.getFirst().getCreatedAt());
+    assertEquals(
+        expected.getAttendanceMovementType(), actual.getFirst().getAttendanceMovementType());
+    assertEquals(expected.getPlace(), actual.getFirst().getPlace());
+    assertEquals(expected.getStudent(), actual.getFirst().getStudent());
   }
 
   @Test
-  void manager_create_attendance_with_no_student_id() throws ApiException {
+  void manager_create_attendance_with_no_student_id() {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     AttendanceApi api = new AttendanceApi(manager1Client);
 
@@ -224,14 +198,6 @@ class AttendanceIT extends MockedThirdParties {
         .course(course2())
         .group(group1())
         .mainTeacher(teacher4());
-  }
-
-  public static AwardedCourse awardedCourse5() {
-    return new AwardedCourse()
-        .id("awarded_course5_id")
-        .course(course3())
-        .group(group2())
-        .mainTeacher(teacher2());
   }
 
   public static CourseSession courseSession1() {
@@ -337,14 +303,5 @@ class AttendanceIT extends MockedThirdParties {
         .attendanceMovementType(AttendanceMovementType.IN)
         .studentId("student_id_ko")
         .createdAt(Instant.parse("2021-11-08T07:30:00.00Z"));
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }

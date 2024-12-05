@@ -1,5 +1,7 @@
 package school.hei.haapi.endpoint.event.consumer.model;
 
+import static java.lang.Integer.parseInt;
+
 import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +28,8 @@ public class ConsumableEventTyper implements Function<List<SQSMessage>, List<Con
 
   private static final String DETAIL_PROPERTY = "detail";
   private static final String DETAIL_TYPE_PROPERTY = "detail-type";
+  private static final String SQS_APPROXIMATE_RECEIVE_COUNT_SQS_ATTRIBUTE =
+      "ApproximateReceiveCount";
 
   private final ObjectMapper om;
   private final EventConf eventConf;
@@ -45,7 +49,9 @@ public class ConsumableEventTyper implements Function<List<SQSMessage>, List<Con
       String sqsQueueUrl = typedEvent.payload().getEventStack().getSqsQueueUrl();
       ConsumableEvent consumableEvent =
           new ConsumableEvent(
-              typedEvent, acknowledger(message, sqsQueueUrl), failer(message, sqsQueueUrl));
+              typedEvent,
+              acknowledger(message, sqsQueueUrl),
+              visibilityChanger(message, sqsQueueUrl));
       res.add(consumableEvent);
     }
     return res;
@@ -56,8 +62,12 @@ public class ConsumableEventTyper implements Function<List<SQSMessage>, List<Con
     TypeReference<Map<String, Object>> typeRef = new TypeReference<>() {};
     Map<String, Object> body = om.readValue(message.getBody(), typeRef);
     String typeName = body.get(DETAIL_TYPE_PROPERTY).toString();
-    return new TypedEvent(
-        typeName, (PojaEvent) om.convertValue(body.get(DETAIL_PROPERTY), Class.forName(typeName)));
+    var pojaEvent = (PojaEvent) om.convertValue(body.get(DETAIL_PROPERTY), Class.forName(typeName));
+    var sqsMessageAttributes = message.getAttributes();
+    pojaEvent.setAttemptNb(
+        parseInt(sqsMessageAttributes.get(SQS_APPROXIMATE_RECEIVE_COUNT_SQS_ATTRIBUTE)));
+
+    return new TypedEvent(typeName, pojaEvent);
   }
 
   private Runnable acknowledger(SQSMessage message, String sqsQueueUrl) {
@@ -72,7 +82,7 @@ public class ConsumableEventTyper implements Function<List<SQSMessage>, List<Con
     };
   }
 
-  private Runnable failer(SQSMessage message, String sqsQueueUrl) {
+  private Runnable visibilityChanger(SQSMessage message, String sqsQueueUrl) {
     return () -> {
       var newRandomVisibility =
           (int) (toTypedEvent(message).payload()).randomVisibilityTimeout().toSeconds();

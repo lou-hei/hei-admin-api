@@ -2,33 +2,38 @@ package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.integration.StudentIT.student1;
-import static school.hei.haapi.integration.conf.TestUtils.*;
+import static school.hei.haapi.integration.conf.TestUtils.FEE_TEMPLATE1_ID;
+import static school.hei.haapi.integration.conf.TestUtils.FEE_TEMPLATE1_NAME;
+import static school.hei.haapi.integration.conf.TestUtils.FEE_TEMPLATE2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.createFeeTemplate2;
+import static school.hei.haapi.integration.conf.TestUtils.feeTemplate1;
+import static school.hei.haapi.integration.conf.TestUtils.feeTemplate2;
+import static school.hei.haapi.integration.conf.TestUtils.feeTemplate3;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
+import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
+import static school.hei.haapi.integration.conf.TestUtils.updateFeeTemplate1;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.PayingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.FeeTemplate;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = FeeTemplateIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-public class FeeTemplateIT extends MockedThirdParties {
+public class FeeTemplateIT extends FacadeITMockedThirdParties {
 
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, FeeTemplateIT.ContextInitializer.SERVER_PORT);
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   @BeforeEach
@@ -104,14 +109,5 @@ public class FeeTemplateIT extends MockedThirdParties {
     FeeTemplate actual = api.getFeeTemplateById(FEE_TEMPLATE1_ID);
 
     assertEquals(feeTemplate1(), actual);
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }

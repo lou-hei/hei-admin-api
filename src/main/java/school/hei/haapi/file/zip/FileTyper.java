@@ -1,4 +1,4 @@
-package school.hei.haapi.file;
+package school.hei.haapi.file.zip;
 
 import static org.springframework.http.MediaType.parseMediaType;
 

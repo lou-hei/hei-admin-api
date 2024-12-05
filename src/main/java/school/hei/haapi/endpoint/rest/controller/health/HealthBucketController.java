@@ -3,7 +3,7 @@ package school.hei.haapi.endpoint.rest.controller.health;
 import static java.io.File.createTempFile;
 import static java.nio.file.Files.createTempDirectory;
 import static java.util.UUID.randomUUID;
-import static school.hei.haapi.file.FileHashAlgorithm.NONE;
+import static school.hei.haapi.file.hash.FileHashAlgorithm.NONE;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,8 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import school.hei.haapi.PojaGenerated;
-import school.hei.haapi.file.BucketComponent;
-import school.hei.haapi.file.FileHash;
+import school.hei.haapi.file.bucket.BucketComponent;
+import school.hei.haapi.file.hash.FileHash;
 
 @PojaGenerated
 @RestController

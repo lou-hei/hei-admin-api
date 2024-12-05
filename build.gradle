@@ -6,11 +6,11 @@ plugins {
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.3'
 
-    id 'org.openapi.generator' version '7.4.0'
+    id 'org.openapi.generator' version '7.7.0'
 
     id 'jacoco'
 
-
+    
 }
 
 jacoco {
@@ -128,7 +128,7 @@ jacocoTestReport {
         }))
     }
     doLast {
-        def coverageReportFile = file("$buildDir/reports/jacoco/test/jacocoTestReport.xml")
+        def coverageReportFile = file("$rootDir/build/reports/jacoco/test/jacocoTestReport.xml")
 
         if (coverageReportFile.exists()) {
             def xmlParser = new XmlParser()
@@ -137,11 +137,19 @@ jacocoTestReport {
 
             def xml = xmlParser.parse(coverageReportFile)
 
-            def totalLines = xml.'counter'.find { it.@type == 'LINE' }.@missed.toInteger() + xml.'counter'.find { it.@type == 'LINE' }.@covered.toInteger()
-            def coveredLines = xml.'counter'.find { it.@type == 'LINE' }.@covered.toInteger()
-            def coverageRate = coveredLines / totalLines.toDouble() * 100
-
-            println "Total Line Coverage Rate: ${coverageRate.round(2)}%"
+            def lineCounter = xml.'counter'.find { it.@type == 'LINE' }
+            if (lineCounter != null) {
+                def totalLines = lineCounter.@missed?.toInteger() + lineCounter.@covered?.toInteger() ?: 0
+                def coveredLines = lineCounter.@covered?.toInteger() ?: 0
+                if (totalLines > 0) {
+                    def coverageRate = coveredLines / totalLines.toDouble() * 100
+                    println "Total Line Coverage Rate: ${coverageRate.round(2)}%"
+                } else {
+                    println "No lines were covered or missed in the report."
+                }
+            } else {
+                println "No LINE coverage counter found in the JaCoCo report."
+            }
         } else {
             println "No JaCoCo coverage report found. Make sure you run 'gradle test jacocoTestReport' first."
         }
@@ -152,7 +160,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.flywaydb:flyway-core'
-    testImplementation 'org.testcontainers:postgresql:1.19.4'
+    testImplementation 'org.testcontainers:postgresql:1.20.0'
     implementation 'org.postgresql:postgresql'
     implementation 'org.xerial:sqlite-jdbc:3.45.1.0'
     implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.3.Final'
@@ -220,5 +228,6 @@ implementation 'org.dhatim:fastexcel-reader:0.18.4'
 implementation 'org.dhatim:fastexcel:0.18.4'
 testImplementation 'org.mockito:mockito-core:5.3.1'
 
-implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+    
+
 }

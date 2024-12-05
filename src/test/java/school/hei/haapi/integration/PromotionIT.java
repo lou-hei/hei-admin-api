@@ -1,11 +1,9 @@
 package school.hei.haapi.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static school.hei.haapi.integration.PromotionIT.ContextInitializer.SERVER_PORT;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.PROMOTION1_ID;
@@ -13,7 +11,6 @@ import static school.hei.haapi.integration.conf.TestUtils.PROMOTION3_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.addGroupToPromotion3;
-import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
 import static school.hei.haapi.integration.conf.TestUtils.createGroupIdentifier;
 import static school.hei.haapi.integration.conf.TestUtils.createPromotion4;
@@ -34,27 +31,22 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.PromotionsApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.CrupdatePromotion;
 import school.hei.haapi.endpoint.rest.model.Promotion;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = PromotionIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-public class PromotionIT extends MockedThirdParties {
+public class PromotionIT extends FacadeITMockedThirdParties {
 
-  private static ApiClient anApiClient(String token) {
-    return TestUtils.anApiClient(token, SERVER_PORT);
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   @BeforeEach
@@ -67,9 +59,9 @@ public class PromotionIT extends MockedThirdParties {
   void manager_generate_promotion_students_ok() throws IOException, InterruptedException {
     String STUDENTS_PROMOTION_PATH = "/promotions/" + PROMOTION1_ID + "/students";
     HttpClient httpClient = HttpClient.newBuilder().build();
-    String basePath = "http://localhost:" + SERVER_PORT;
+    String basePath = "http://localhost:" + localPort;
 
-    HttpResponse response =
+    HttpResponse<byte[]> response =
         httpClient.send(
             HttpRequest.newBuilder()
                 .uri(URI.create(basePath + STUDENTS_PROMOTION_PATH))
@@ -212,14 +204,5 @@ public class PromotionIT extends MockedThirdParties {
     assertThrowsForbiddenException(() -> teacherCallAPi.crupdatePromotion(createPromotion4()));
     assertThrowsForbiddenException(
         () -> teacherCallAPi.updatePromotionGroups(PROMOTION3_ID, addGroupToPromotion3()));
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }

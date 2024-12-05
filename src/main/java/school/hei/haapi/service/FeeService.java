@@ -22,7 +22,9 @@ import school.hei.haapi.endpoint.event.model.PojaEvent;
 import school.hei.haapi.endpoint.event.model.StudentsWithOverdueFeesReminder;
 import school.hei.haapi.endpoint.event.model.UnpaidFeesReminder;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
+import school.hei.haapi.endpoint.rest.model.FeeTypeEnum;
 import school.hei.haapi.endpoint.rest.model.FeesStatistics;
+import school.hei.haapi.endpoint.rest.model.MpbsStatus;
 import school.hei.haapi.endpoint.rest.model.PaymentFrequency;
 import school.hei.haapi.model.*;
 import school.hei.haapi.model.exception.ApiException;
@@ -128,13 +130,16 @@ public class FeeService {
   public List<Fee> getFees(
       PageFromOne page,
       BoundedPageSize pageSize,
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
       FeeStatusEnum status,
       Instant monthFrom,
       Instant monthTo,
       boolean isMpbs,
       String studentRef) {
     Pageable pageable = PageRequest.of(page.getValue() - 1, pageSize.getValue());
-    return feeDao.getByCriteria(status, studentRef, monthFrom, monthTo, isMpbs, pageable);
+    return feeDao.getByCriteria(
+        mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs, pageable);
   }
 
   public FeesStatistics getFeesStats(Instant monthFrom, Instant monthTo) {
@@ -178,10 +183,10 @@ public class FeeService {
 
     List<Fee> feesToSave =
         switch (frequency) {
-          case MONTHLY -> createFeesFromFeeTemplate(
-              MONTHLY_FEE_TEMPLATE_NAME, user, firstDueDatetime);
-          case YEARLY -> createFeesFromFeeTemplate(
-              YEARLY_FEE_TEMPLATE_NAME, user, firstDueDatetime);
+          case MONTHLY ->
+              createFeesFromFeeTemplate(MONTHLY_FEE_TEMPLATE_NAME, user, firstDueDatetime);
+          case YEARLY ->
+              createFeesFromFeeTemplate(YEARLY_FEE_TEMPLATE_NAME, user, firstDueDatetime);
         };
     return feeRepository.saveAll(feesToSave);
   }

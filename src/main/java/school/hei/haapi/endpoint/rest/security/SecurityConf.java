@@ -89,7 +89,7 @@ public class SecurityConf {
                     antMatcher(GET, "/staff_members"),
                     antMatcher(PUT, "/staff_members"),
                     antMatcher(GET, "/staff_members/*"),
-                    antMatcher(GET, "/staff_members/*"),
+                    antMatcher(PUT, "/staff_members/*"),
                     antMatcher(GET, "/teachers/announcements"),
                     antMatcher(GET, "/students/announcements"),
                     antMatcher(GET, "/students/announcements/*"),
@@ -259,6 +259,8 @@ public class SecurityConf {
                     .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(new SelfMatcher(PUT, "/admins/*", "admins"))
                     .hasAnyRole(ADMIN.getRole())
+                    .requestMatchers(new SelfMatcher(POST, "/admins/*/picture/raw", "admins"))
+                    .hasAnyRole(ADMIN.getRole())
                     //
                     // Announcements resources
                     //
@@ -362,6 +364,8 @@ public class SecurityConf {
                     .requestMatchers(
                         new SelfMatcher(POST, "/staff_members/*/picture/raw", "staff_members"))
                     .hasRole(STAFF_MEMBER.getRole())
+                    .requestMatchers(POST, "/staff_members/*/picture/raw")
+                    .hasRole(ADMIN.getRole())
                     // STUDENTS
                     .requestMatchers(GET, "/students")
                     .hasAnyRole(
@@ -681,8 +685,7 @@ public class SecurityConf {
                     .requestMatchers(GET, "/staff_members/*")
                     .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(PUT, "/staff_members/*")
-                    .hasAnyRole(ADMIN.getRole())
-
+                    .hasAnyRole(ADMIN.getRole(), STAFF_MEMBER.getRole())
                     //
                     // Letter resources
                     //

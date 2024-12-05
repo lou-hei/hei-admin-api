@@ -40,35 +40,35 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
   @Query(
       value =
           """
-    SELECT
-        f
-    FROM
-        Fee f
-    JOIN
-        User u ON f.student.id = u.id
-    WHERE
-        f.student.id = :studentId
-    ORDER BY
-      CASE
-        WHEN f.status = 'LATE' THEN 1
-        WHEN f.status = 'UNPAID' THEN 2
-        WHEN f.status = 'PAID' THEN 3
-      END ASC,
-      f.dueDatetime DESC,
-      f.id
-    """)
+          SELECT
+              f
+          FROM
+              Fee f
+          JOIN
+              User u ON f.student.id = u.id
+          WHERE
+              f.student.id = :studentId
+          ORDER BY
+            CASE
+              WHEN f.status = 'LATE' THEN 1
+              WHEN f.status = 'UNPAID' THEN 2
+              WHEN f.status = 'PAID' THEN 3
+            END ASC,
+            f.dueDatetime DESC,
+            f.id
+          """)
   List<Fee> findAllByStudentIdSortByStatusAndDueDatetimeDescAndId(
       String studentId, Pageable pageable);
 
   @Query(
       """
-        select f from Fee f
-        left join User u on f.student = u
-        where f.dueDatetime < :toCompare
-        and u.id = :studentId
-        and f.status = :status
-        and f.remainingAmount > 0
-        """)
+      select f from Fee f
+      left join User u on f.student = u
+      where f.dueDatetime < :toCompare
+      and u.id = :studentId
+      and f.status = :status
+      and f.remainingAmount > 0
+      """)
   List<Fee> getStudentFeesUnpaidOrLateFrom(
       @Param(value = "toCompare") Instant toCompare,
       @Param("studentId") String studentId,
@@ -83,15 +83,15 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
 
   @Query(
       """
-          SELECT
-            COUNT(f) AS totalFees,
-            SUM(CASE WHEN f.status = 'PAID' THEN 1 ELSE 0 END) AS paidFees,
-            SUM(CASE WHEN f.status = 'UNPAID' THEN 1 ELSE 0 END) AS unpaidFees
-          FROM Fee f
-          JOIN User s ON f.student = s
-          WHERE f.dueDatetime BETWEEN :from AND :to
-          AND s.status IN :statuses
-          """)
+      SELECT
+        COUNT(f) AS totalFees,
+        SUM(CASE WHEN f.status = 'PAID' THEN 1 ELSE 0 END) AS paidFees,
+        SUM(CASE WHEN f.status = 'UNPAID' THEN 1 ELSE 0 END) AS unpaidFees
+      FROM Fee f
+      JOIN User s ON f.student = s
+      WHERE f.dueDatetime BETWEEN :from AND :to
+      AND s.status IN :statuses
+      """)
   List<Object[]> getMonthlyFeeStatistics(
       @Param(value = "from") Instant monthFrom,
       @Param(value = "to") Instant monthTo,

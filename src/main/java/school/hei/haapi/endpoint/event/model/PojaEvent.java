@@ -1,18 +1,24 @@
 package school.hei.haapi.endpoint.event.model;
 
+import static java.lang.Math.random;
 import static school.hei.haapi.endpoint.event.EventStack.EVENT_STACK_1;
 
 import java.io.Serializable;
 import java.time.Duration;
+import lombok.Getter;
+import lombok.Setter;
 import school.hei.haapi.PojaGenerated;
 import school.hei.haapi.endpoint.event.EventStack;
 
 @PojaGenerated
 public abstract class PojaEvent implements Serializable {
+
+  @Getter @Setter protected int attemptNb;
+
   public abstract Duration maxConsumerDuration();
 
   private Duration randomConsumerBackoffBetweenRetries() {
-    return Duration.ofSeconds(maxConsumerBackoffBetweenRetries().toSeconds());
+    return Duration.ofSeconds((int) (random() * maxConsumerBackoffBetweenRetries().toSeconds()));
   }
 
   public abstract Duration maxConsumerBackoffBetweenRetries();

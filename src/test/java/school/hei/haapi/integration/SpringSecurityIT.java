@@ -2,13 +2,11 @@ package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.OPTIONS;
 import static org.springframework.http.HttpMethod.PUT;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.BAD_TOKEN;
-import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 
 import java.io.IOException;
@@ -22,22 +20,16 @@ import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = SpringSecurityIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-class SpringSecurityIT extends MockedThirdParties {
-  @Value("${test.aws.cognito.idToken}")
+class SpringSecurityIT extends FacadeITMockedThirdParties {
+  // @Value("${test.aws.cognito.idToken}")
   private String bearer;
 
   @BeforeEach
@@ -45,10 +37,9 @@ class SpringSecurityIT extends MockedThirdParties {
     setUpS3Service(fileService, student1());
   }
 
-  @Disabled("Cognito should be mocked")
   @Test
+  @Disabled("Cognito should be mocked")
   void authenticated_user_has_known_email() {
-    System.out.println("------------------------------test+-------------------");
     String email = cognitoComponentMock.getEmailByIdToken(bearer);
     assertEquals("test+ryan@hei.school", email);
   }
@@ -62,7 +53,7 @@ class SpringSecurityIT extends MockedThirdParties {
   void ping_with_cors() throws IOException, InterruptedException {
     // /!\ The HttpClient produced by openapi-generator SEEMS to not support text/plain
     HttpClient unauthenticatedClient = HttpClient.newBuilder().build();
-    String basePath = "http://localhost:" + SpringSecurityIT.ContextInitializer.SERVER_PORT;
+    String basePath = "http://localhost:" + localPort;
 
     HttpResponse<String> response =
         unauthenticatedClient.send(
@@ -80,7 +71,7 @@ class SpringSecurityIT extends MockedThirdParties {
     var headers = response.headers();
     var origins = headers.allValues("Access-Control-Allow-Origin");
     assertEquals(1, origins.size());
-    assertEquals("*", origins.get(0));
+    assertEquals("*", origins.getFirst());
   }
 
   @Test
@@ -89,9 +80,11 @@ class SpringSecurityIT extends MockedThirdParties {
     test_cors(PUT, "/students");
   }
 
+  @Test
+  @Disabled("was not annotated with @Test")
   void test_cors(HttpMethod method, String path) throws IOException, InterruptedException {
     HttpClient unauthenticatedClient = HttpClient.newBuilder().build();
-    String basePath = "http://localhost:" + SpringSecurityIT.ContextInitializer.SERVER_PORT;
+    String basePath = "http://localhost:" + localPort;
 
     HttpResponse<String> response =
         unauthenticatedClient.send(
@@ -107,10 +100,10 @@ class SpringSecurityIT extends MockedThirdParties {
     var headers = response.headers();
     var origins = headers.allValues("Access-Control-Allow-Origin");
     assertEquals(1, origins.size());
-    assertEquals("*", origins.get(0));
+    assertEquals("*", origins.getFirst());
     var headersList = headers.allValues("Access-Control-Allow-Headers");
     assertEquals(1, headersList.size());
-    assertEquals("authorization", headersList.get(0));
+    assertEquals("authorization", headersList.getFirst());
   }
 
   // TODO: For instance, we set the timezone to be UTC+3 through jackson-time-zone
@@ -121,14 +114,5 @@ class SpringSecurityIT extends MockedThirdParties {
     String utc = "+03:00";
     ZoneOffset offset = zoneId.getRules().getOffset(Instant.now());
     assertEquals(utc, offset.getId());
-  }
-
-  public static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }

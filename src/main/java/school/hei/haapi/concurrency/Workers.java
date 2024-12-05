@@ -16,7 +16,7 @@ import school.hei.haapi.PojaGenerated;
 
 @PojaGenerated
 @Component
-public class Workers<T> {
+public class Workers {
   private final ExecutorService executorService;
 
   public Workers() {

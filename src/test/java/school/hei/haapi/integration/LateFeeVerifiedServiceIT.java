@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
-import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
 import static school.hei.haapi.model.User.Role.STUDENT;
 import static school.hei.haapi.model.User.Status.ENABLED;
 import static school.hei.haapi.model.User.Status.SUSPENDED;
@@ -16,24 +14,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.event.model.LateFeeVerified;
-import school.hei.haapi.integration.conf.AbstractContextInitializer;
-import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.mail.Email;
 import school.hei.haapi.mail.Mailer;
 import school.hei.haapi.model.User;
 import school.hei.haapi.repository.UserRepository;
 import school.hei.haapi.service.event.LateFeeVerifiedService;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-@ContextConfiguration(initializers = LateFeeVerifiedServiceIT.ContextInitializer.class)
 @AutoConfigureMockMvc
-public class LateFeeVerifiedServiceIT extends MockedThirdParties {
+public class LateFeeVerifiedServiceIT extends FacadeITMockedThirdParties {
   @Autowired private LateFeeVerifiedService subject;
   @Autowired private UserRepository userRepository;
   @MockBean private Mailer mailer;
@@ -81,14 +74,5 @@ public class LateFeeVerifiedServiceIT extends MockedThirdParties {
     User actualStudent = userRepository.findById(storedUser.getId()).get();
     // test: user is correctly flagged to suspended
     assertEquals(SUSPENDED, actualStudent.getStatus());
-  }
-
-  static class ContextInitializer extends AbstractContextInitializer {
-    public static final int SERVER_PORT = anAvailableRandomPort();
-
-    @Override
-    public int getServerPort() {
-      return SERVER_PORT;
-    }
   }
 }
