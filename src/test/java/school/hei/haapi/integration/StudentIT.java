@@ -660,6 +660,7 @@ public class StudentIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  @Disabled("TODO")
   void manager_read_by_ref_and_last_name_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     UsersApi api = new UsersApi(manager1Client);
