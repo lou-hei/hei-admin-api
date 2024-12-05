@@ -40,8 +40,8 @@ class AnnouncementSendInitServiceIT extends MockedThirdParties {
   void should_invoke_eventproducer() {
     announcementSendInitService.accept(announcement());
 
-    // 2 relays on actual data
-    verify(eventProducerMock, times(2)).accept(any());
+    // 3 depends on actual data
+    verify(eventProducerMock, times(3)).accept(any());
   }
 
   static class ContextInitializer extends AbstractContextInitializer {
