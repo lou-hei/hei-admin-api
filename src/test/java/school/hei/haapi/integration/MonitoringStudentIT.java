@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_ID;
-import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.MONITOR2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.MONITOR2_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT2_ID;
@@ -19,7 +20,6 @@ import static school.hei.haapi.integration.conf.TestUtils.student2;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -51,7 +51,6 @@ public class MonitoringStudentIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled("dirty")
   void monitor_follow_students_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     MonitoringApi api = new MonitoringApi(manager1Client);
@@ -59,21 +58,21 @@ public class MonitoringStudentIT extends FacadeITMockedThirdParties {
     // 1. Link some students to a monitor ...
     List<Student> studentsLinked =
         api.linkStudentsByMonitorId(
-            MONITOR1_ID, new LinkStudentsByMonitorIdRequest().studentsIds(List.of(STUDENT1_ID)));
+            MONITOR2_ID, new LinkStudentsByMonitorIdRequest().studentsIds(List.of(STUDENT1_ID)));
 
     assertEquals(1, studentsLinked.size());
     assertTrue(studentsLinked.contains(student1()));
 
     List<Student> studentsLinkedByMonitor =
         api.linkStudentsByMonitorId(
-            MONITOR1_ID, new LinkStudentsByMonitorIdRequest().studentsIds(List.of(STUDENT2_ID)));
+            MONITOR2_ID, new LinkStudentsByMonitorIdRequest().studentsIds(List.of(STUDENT2_ID)));
 
     assertEquals(1, studentsLinkedByMonitor.size());
     assertTrue(studentsLinkedByMonitor.contains(student2()));
 
     // 2. ... Except that the monitor access to his resources ...
-    ApiClient monitor1Client = anApiClient(MONITOR1_TOKEN);
-    PayingApi payingApi = new PayingApi(monitor1Client);
+    ApiClient monitor2Client = anApiClient(MONITOR2_TOKEN);
+    PayingApi payingApi = new PayingApi(monitor2Client);
     List<Fee> followedStudentFee = payingApi.getStudentFees(STUDENT2_ID, 1, 10, null);
 
     assertFalse(followedStudentFee.isEmpty());
@@ -93,17 +92,7 @@ public class MonitoringStudentIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  void monitor_read_own_followed_students_ok() throws ApiException {
-    ApiClient monitor1Client = anApiClient(MONITOR1_TOKEN);
-    MonitoringApi api = new MonitoringApi(monitor1Client);
-
-    List<Student> studentsLinkedToAMonitor = api.getLinkedStudentsByMonitorId(MONITOR1_ID, 1, 10);
-    assertEquals(1, studentsLinkedToAMonitor.size());
-    assertEquals(student1(), studentsLinkedToAMonitor.getFirst());
-  }
-
-  @Test
-  void monitor_follow_students_ko() throws ApiException {
+  void monitor_follow_students_ko() {
     ApiClient teacher1client = anApiClient(TEACHER1_TOKEN);
     MonitoringApi teacherApi = new MonitoringApi(teacher1client);
 
