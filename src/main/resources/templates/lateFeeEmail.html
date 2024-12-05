@@ -1,14 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
+    <meta charset="UTF-8"/>
+    <title>Notification de Paiement</title>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
         }
 
-        h1,section, footer {
+        h1,
+        section,
+        footer {
             margin: 2vh 2vw;
         }
 
@@ -17,7 +23,8 @@
             font-weight: 500;
         }
 
-        section, footer{
+        section,
+        footer {
             font-size: 1.1em;
             line-height: 1.5em;
         }
@@ -41,59 +48,134 @@
             background-repeat: no-repeat;
         }
 
-        .signature {
-            width: 100%;
-            height: 100%;
+        footer {
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background-color: white;
+            color: #002147;
         }
 
-        .motto {
-            color: rgb(0, 0, 125);
+        .logo {
+            background-color: #002147;
+            color: #ffd700;
+            font-family: Garamond, serif;
+            font-size: 2em;
+            padding: 20px;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            height: 150px;
         }
 
-        .hei {
-            color: rgb(164, 164, 164);
+        .logo span {
+            margin: 0 10px;
         }
 
-        .remark {
-            color: red;
+        .separator {
+            width: 2px;
+            height: 200px;
+            background-color: #002147;
+            margin: 0 20px;
         }
 
+        .info {
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            -moz-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            height: 200px;
+        }
+
+        .info h1 {
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .info p {
+            margin: 5px 0;
+        }
+
+        .social-icons {
+            margin-top: 10px;
+        }
+
+        .social-icons a {
+            color: #002147;
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
     </style>
 </head>
 <body>
-    <main>
-        <section>
-            <p>Bonjour
-                <span th:text="${fullName}"></span>,
-            </p>
-        </section>
-        <section>
-            Sauf erreur de notre part, nous avons remarqué que vous n'avez pas encore effectué
-            le paiement de <span th:text="${comment}"></span> , qui devait être régler
-            au plus tard le <span th:text="${dueDatetime}"></span>, pour un montant de <span th:text="${remainingAmount}"></span> MGA,
-            (<span th:text="${remainingAmWords}"></span> ARIARY).
-        </section>
-        <section>
-            Par conséquent, vous n'êtes autorisé ni à assister au cours ni à l'examen, jusqu'à ce que le paiement de vos frais de scolarité soit effectué.
-        </section>
-        <section>
-            Nous espérons que vous pourrez régler cette question dans les plus brefs délais afin de reprendre vos études sans interruption.
-        </section>
-        <section>
-            <em>Si vous avez déjà effectué votre paiement, veuillez insérer la référence de votre transaction dans Hei Admin.</em>
-        </section>
-        <section class="remark">
-            Remarques : Si votre paiement n'est pas effectué avant le <span th:text="${recoveryDate}"></span>, au-delà de cette date, des frais de recouvrement seront exigibles, dont le montant est fixé à 100 000 Ar.
-        </section>
-        <section>
-            N'hésitez pas à contacter l’administration via l’adresse email  <a href="mailto:contact@hei.school">contact@hei.school</a>  ou appeler le numéro <a href="tel:+261349404116">+261 34 94 041 16</a> pour toutes informations complémentaires.
-        </section>
-        <section>
-            Cordialement,
-        </section>
-    </main>
-    <footer>
-        <div class="contacts" th:style="'background-image: url(data:image/png;base64,'+${emailSignature}+');'"></div>
-    </footer>
+<main>
+    <section>
+        <p>Bonjour
+            <span th:text="${fullName}"></span>,
+        </p>
+        <p>
+            Nous vous informons que nous n’avons pas encore reçu le paiement de
+            vos <span th:text="${comment}"></span> d’un montant de
+            <strong><span th:text="${remainingAmount}"></span> MGA (<span th:text="${remainingAmWords}"></span> Ariary),</strong>
+            initialement dus le <strong><span th:text="${dueDatetime}"></span>.</strong>
+        </p>
+        <p>
+            En conséquence, vous êtes suspendu de vos cours et n’avez plus accès à
+            vos documents via HEI Admin, jusqu’à ce que le paiement soit effectué.
+        </p>
+        <p>
+            Pour régulariser votre situation, nous vous invitons à effectuer ce
+            paiement dans les plus brefs délais. Si le règlement a déjà été
+            effectué, merci de bien vouloir insérer la référence de votre
+            transaction dans HEI Admin pour réactiver votre accès et mettre à jour
+            vos frais.
+        </p>
+        <em>
+            <strong style="color: red;">Important :</strong> Si le délai de paiement dépasse le
+            <strong><span th:text="${recoveryDate}"></span>,</strong> nous serons contraints d’entamer une
+            procédure judiciaire, ce qui pourrait engendrer des frais
+            supplémentaires à votre charge.
+        </em>
+    </section>
+    <section>
+        Pour toute question ou besoin d’assistance, n’hésitez pas à contacter
+        l’administration à l’adresse
+        <strong>contact@hei.school</strong> ou au numéro
+        <strong>+261 34 94 041 16</strong>.
+    </section>
+    <section>Cordialement,</section>
+</main>
+<footer>
+    <div class="logo"><span></span>HEI<span></span></div>
+    <div class="separator"></div>
+    <div class="info">
+        <h1>HEI MADAGASCAR</h1>
+        <p>II J 161 R Ivandry, Antananarivo</p>
+        <p>+261 (0) 34 94 041 16</p>
+        <p>
+            <a href="mailto:contact@mail.hei.school">contact@mail.hei.school</a>
+        </p>
+        <p><a href="https://www.hei.school">www.hei.school</a></p>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+    </div>
+</footer>
 </body>
 </html>
