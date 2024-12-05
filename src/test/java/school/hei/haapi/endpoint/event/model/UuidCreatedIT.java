@@ -8,10 +8,9 @@ import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import school.hei.haapi.PojaGenerated;
-import school.hei.haapi.conf.FacadeIT;
 
 @PojaGenerated
-class UuidCreatedIT extends FacadeIT {
+class UuidCreatedIT extends school.hei.haapi.integration.conf.FacadeITMockedThirdParties {
 
   @Autowired ObjectMapper om;
 

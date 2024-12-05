@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 public class EventConf {
   private final Region region;
 
-  public EventConf(@Value("${aws.region}") Region region) {
+  public EventConf(@Value("eu-west-3") Region region) {
     this.region = region;
   }
 

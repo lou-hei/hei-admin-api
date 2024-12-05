@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import school.hei.haapi.PojaGenerated;
-import school.hei.haapi.conf.FacadeIT;
 import school.hei.haapi.endpoint.event.consumer.EventConsumer;
 import school.hei.haapi.endpoint.event.consumer.model.ConsumableEvent;
 import school.hei.haapi.endpoint.event.consumer.model.TypedEvent;
@@ -17,7 +16,7 @@ import school.hei.haapi.endpoint.event.model.UuidCreated;
 import school.hei.haapi.repository.DummyUuidRepository;
 
 @PojaGenerated
-class EventConsumerIT extends FacadeIT {
+class EventConsumerIT extends school.hei.haapi.integration.conf.FacadeITMockedThirdParties {
 
   @Autowired EventConsumer subject;
   @Autowired DummyUuidRepository dummyUuidRepository;

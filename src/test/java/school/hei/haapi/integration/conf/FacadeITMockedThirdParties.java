@@ -6,7 +6,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import school.hei.haapi.conf.FacadeIT;
 import school.hei.haapi.endpoint.SentryConf;
 import school.hei.haapi.endpoint.rest.security.cognito.CognitoComponent;
-import school.hei.haapi.file.BucketConf;
+import school.hei.haapi.file.bucket.BucketConf;
 import school.hei.haapi.service.aws.FileService;
 
 @AutoConfigureMockMvc

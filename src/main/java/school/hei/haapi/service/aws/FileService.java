@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import school.hei.haapi.endpoint.rest.model.FileType;
-import school.hei.haapi.file.BucketComponent;
-import school.hei.haapi.file.FileHash;
-import school.hei.haapi.file.FileTyper;
+import school.hei.haapi.file.bucket.BucketComponent;
+import school.hei.haapi.file.hash.FileHash;
+import school.hei.haapi.file.zip.FileTyper;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.exception.BadRequestException;
 

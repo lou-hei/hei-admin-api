@@ -113,7 +113,7 @@ public class EventProducer<T extends PojaEvent> implements Consumer<Collection<T
     public static final int MAX_PUT_EVENT_ENTRIES = 10;
     private final Region region;
 
-    public Conf(@Value("${aws.region}") String region) {
+    public Conf(@Value("eu-west-3") String region) {
       this.region = Region.of(region);
     }
 
