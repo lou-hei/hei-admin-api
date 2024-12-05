@@ -50,9 +50,7 @@ class EventServiceInvokerTest {
     userService = mock(UserService.class);
     classPathResourceResolver = mock(ClassPathResourceResolver.class);
     base64Converter = mock(Base64Converter.class);
-    lateFeeService =
-        new LateFeeVerifiedService(
-            sesService, userService, base64Converter, classPathResourceResolver);
+    lateFeeService = new LateFeeVerifiedService(sesService, userService);
   }
 
   @Test
