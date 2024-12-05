@@ -37,8 +37,7 @@ public class ScholarshipCertificateDataProvider {
     return switch (year) {
       case 0 -> "Première";
       case 1 -> "Deuxième";
-      case 2 -> "Troisième";
-      case 3 -> "Troisième";
+      case 2, 3 -> "Troisième";
       default -> throw new ApiException(SERVER_EXCEPTION, "Invalid year");
     };
   }
@@ -58,6 +57,7 @@ public class ScholarshipCertificateDataProvider {
   }
 
   private Promotion findLastStudentPromotion(User student) {
+    // TODO: getLast orderBy creationDatetime
     return promotionService.getAllStudentPromotions(student.getId()).getFirst();
   }
 }

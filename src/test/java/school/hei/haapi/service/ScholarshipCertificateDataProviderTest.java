@@ -34,17 +34,17 @@ class ScholarshipCertificateDataProviderTest extends FacadeITMockedThirdParties 
 
   @Test
   void get_academic_year_ok() {
-    User student7 = userService.findById("student7_id");
-    User student8 = userService.findById("student8_id");
+    User student9 = userService.findById("student9_id");
+    User student10 = userService.findById("student10_id");
 
-    Instant expectedCurrentYear = Instant.parse("2023-11-08T08:25:24.00Z");
+    Instant customInstant = Instant.parse("2025-11-08T08:25:24.00Z");
 
-    String academicYearStudent7 =
-        scholarshipCertificateDataProvider.getAcademicYear(student7, expectedCurrentYear);
-    String academicYearStudent8 =
-        scholarshipCertificateDataProvider.getAcademicYear(student8, expectedCurrentYear);
+    String academicYearStudent9 =
+        scholarshipCertificateDataProvider.getAcademicYear(student9, customInstant);
+    String academicYearStudent10 =
+        scholarshipCertificateDataProvider.getAcademicYear(student10, customInstant);
 
-    assertEquals("Deuxième", academicYearStudent7);
-    assertEquals("Première", academicYearStudent8);
+    assertEquals("Deuxième", academicYearStudent9);
+    assertEquals("Première", academicYearStudent10);
   }
 }
