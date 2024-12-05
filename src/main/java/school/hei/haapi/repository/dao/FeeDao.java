@@ -1,5 +1,6 @@
 package school.hei.haapi.repository.dao;
 
+import static java.lang.Boolean.TRUE;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.UNPAID;
@@ -13,6 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
+import school.hei.haapi.endpoint.rest.model.FeeTypeEnum;
+import school.hei.haapi.endpoint.rest.model.MpbsStatus;
 import school.hei.haapi.model.Fee;
 import school.hei.haapi.model.Mpbs.Mpbs;
 import school.hei.haapi.model.User;
@@ -23,6 +26,8 @@ public class FeeDao {
   private final EntityManager entityManager;
 
   public List<Fee> getByCriteria(
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
       FeeStatusEnum status,
       String studentRef,
       Instant monthFrom,
@@ -33,7 +38,17 @@ public class FeeDao {
     CriteriaQuery<Fee> query = builder.createQuery(Fee.class);
     Root<Fee> root = query.from(Fee.class);
     List<Predicate> predicates =
-        getPredicate(root, query, status, studentRef, monthFrom, monthTo, isMpbs, builder);
+        getPredicate(
+            root,
+            query,
+            mpbsStatus,
+            feeType,
+            status,
+            studentRef,
+            monthFrom,
+            monthTo,
+            isMpbs,
+            builder);
 
     CriteriaBuilder.Case<Object> statusOrder =
         builder
@@ -69,12 +84,18 @@ public class FeeDao {
       CriteriaBuilder builder,
       Root<Fee> root,
       List<Predicate> predicates,
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
       FeeStatusEnum status,
       String studentRef,
       Instant monthFrom,
       Instant monthTo,
       Boolean isMpbs,
       CriteriaQuery<Fee> query) {
+    if (feeType != null) {
+      predicates.add(builder.equal(root.get("type"), feeType));
+    }
+
     if (status != null) {
       predicates.add(builder.equal(root.get("status"), status));
     }
@@ -86,10 +107,15 @@ public class FeeDao {
 
     addDatePredicates(builder, root, predicates, monthFrom, monthTo);
 
-    if (Boolean.TRUE.equals(isMpbs)) {
+    if (TRUE.equals(isMpbs)) {
       Join<Fee, Mpbs> mpbsJoin = root.join("mpbs");
       predicates.add(builder.isNotNull(mpbsJoin));
       query.orderBy(builder.desc(mpbsJoin.get("creationDatetime")));
+    }
+
+    if (mpbsStatus != null) {
+      Join<Fee, Mpbs> mpbsJoin = root.join("mpbs");
+      predicates.add(builder.equal(mpbsJoin.get("status"), mpbsStatus));
     }
     return predicates;
   }
@@ -97,6 +123,8 @@ public class FeeDao {
   private List<Predicate> getPredicate(
       Root<Fee> root,
       CriteriaQuery<Fee> query,
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
       FeeStatusEnum status,
       String studentRef,
       Instant monthFrom,
@@ -108,7 +136,17 @@ public class FeeDao {
       predicates.add(builder.equal(root.get("status"), LATE));
     } else {
       buildPredicates(
-          builder, root, predicates, status, studentRef, monthFrom, monthTo, isMpbs, query);
+          builder,
+          root,
+          predicates,
+          mpbsStatus,
+          feeType,
+          status,
+          studentRef,
+          monthFrom,
+          monthTo,
+          isMpbs,
+          query);
     }
     return predicates;
   }
