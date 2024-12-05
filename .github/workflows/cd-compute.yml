@@ -1,29 +1,17 @@
-name: CD compute
+name: CD Compute
 
 on:
   push:
     branches:
-      - 'prod'
-      - 'preprod'
+      - "preprod"
+      - "prod"
 
   workflow_dispatch:
-    inputs:
-      run_tests:
-        type: choice
-        required: false
-        default: 'yes'
-        description: Run tests?
-        options:
-          - 'yes'
-          - 'no'
-
-  workflow_call:
 
 jobs:
-  deploy-api:
-    if: ${{ github.ref_name == 'prod' || github.ref_name == 'preprod' }}
+  initiate-deployment:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
 
     env:
       AWS_REGION: eu-west-3
@@ -31,28 +19,74 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.6
 
+      - name: Update github workflow state
+        run: |
+          commit_message=$(git log -1 --pretty=%B)
+          commit_author=$(git log -1 --pretty=%an)
+          app_env_deployment_id_value=${{ env.app_env_deployment_id }}
+          if [ -z "$app_env_deployment_id_value" ]; then
+            app_env_deployment_id_value=null
+          else
+            app_env_deployment_id_value="\"$app_env_deployment_id_value\""
+          fi
+          response=$(curl --fail -X POST "https://api.prod.jcloudify.com/gh-repos/${{ github.repository }}/github-workflow-state" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d "{\"app_env_deployment_id\":$app_env_deployment_id_value, \"commit_sha\":\"${{ github.sha }}\", \"commit_message\":$(echo \"$commit_message\"), \"commit_author_name\":$(echo \"$commit_author\"), \"status\":\"WORKFLOW_RUNNING\", \"environment_type\":$(echo \"${{ github.ref_name }}\" | tr \"[:lower:]\" \'[:upper:]\")}")
+          echo "app_env_deployment_id=$(echo $response | jq -r '.app_env_deployment_id')" >> $GITHUB_ENV
+          echo $response
+
       - uses: actions/setup-java@v4.2.1
         with:
           java-version: '21'
           distribution: 'corretto'
 
-      - uses: hei-school/aws-credentials-setter@v1.0.3
-        with:
-          secrets: ${{ toJSON(secrets) }}
-          region: ${{ env.AWS_REGION }}
-
-      - name: Disable tests
-        if: ${{ github.event.inputs.run_tests == 'no' }}
+      - name: Prepare build
         run: |
-          printf "tasks.named('test').configure {\n    enabled = false\n}" >> build.gradle
+          chmod +x ./gradlew
+          chmod +x .shell/publish_gen_to_maven_local.sh
+          response=$(curl -X GET "https://api.prod.jcloudify.com/gh-repos/${{ github.repository }}/upload-build-uri?environment_type=$(echo "${{ github.ref_name }}" | tr '[:lower:]' '[:upper:]')" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/json")
+          echo "upload_build_file_uri=$(echo $response | jq -r '.uri')" >> $GITHUB_ENV
+          echo "to_upload_filename=$(echo $response | jq -r '.filename')" >> $GITHUB_ENV
+          curl -X GET -o template.yml "$(echo $response | jq -r '.build_template_file_uri')"
 
-      - run: sam build
+      - name: Build project
+        run: sam build
 
-      - name: Deploy application
-        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name ${{ github.ref_name }}-compute-haapi --capabilities CAPABILITY_IAM --parameter-overrides Env=${{ github.ref_name }} --resolve-s3 --tags app=haapi env=${{ github.ref_name }} user:poja=haapi
+      - name: Prepare JCloudify deployment
+        run: |
+          shopt -s globstar
+          zip -r9 ${{ env.to_upload_filename }} .aws-sam
+          shopt -u globstar
+          curl -X PUT -H "Content-Type: application/zip" -T ${{ env.to_upload_filename }} "${{ env.upload_build_file_uri }}"
 
-  health-check-infra:
-    needs: [deploy-api]
-    if: ${{ needs.deploy-api.result == 'success' && (github.ref_name == 'prod' || github.ref_name == 'preprod') }}
-    uses: ./.github/workflows/health-check-infra.yml
-    secrets: inherit
+      - name: Get current time
+        uses: gerred/actions/current-time@master
+        id: current-time
+
+      - name: Create UUID
+        id: generate-uuid
+        uses: filipstefansson/uuid-action@v1
+        with:
+          name: ${{ steps.current-time.outputs.time }}
+
+      - name: Trigger JCloudify deployment
+        run: |
+          curl --fail -X PUT "https://api.prod.jcloudify.com/gh-repos/${{ github.repository }}/env-deploys?environment_type=$(echo "${{ github.ref_name }}" | tr '[:lower:]' '[:upper:]')" \
+                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Content-Type: application/json" \
+                -d "{\"formatted_bucket_key\":\"${{ env.to_upload_filename }}\",\"id\":\"${{ steps.generate-uuid.outputs.uuid }}\", \"commit_sha\":\"${{ github.sha }}\", \"app_env_deployment_id\":\"${{ env.app_env_deployment_id }}\", \"environment_type\":$(echo \"${{ github.ref_name }}\" | tr \"[:lower:]\" \'[:upper:]\")}"
+      
+      - name: Update github state if step fails
+        if: failure()
+        run: |
+          app_env_deployment_id_value=${{ env.app_env_deployment_id }}
+          if [ -z "$app_env_deployment_id_value" ]; then
+            app_env_deployment_id_value=null
+          else
+            app_env_deployment_id_value="\"$app_env_deployment_id_value\""
+          fi
+          curl -X POST "https://api.prod.jcloudify.com/gh-repos/${{ github.repository }}/github-workflow-state" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d "{\"app_env_deployment_id\":$app_env_deployment_id_value, \"commit_sha\":\"${{ github.sha }}\", \"commit_message\":$(echo \"$commit_message\"), \"commit_author_name\":$(echo \"$commit_author\"), \"status\":\"WORKFLOW_FAILED\", \"environment_type\":$(echo \"${{ github.ref_name }}\" | tr \"[:lower:]\" \'[:upper:]\")}"
