@@ -3,6 +3,7 @@ package school.hei.haapi.endpoint.rest.controller;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -24,6 +25,7 @@ import school.hei.haapi.model.User;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
 import school.hei.haapi.service.FeeService;
 import school.hei.haapi.service.FeeTemplateService;
+import school.hei.haapi.service.PatrimoineService;
 import school.hei.haapi.service.UserService;
 
 @RestController
@@ -35,6 +37,7 @@ public class FeeController {
   private final UpdateFeeValidator updateFeeValidator;
   private final FeeTemplateService feeTemplateService;
   private final FeeTemplateMapper feeTemplateMapper;
+  private final PatrimoineService patrimoineService;
 
   @GetMapping("/fees/{fee_id}")
   public Fee getFeeById(@PathVariable(name = "fee_id") String id) {
@@ -160,5 +163,10 @@ public class FeeController {
       @PathVariable String id, @RequestBody CrupdateFeeTemplate feeType) {
     return feeTemplateMapper.toRest(
         feeTemplateService.createOrUpdateFeeTemplate(feeTemplateMapper.toDomain(feeType)));
+  }
+
+  @GetMapping("/fees/projection")
+  public File getUnpaidFeesProjection() {
+    return patrimoineService.visualizeUnpaidFees();
   }
 }
