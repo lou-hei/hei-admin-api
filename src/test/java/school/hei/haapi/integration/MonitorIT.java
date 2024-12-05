@@ -214,7 +214,7 @@ public class MonitorIT extends FacadeITMockedThirdParties {
 
     List<Monitor> actual = api.getMonitors(1, 10, null, null, null);
 
-    assertEquals(1, actual.size());
+    assertEquals(2, actual.size());
     assertEquals(monitor1(), actual.getFirst());
   }
 }
