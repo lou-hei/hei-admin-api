@@ -43,6 +43,10 @@ class PatrimoineServiceTest {
     return 300000;
   }
 
+  static Instant dateTime() {
+    return Instant.parse("2024-12-06T00:00:00.00Z");
+  }
+
   static Fee createSomeFee(
       String feeId,
       int paymentAmount,
@@ -70,7 +74,7 @@ class PatrimoineServiceTest {
       int remainingAmount,
       school.hei.haapi.endpoint.rest.model.FeeStatusEnum status) {
     Instant dueDatetime = Instant.parse("2025-01-06T00:00:00.00Z");
-    Instant creationDatetime = Instant.parse("2024-12-06T00:00:00.00Z");
+    Instant creationDatetime = dateTime();
     Fee fee = createSomeFee(feeId, paymentAmount, status, dueDatetime, creationDatetime);
     fee.setRemainingAmount(remainingAmount);
     if (isMocked) {
@@ -105,7 +109,7 @@ class PatrimoineServiceTest {
     when(feeRepository.getUnpaidFees(now))
         .thenReturn(List.of(fee1(isMocked), fee2(isMocked), fee3(isMocked)));
 
-    File unpaidFeesGraph = subject.visualizeUnpaidFees();
+    File unpaidFeesGraph = subject.visualizeUnpaidFees(dateTime());
 
     assertNotNull(unpaidFeesGraph);
     assertTrue(unpaidFeesGraph.exists());

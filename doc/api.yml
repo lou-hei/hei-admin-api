@@ -2612,6 +2612,31 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /fees/projection:
+    get:
+      tags:
+        - Paying
+      summary: Get unpaid fees projection
+      description: Get unpaid fees graphic evolution
+      operationId: getFeesProjection
+      responses:
+        '200':
+          description: The unpaid fees graph
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /mpbs:
     get:
       tags:

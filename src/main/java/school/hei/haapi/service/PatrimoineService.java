@@ -31,18 +31,18 @@ public class PatrimoineService {
   private final GrapheurEvolutionPatrimoine grapheurEvolutionPatrimoine =
       new GrapheurEvolutionPatrimoine();
 
-  public File visualizeUnpaidFees() {
-    Instant now = Instant.now();
-    List<Fee> unpaidFees = feeRepository.getUnpaidFees(now);
+  public File visualizeUnpaidFees(Instant date) {
+    LocalDate projectionDate = LocalDate.from(date);
+    List<Fee> unpaidFees = feeRepository.getUnpaidFees(date);
     var hei = new Personne("HEI");
-    var zoneId = ZoneId.systemDefault();
+    var zoneId = ZoneId.of("UTC");
     Set<Possession> creances = new HashSet<>();
 
     LocalDate latestDueDate =
         unpaidFees.stream()
             .map(fee -> fee.getDueDatetime().atZone(zoneId).toLocalDate())
             .max(LocalDate::compareTo)
-            .orElse(LocalDate.now());
+            .orElse(projectionDate);
 
     unpaidFees.forEach(
         fee -> {
@@ -53,13 +53,10 @@ public class PatrimoineService {
         });
 
     var patrimoineEncaissement =
-        Patrimoine.of("Frais non encaissés", MGA, LocalDate.now(), hei, creances);
+        Patrimoine.of("Frais non encaissés", MGA, projectionDate, hei, creances);
     var evolutionEncaissement =
         new EvolutionPatrimoine(
-            "Evolution frais non encaissés",
-            patrimoineEncaissement,
-            LocalDate.now(),
-            latestDueDate);
+            "Evolution frais non encaissés", patrimoineEncaissement, projectionDate, latestDueDate);
     return grapheurEvolutionPatrimoine.apply(evolutionEncaissement);
   }
 }
