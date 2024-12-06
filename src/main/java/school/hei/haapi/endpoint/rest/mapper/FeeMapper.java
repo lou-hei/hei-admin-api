@@ -27,32 +27,11 @@ import school.hei.haapi.service.utils.DataFormatterUtils;
 @Component
 @AllArgsConstructor
 public class FeeMapper {
-
   private final CreateFeeValidator createFeeValidator;
-  private PaymentMapper paymentMapper;
   private final MpbsMapper mpbsMapper;
   private final LetterService letterService;
   private final FileService fileService;
   private final UserService userService;
-
-  public ModelFee toRestModelFee(school.hei.haapi.model.Fee fee) {
-    var studentFee = fee.getStudent();
-    return new ModelFee()
-        .studentId(studentFee.getId())
-        .studentRef(studentFee.getRef())
-        .status(fee.getStatus())
-        .type(fee.getType())
-        .totalAmount(fee.getTotalAmount())
-        .remainingAmount(fee.getRemainingAmount())
-        .comment(fee.getComment())
-        .creationDatetime(fee.getCreationDatetime())
-        .updatedAt(fee.getUpdatedAt())
-        .dueDatetime(fee.getDueDatetime())
-        .payments(
-            fee.getPayments().stream()
-                .map(paymentMapper::toRestPayment)
-                .collect(toUnmodifiableList()));
-  }
 
   public Fee toRestFee(school.hei.haapi.model.Fee fee) {
     Mpbs feeMpbs = fee.getMpbs() != null ? mpbsMapper.toRest(fee.getMpbs()) : null;
@@ -158,20 +137,5 @@ public class FeeMapper {
     return toCreate.stream()
         .map(createFee -> toDomainFee(student, createFee))
         .collect(toUnmodifiableList());
-  }
-
-  private FeeTypeEnum toDomainFeeType(FeeTypeEnum createFeeType) {
-    switch (createFeeType) {
-      case TUITION:
-        return TUITION;
-      case HARDWARE:
-        return HARDWARE;
-      case REMEDIAL_COSTS:
-        return REMEDIAL_COSTS;
-      case STUDENT_INSURANCE:
-        return STUDENT_INSURANCE;
-      default:
-        throw new BadRequestException("Unexpected feeType: " + createFeeType.getValue());
-    }
   }
 }
