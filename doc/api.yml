@@ -5803,6 +5803,7 @@ components:
         - UNPAID
         - PAID
         - LATE
+        - PENDING
     FeeTypeEnum:
       type: string
       enum:

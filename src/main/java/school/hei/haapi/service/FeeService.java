@@ -304,4 +304,8 @@ public class FeeService {
           log.info("Unpaid fee with id.{} is sent to Queue", unpaidFee.getId());
         });
   }
+
+  public Fee update(Fee fee) {
+    return feeRepository.save(fee);
+  }
 }

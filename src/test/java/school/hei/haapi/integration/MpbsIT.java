@@ -2,6 +2,7 @@ package school.hei.haapi.integration;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
 import static school.hei.haapi.endpoint.rest.model.MobileMoneyType.MVOLA;
 import static school.hei.haapi.endpoint.rest.model.MobileMoneyType.ORANGE_MONEY;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.PENDING;
@@ -23,14 +24,18 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.PayingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
+import school.hei.haapi.endpoint.rest.model.CreateFee;
 import school.hei.haapi.endpoint.rest.model.CrupdateMpbs;
 import school.hei.haapi.endpoint.rest.model.Fee;
+import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.endpoint.rest.model.Mpbs;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
@@ -39,7 +44,9 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 @Testcontainers
 @AutoConfigureMockMvc
 public class MpbsIT extends FacadeITMockedThirdParties {
+  private static final Logger log = LoggerFactory.getLogger(MpbsIT.class);
   @MockBean private EventBridgeClient eventBridgeClientMock;
+  static final String FEE_TEST_ID = "test_id";
 
   @BeforeEach
   public void setUp() {
@@ -132,12 +139,34 @@ public class MpbsIT extends FacadeITMockedThirdParties {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     PayingApi api = new PayingApi(student1Client);
 
-    Mpbs actual = api.crupdateMpbs(STUDENT1_ID, FEE2_ID, createableMpbs1());
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    PayingApi manager1Api = new PayingApi(manager1Client);
+
+    Fee actualFee =
+        manager1Api
+            .createStudentFees(
+                STUDENT1_ID,
+                List.of(
+                    new CreateFee()
+                        .totalAmount(5000)
+                        .dueDatetime(Instant.parse("2030-11-08T08:25:24.00Z"))
+                        .type(TUITION)
+                        .creationDatetime(Instant.now())
+                        .comment("test")))
+            .getFirst();
+    assertEquals(actualFee.getStudentId(), STUDENT1_ID);
+
+    Mpbs actual =
+        api.crupdateMpbs(
+            STUDENT1_ID, actualFee.getId(), createableMpbsFromFeeIdWithStudent1(actualFee.getId()));
 
     assertEquals(createableMpbs1().getStudentId(), actual.getStudentId());
     assertEquals(createableMpbs1().getPspId(), actual.getPspId());
-    assertEquals(createableMpbs1().getFeeId(), actual.getFeeId());
     assertEquals(createableMpbs1().getPspType(), actual.getPspType());
+
+    Fee updatedFee = api.getStudentFeeById(STUDENT1_ID, actualFee.getId());
+
+    assertEquals(FeeStatusEnum.PENDING, updatedFee.getStatus());
   }
 
   public static CrupdateMpbs updatableMpbs1() {
@@ -166,7 +195,7 @@ public class MpbsIT extends FacadeITMockedThirdParties {
     return new CrupdateMpbs()
         .studentId(STUDENT1_ID)
         .feeId(FEE2_ID)
-        .pspType(MVOLA)
+        .pspType(ORANGE_MONEY)
         .pspId("MP240726.1541.D88425");
   }
 
