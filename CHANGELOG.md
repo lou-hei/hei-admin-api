@@ -1,4 +1,23 @@
-# [1.84.0](https://github.com/hei-school/hei-admin-api/compare/v1.83.0...v1.84.0) (2024-12-03)
+# [1.85.0](https://github.com/hei-school/hei-admin-api/compare/v1.83.1...v1.85.0) (2024-12-06)
+
+
+### Bug Fixes
+
+* crupdate staff member access ([b375d3a](https://github.com/hei-school/hei-admin-api/commit/b375d3a547b08f5b9b80d495e17d45e7b9ff076f))
+
+
+### Features
+
+* filter fees by status and type  ([c838c1b](https://github.com/hei-school/hei-admin-api/commit/c838c1bfa4822a8de03966183ac6211fdbf1ea9a))
+
+
+### Reverts
+
+* Revert "chore: lower min code coverage(line)" ([8c13767](https://github.com/hei-school/hei-admin-api/commit/8c1376736009c117d09fb558d2ae427348e3b878))
+
+
+
+## [1.83.1](https://github.com/hei-school/hei-admin-api/compare/v1.83.0...v1.83.1) (2024-12-04)
 
 
 ### Bug Fixes
@@ -7,15 +26,7 @@
 * letter stats required param ([05ddfe5](https://github.com/hei-school/hei-admin-api/commit/05ddfe53e701fcd608dd5beb838cc05c44405748))
 * return admin model in admin resources ([838193c](https://github.com/hei-school/hei-admin-api/commit/838193c289d8c73e3045441c1346d2826f4b3ce3))
 * set mpbs creation datetime not null  ([b02447b](https://github.com/hei-school/hei-admin-api/commit/b02447b2e960458df98220dfb52c6c2ccc3c2bd9))
-<<<<<<< HEAD
 * upload staff member profile picture ([40e730b](https://github.com/hei-school/hei-admin-api/commit/40e730b17fde513cd8c3d660df1ad02276629867))
-=======
-
-
-### Features
-
-* **not-implemented:** stats will depend on fees filter  ([bd67560](https://github.com/hei-school/hei-admin-api/commit/bd67560ca03f3a85b5b5cecfe7061fb3dd52b88f))
->>>>>>> 096a49ad (release: v1.84.0 [skip ci])
 
 
 
@@ -112,20 +123,6 @@
 ### Features
 
 * implement grades resources ([e370dad](https://github.com/hei-school/hei-admin-api/commit/e370dad2ba64c22a85a849bcb1dee52b7a32973c))
-
-
-
-# [1.76.0](https://github.com/hei-school/hei-admin-api/compare/v1.75.0...v1.76.0) (2024-11-08)
-
-
-### Bug Fixes
-
-* fetch only for enabled and suspended students  ([08ed33a](https://github.com/hei-school/hei-admin-api/commit/08ed33a1b9a1e3823e7442c8e2854b13927fb1db))
-
-
-### Features
-
-* filter exams and get exam by id ([834db9d](https://github.com/hei-school/hei-admin-api/commit/834db9d1fad3e57e3714585be9a1adeb3317a2f9))
 
 
 
