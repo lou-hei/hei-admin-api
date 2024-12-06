@@ -92,32 +92,19 @@ public class FeeController {
   }
 
   @GetMapping("/fees")
-  public FeesWithStats getFees(
+  public List<Fee> getFees(
       @RequestParam PageFromOne page,
       @RequestParam("page_size") BoundedPageSize pageSize,
-      @RequestParam(name = "transaction_status", required = false) MpbsStatus transactionStatus,
-      @RequestParam(name = "type", required = false) FeeTypeEnum feeType,
       @RequestParam(required = false) FeeStatusEnum status,
       @RequestParam(name = "month_from", required = false) Instant monthFrom,
       @RequestParam(name = "month_to", required = false) Instant monthTo,
       @RequestParam(name = "isMpbs", required = false) boolean isMpbs,
       @RequestParam(name = "student_ref", required = false) String studentRef) {
-    var restFees =
-        feeService
-            .getFees(
-                page,
-                pageSize,
-                transactionStatus,
-                feeType,
-                status,
-                monthFrom,
-                monthTo,
-                isMpbs,
-                studentRef)
-            .stream()
-            .map(feeMapper::toRestFee)
-            .collect(toUnmodifiableList());
-    return new FeesWithStats().data(restFees);
+    return feeService
+        .getFees(page, pageSize, status, monthFrom, monthTo, isMpbs, studentRef)
+        .stream()
+        .map(feeMapper::toRestFee)
+        .collect(toUnmodifiableList());
   }
 
   @GetMapping("/fees/stats")
