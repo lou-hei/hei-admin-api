@@ -153,8 +153,10 @@ public class FeeService {
       boolean isMpbs,
       String studentRef) {
     Pageable pageable = PageRequest.of(page.getValue() - 1, pageSize.getValue());
+    log.info("helloooooooooo" + feeDao.getStatByCriteria(
+            mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs).toString());
     return feeDao.getByCriteria(
-        mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs, pageable);
+            mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs, pageable);
   }
 
   public FeesStatistics getFeesStats(Instant monthFrom, Instant monthTo) {
