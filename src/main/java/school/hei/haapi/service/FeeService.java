@@ -32,6 +32,7 @@ import school.hei.haapi.model.validator.FeeValidator;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
 import school.hei.haapi.repository.FeeRepository;
 import school.hei.haapi.repository.dao.FeeDao;
+import school.hei.haapi.repository.model.FeesStats;
 import school.hei.haapi.service.utils.DateUtils;
 import school.hei.haapi.service.utils.XlsxCellsGenerator;
 
@@ -127,6 +128,18 @@ public class FeeService {
     return feeRepository.saveAll(fees);
   }
 
+  public FeesStats getFeesStats(
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
+      FeeStatusEnum status,
+      Instant monthFrom,
+      Instant monthTo,
+      boolean isMpbs,
+      String studentRef) {
+    return feeDao.getStatByCriteria(
+        mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs);
+  }
+
   public List<Fee> getFees(
       PageFromOne page,
       BoundedPageSize pageSize,
@@ -138,23 +151,12 @@ public class FeeService {
       boolean isMpbs,
       String studentRef) {
     Pageable pageable = PageRequest.of(page.getValue() - 1, pageSize.getValue());
-    log.info("helloooooooooo" + feeDao.getStatByCriteria(
-            mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs).toString());
     return feeDao.getByCriteria(
-            mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs, pageable);
+        mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs, pageable);
   }
 
   public FeesStatistics getFeesStats(Instant monthFrom, Instant monthTo) {
-    Instant[] defaultRange = dateUtils.getDefaultMonthRange(monthFrom, monthTo);
-    monthFrom = defaultRange[0];
-    monthTo = defaultRange[1];
-    List<User.Status> statuses = List.of(User.Status.ENABLED, User.Status.SUSPENDED);
-    Object[] stats = feeRepository.getMonthlyFeeStatistics(monthFrom, monthTo, statuses).get(0);
-
-    return new FeesStatistics()
-        .totalFees(toInt(stats[0]))
-        .paidFees(toInt(stats[1]))
-        .unpaidFees(toInt(stats[2]));
+    return FeesStats.to(feeDao.getStatByCriteria(null, null, null, null, monthFrom, monthTo, null));
   }
 
   private int toInt(Object value) {

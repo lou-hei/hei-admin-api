@@ -29,49 +29,74 @@ public class FeeDao {
   private final EntityManager entityManager;
 
   public List<Fee> getByCriteria(
-          MpbsStatus mpbsStatus,
-          FeeTypeEnum feeType,
-          FeeStatusEnum status,
-          String studentRef,
-          Instant monthFrom,
-          Instant monthTo,
-          Boolean isMpbs,
-          Pageable pageable) {
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
+      FeeStatusEnum status,
+      String studentRef,
+      Instant monthFrom,
+      Instant monthTo,
+      Boolean isMpbs,
+      Pageable pageable) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Fee> query = builder.createQuery(Fee.class);
     Root<Fee> root = query.from(Fee.class);
     List<Predicate> predicates =
-            getPredicate(
-                    root,
-                    query,
-                    mpbsStatus,
-                    feeType,
-                    status,
-                    studentRef,
-                    monthFrom,
-                    monthTo,
-                    isMpbs,
-                    builder);
+        getPredicate(
+            root,
+            query,
+            mpbsStatus,
+            feeType,
+            status,
+            studentRef,
+            monthFrom,
+            monthTo,
+            isMpbs,
+            builder);
 
     CriteriaBuilder.Case<Object> statusOrder =
-            builder
-                    .selectCase()
-                    .when(builder.equal(root.get("status"), LATE), 1)
-                    .when(builder.equal(root.get("status"), UNPAID), 2)
-                    .when(builder.equal(root.get("status"), PAID), 3);
+        builder
+            .selectCase()
+            .when(builder.equal(root.get("status"), LATE), 1)
+            .when(builder.equal(root.get("status"), UNPAID), 2)
+            .when(builder.equal(root.get("status"), PAID), 3);
 
     query
-            .where(predicates.toArray(new Predicate[0]))
-            .orderBy(
-                    builder.asc(statusOrder),
-                    builder.desc(root.get("dueDatetime")),
-                    builder.asc(root.get("id")));
+        .where(predicates.toArray(new Predicate[0]))
+        .orderBy(
+            builder.asc(statusOrder),
+            builder.desc(root.get("dueDatetime")),
+            builder.asc(root.get("id")));
 
     return entityManager
-            .createQuery(query)
-            .setFirstResult((pageable.getPageNumber()) * pageable.getPageSize())
-            .setMaxResults(pageable.getPageSize())
-            .getResultList();
+        .createQuery(query)
+        .setFirstResult((pageable.getPageNumber()) * pageable.getPageSize())
+        .setMaxResults(pageable.getPageSize())
+        .getResultList();
+  }
+
+  private List<Expression<?>> handleGroupByFilterStat(
+      Root<Fee> root,
+      FeeTypeEnum feeType,
+      FeeStatusEnum status,
+      Instant monthFrom,
+      Instant monthTo) {
+    List<Expression<?>> groupByExpressions = new ArrayList<>();
+
+    if (feeType != null) {
+      groupByExpressions.add(root.get("type"));
+    }
+    if (status != null) {
+      groupByExpressions.add(root.get("status"));
+    }
+    if (monthFrom != null) {
+      groupByExpressions.add(root.get("dueDatetime"));
+      groupByExpressions.add(root.get("creationDatetime"));
+    }
+    if (monthTo != null) {
+      groupByExpressions.add(root.get("dueDatetime"));
+      groupByExpressions.add(root.get("creationDatetime"));
+    }
+    return groupByExpressions;
   }
 
   public FeesStats getStatByCriteria(
@@ -99,35 +124,54 @@ public class FeeDao {
             builder);
 
     query
-         .where(predicates.toArray(new Predicate[0]))
-         .multiselect(
-         builder.count(root),
-         builder.sum(builder.selectCase()
-                    .when(builder.equal(root.get("status"), PAID), 1)
-                    .otherwise(0).as(Long.class)),
-         builder.sum(builder.selectCase()
-                    .when(builder.equal(root.get("status"), UNPAID), 1)
-                    .otherwise(0).as(Long.class)),
-         builder.sum(builder.selectCase()
-                    .when(builder.equal(root.get("status"), LATE), 1)
-                    .otherwise(0).as(Long.class)),
-         builder.sum(builder.selectCase()
-                    .when(builder.equal(handleMpbsJoining(root).get("status"), PENDING), 1)
-                    .otherwise(0).as(Long.class)),
-         builder.sum(builder.selectCase()
-                    .when(builder.equal(handleMpbsJoining(root).get("status"), SUCCESS), 1)
-                    .otherwise(0).as(Long.class)),
-         builder.sum(builder.selectCase()
-                    .when(builder.like(root.get("comment"), "%Frais mensuel%"), 1)
-                    .otherwise(0).as(Long.class)),
-         builder.sum(builder.selectCase()
-                    .when(builder.like(root.get("comment"), "%Frais annuel%"), 1)
-                    .otherwise(0).as(Long.class))
-            );
+        .where(predicates.toArray(new Predicate[0]))
+        .groupBy(handleGroupByFilterStat(root, feeType, status, monthFrom, monthTo))
+        .multiselect(
+            builder.count(root),
+            builder.sum(
+                builder
+                    .selectCase()
+                    .when(builder.equal(root.get("status"), PAID), 1L)
+                    .otherwise(0L)
+                    .as(Long.class)),
+            builder.sum(
+                builder
+                    .selectCase()
+                    .when(builder.equal(root.get("status"), UNPAID), 1L)
+                    .otherwise(0L)
+                    .as(Long.class)),
+            builder.sum(
+                builder
+                    .selectCase()
+                    .when(builder.equal(root.get("status"), LATE), 1L)
+                    .otherwise(0L)
+                    .as(Long.class)),
+            builder.sum(
+                builder
+                    .selectCase()
+                    .when(builder.equal(handleMpbsJoining(root).get("status"), PENDING), 1L)
+                    .otherwise(0L)
+                    .as(Long.class)),
+            builder.sum(
+                builder
+                    .selectCase()
+                    .when(builder.equal(handleMpbsJoining(root).get("status"), SUCCESS), 1L)
+                    .otherwise(0L)
+                    .as(Long.class)),
+            builder.sum(
+                builder
+                    .selectCase()
+                    .when(builder.like(root.get("comment"), "%Frais mensuel%"), 1L)
+                    .otherwise(0L)
+                    .as(Long.class)),
+            builder.sum(
+                builder
+                    .selectCase()
+                    .when(builder.like(root.get("comment"), "%Frais annuel%"), 1L)
+                    .otherwise(0L)
+                    .as(Long.class)));
 
-    return entityManager
-        .createQuery(query)
-        .getSingleResult();
+    return entityManager.createQuery(query).getSingleResult();
   }
 
   private boolean isCriteriaEmpty(
@@ -180,17 +224,17 @@ public class FeeDao {
   }
 
   private List<Predicate> buildPredicates(
-          CriteriaBuilder builder,
-          Root<Fee> root,
-          List<Predicate> predicates,
-          MpbsStatus mpbsStatus,
-          FeeTypeEnum feeType,
-          FeeStatusEnum status,
-          String studentRef,
-          Instant monthFrom,
-          Instant monthTo,
-          Boolean isMpbs,
-          CriteriaQuery<Fee> query) {
+      CriteriaBuilder builder,
+      Root<Fee> root,
+      List<Predicate> predicates,
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
+      FeeStatusEnum status,
+      String studentRef,
+      Instant monthFrom,
+      Instant monthTo,
+      Boolean isMpbs,
+      CriteriaQuery<Fee> query) {
     if (feeType != null) {
       predicates.add(builder.equal(root.get("type"), feeType));
     }
@@ -251,36 +295,35 @@ public class FeeDao {
   }
 
   private List<Predicate> getPredicate(
-          Root<Fee> root,
-          CriteriaQuery<Fee> query,
-          MpbsStatus mpbsStatus,
-          FeeTypeEnum feeType,
-          FeeStatusEnum status,
-          String studentRef,
-          Instant monthFrom,
-          Instant monthTo,
-          Boolean isMpbs,
-          CriteriaBuilder builder) {
+      Root<Fee> root,
+      CriteriaQuery<Fee> query,
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
+      FeeStatusEnum status,
+      String studentRef,
+      Instant monthFrom,
+      Instant monthTo,
+      Boolean isMpbs,
+      CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
     if (isCriteriaEmpty(status, studentRef, monthFrom, monthTo, isMpbs)) {
       predicates.add(builder.equal(root.get("status"), LATE));
     } else {
       buildPredicates(
-              builder,
-              root,
-              predicates,
-              mpbsStatus,
-              feeType,
-              status,
-              studentRef,
-              monthFrom,
-              monthTo,
-              isMpbs,
-              query);
+          builder,
+          root,
+          predicates,
+          mpbsStatus,
+          feeType,
+          status,
+          studentRef,
+          monthFrom,
+          monthTo,
+          isMpbs,
+          query);
     }
     return predicates;
   }
-
 
   private void addDatePredicates(
       CriteriaBuilder builder,
@@ -299,8 +342,6 @@ public class FeeDao {
   }
 
   private Join<Fee, Mpbs> handleMpbsJoining(Root<Fee> root) {
-      return root.join("mpbs");
+    return root.join("mpbs");
   }
-
-
 }

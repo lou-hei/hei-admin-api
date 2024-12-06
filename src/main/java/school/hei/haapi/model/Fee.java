@@ -78,7 +78,7 @@ public class Fee implements Serializable {
     return creationDatetime.truncatedTo(ChronoUnit.MILLIS);
   }
 
-  public Fee (Fee fee) {
+  public Fee(Fee fee) {
     this.id = fee.getId();
     this.student = fee.getStudent();
     this.status = fee.getStatus();

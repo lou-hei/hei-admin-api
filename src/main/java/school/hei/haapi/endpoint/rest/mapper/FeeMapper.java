@@ -5,10 +5,6 @@ import static school.hei.haapi.endpoint.rest.mapper.FileInfoMapper.ONE_DAY_DURAT
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.UNPAID;
-import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.HARDWARE;
-import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.REMEDIAL_COSTS;
-import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.STUDENT_INSURANCE;
-import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
 
 import java.time.Instant;
 import java.util.List;

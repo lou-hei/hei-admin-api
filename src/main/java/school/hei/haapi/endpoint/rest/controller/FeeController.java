@@ -22,6 +22,7 @@ import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
+import school.hei.haapi.repository.model.FeesStats;
 import school.hei.haapi.service.FeeService;
 import school.hei.haapi.service.FeeTemplateService;
 import school.hei.haapi.service.UserService;
@@ -102,6 +103,9 @@ public class FeeController {
       @RequestParam(name = "month_to", required = false) Instant monthTo,
       @RequestParam(name = "isMpbs", required = false) boolean isMpbs,
       @RequestParam(name = "student_ref", required = false) String studentRef) {
+    var feesStats =
+        feeService.getFeesStats(
+            transactionStatus, feeType, status, monthFrom, monthTo, isMpbs, studentRef);
     var restFees =
         feeService
             .getFees(
@@ -117,7 +121,7 @@ public class FeeController {
             .stream()
             .map(feeMapper::toRestFee)
             .collect(toUnmodifiableList());
-    return new FeesWithStats().data(restFees);
+    return new FeesWithStats().data(restFees).statistics(FeesStats.to(feesStats));
   }
 
   @GetMapping("/fees/stats")
