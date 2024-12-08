@@ -1,6 +1,7 @@
 package school.hei.haapi.repository.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import school.hei.haapi.endpoint.rest.model.FeesStatistics;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 public class FeesStats {
   private Long totalFees;

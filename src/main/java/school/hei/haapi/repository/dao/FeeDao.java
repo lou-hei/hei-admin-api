@@ -79,7 +79,8 @@ public class FeeDao {
       FeeTypeEnum feeType,
       FeeStatusEnum status,
       Instant monthFrom,
-      Instant monthTo) {
+      Instant monthTo,
+      boolean isMpbs) {
     List<Expression<?>> groupByExpressions = new ArrayList<>();
 
     if (feeType != null) {
@@ -89,17 +90,19 @@ public class FeeDao {
       groupByExpressions.add(root.get("status"));
     }
     if (monthFrom != null) {
-      groupByExpressions.add(root.get("dueDatetime"));
       groupByExpressions.add(root.get("creationDatetime"));
     }
     if (monthTo != null) {
-      groupByExpressions.add(root.get("dueDatetime"));
       groupByExpressions.add(root.get("creationDatetime"));
+    }
+    if (isMpbs) {
+      Join<Fee, Mpbs> mpbsJoin = handleMpbsJoining(root);
+      groupByExpressions.add(mpbsJoin.get("creationDatetime"));
     }
     return groupByExpressions;
   }
 
-  public FeesStats getStatByCriteria(
+  public List<FeesStats> getStatByCriteria(
       MpbsStatus mpbsStatus,
       FeeTypeEnum feeType,
       FeeStatusEnum status,
@@ -125,7 +128,6 @@ public class FeeDao {
 
     query
         .where(predicates.toArray(new Predicate[0]))
-        .groupBy(handleGroupByFilterStat(root, feeType, status, monthFrom, monthTo))
         .multiselect(
             builder.count(root),
             builder.sum(
@@ -169,9 +171,10 @@ public class FeeDao {
                     .selectCase()
                     .when(builder.like(root.get("comment"), "%Frais annuel%"), 1L)
                     .otherwise(0L)
-                    .as(Long.class)));
+                    .as(Long.class)))
+        .groupBy(handleGroupByFilterStat(root, feeType, status, monthFrom, monthTo, isMpbs));
 
-    return entityManager.createQuery(query).getSingleResult();
+    return entityManager.createQuery(query).getResultList();
   }
 
   private boolean isCriteriaEmpty(
@@ -213,7 +216,6 @@ public class FeeDao {
     if (TRUE.equals(isMpbs)) {
       Join<Fee, Mpbs> mpbsJoin = root.join("mpbs");
       predicates.add(builder.isNotNull(mpbsJoin));
-      query.orderBy(builder.desc(mpbsJoin.get("creationDatetime")));
     }
 
     if (mpbsStatus != null) {
