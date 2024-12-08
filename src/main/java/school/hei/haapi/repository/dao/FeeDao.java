@@ -74,34 +74,6 @@ public class FeeDao {
         .getResultList();
   }
 
-  private List<Expression<?>> handleGroupByFilterStat(
-      Root<Fee> root,
-      FeeTypeEnum feeType,
-      FeeStatusEnum status,
-      Instant monthFrom,
-      Instant monthTo,
-      boolean isMpbs) {
-    List<Expression<?>> groupByExpressions = new ArrayList<>();
-
-    if (feeType != null) {
-      groupByExpressions.add(root.get("type"));
-    }
-    if (status != null) {
-      groupByExpressions.add(root.get("status"));
-    }
-    if (monthFrom != null) {
-      groupByExpressions.add(root.get("creationDatetime"));
-    }
-    if (monthTo != null) {
-      groupByExpressions.add(root.get("creationDatetime"));
-    }
-    if (isMpbs) {
-      Join<Fee, Mpbs> mpbsJoin = handleMpbsJoining(root);
-      groupByExpressions.add(mpbsJoin.get("creationDatetime"));
-    }
-    return groupByExpressions;
-  }
-
   public List<FeesStats> getStatByCriteria(
       MpbsStatus mpbsStatus,
       FeeTypeEnum feeType,
@@ -125,6 +97,22 @@ public class FeeDao {
             monthTo,
             isMpbs,
             builder);
+
+    Subquery<Long> pendingSubquery = query.subquery(Long.class);
+    Root<Mpbs> pendingRoot = pendingSubquery.from(Mpbs.class);
+    pendingSubquery
+        .select(builder.literal(1L))
+        .where(
+            builder.equal(pendingRoot.get("status"), PENDING),
+            builder.equal(pendingRoot.get("fee"), root));
+
+    Subquery<Long> successSubquery = query.subquery(Long.class);
+    Root<Mpbs> successRoot = successSubquery.from(Mpbs.class);
+    successSubquery
+        .select(builder.literal(1L))
+        .where(
+            builder.equal(successRoot.get("status"), SUCCESS),
+            builder.equal(successRoot.get("fee"), root));
 
     query
         .where(predicates.toArray(new Predicate[0]))
@@ -151,13 +139,13 @@ public class FeeDao {
             builder.sum(
                 builder
                     .selectCase()
-                    .when(builder.equal(handleMpbsJoining(root).get("status"), PENDING), 1L)
+                    .when(builder.exists(pendingSubquery), 1L)
                     .otherwise(0L)
                     .as(Long.class)),
             builder.sum(
                 builder
                     .selectCase()
-                    .when(builder.equal(handleMpbsJoining(root).get("status"), SUCCESS), 1L)
+                    .when(builder.exists(successSubquery), 1L)
                     .otherwise(0L)
                     .as(Long.class)),
             builder.sum(
@@ -171,8 +159,7 @@ public class FeeDao {
                     .selectCase()
                     .when(builder.like(root.get("comment"), "%Frais annuel%"), 1L)
                     .otherwise(0L)
-                    .as(Long.class)))
-        .groupBy(handleGroupByFilterStat(root, feeType, status, monthFrom, monthTo, isMpbs));
+                    .as(Long.class)));
 
     return entityManager.createQuery(query).getResultList();
   }
@@ -341,9 +328,5 @@ public class FeeDao {
     } else if (monthTo != null) {
       predicates.add(builder.lessThanOrEqualTo(root.get("dueDatetime"), monthTo));
     }
-  }
-
-  private Join<Fee, Mpbs> handleMpbsJoining(Root<Fee> root) {
-    return root.join("mpbs");
   }
 }

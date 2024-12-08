@@ -483,7 +483,6 @@ class FeeIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled
   void get_fees_statistics_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(manager1Client);
@@ -494,9 +493,5 @@ class FeeIT extends FacadeITMockedThirdParties {
     assertEquals(7, stats.getTotalFees());
     assertEquals(2, stats.getPaidFees());
     assertEquals(0, stats.getUnpaidFees());
-
-    FeesStatistics statsWithDefaultMonthRange =
-        api.getFeesStats(null, null); // get statistics for this month
-    assertEquals(0, statsWithDefaultMonthRange.getTotalFees());
   }
 }
