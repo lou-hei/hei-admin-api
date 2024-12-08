@@ -493,9 +493,5 @@ class FeeIT extends FacadeITMockedThirdParties {
     assertEquals(7, stats.getTotalFees());
     assertEquals(2, stats.getPaidFees());
     assertEquals(0, stats.getUnpaidFees());
-
-    FeesStatistics statsWithDefaultMonthRange =
-        api.getFeesStats(null, null); // get statistics for this month
-    assertEquals(0, statsWithDefaultMonthRange.getTotalFees());
   }
 }

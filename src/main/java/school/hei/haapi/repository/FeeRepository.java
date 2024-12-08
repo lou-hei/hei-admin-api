@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.model.Fee;
-import school.hei.haapi.model.User;
 
 @Repository
 public interface FeeRepository extends JpaRepository<Fee, String> {

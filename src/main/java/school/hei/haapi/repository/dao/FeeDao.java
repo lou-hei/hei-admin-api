@@ -86,31 +86,33 @@ public class FeeDao {
     CriteriaQuery<FeesStats> query = builder.createQuery(FeesStats.class);
     Root<Fee> root = query.from(Fee.class);
     List<Predicate> predicates =
-            getStatPredicate(
-                    root,
-                    query,
-                    mpbsStatus,
-                    feeType,
-                    status,
-                    studentRef,
-                    monthFrom,
-                    monthTo,
-                    isMpbs,
-                    builder);
+        getStatPredicate(
+            root,
+            query,
+            mpbsStatus,
+            feeType,
+            status,
+            studentRef,
+            monthFrom,
+            monthTo,
+            isMpbs,
+            builder);
 
     Subquery<Long> pendingSubquery = query.subquery(Long.class);
     Root<Mpbs> pendingRoot = pendingSubquery.from(Mpbs.class);
-    pendingSubquery.select(builder.literal(1L))
-            .where(
-                    builder.equal(pendingRoot.get("status"), PENDING)
-            );
+    pendingSubquery
+        .select(builder.literal(1L))
+        .where(
+            builder.equal(pendingRoot.get("status"), PENDING),
+            builder.equal(pendingRoot.get("fee"), root));
 
     Subquery<Long> successSubquery = query.subquery(Long.class);
     Root<Mpbs> successRoot = successSubquery.from(Mpbs.class);
-    successSubquery.select(builder.literal(1L))
-            .where(
-                    builder.equal(successRoot.get("status"), SUCCESS)
-            );
+    successSubquery
+        .select(builder.literal(1L))
+        .where(
+            builder.equal(successRoot.get("status"), SUCCESS),
+            builder.equal(successRoot.get("fee"), root));
 
     query
         .where(predicates.toArray(new Predicate[0]))
@@ -163,26 +165,26 @@ public class FeeDao {
   }
 
   private boolean isCriteriaEmpty(
-          FeeStatusEnum status, String studentRef, Instant monthFrom, Instant monthTo, Boolean isMpbs) {
+      FeeStatusEnum status, String studentRef, Instant monthFrom, Instant monthTo, Boolean isMpbs) {
     return status == null
-            && studentRef == null
-            && monthFrom == null
-            && monthTo == null
-            && Boolean.FALSE.equals(isMpbs);
+        && studentRef == null
+        && monthFrom == null
+        && monthTo == null
+        && Boolean.FALSE.equals(isMpbs);
   }
 
   private List<Predicate> buildStatPredicates(
-          CriteriaBuilder builder,
-          Root<Fee> root,
-          List<Predicate> predicates,
-          MpbsStatus mpbsStatus,
-          FeeTypeEnum feeType,
-          FeeStatusEnum status,
-          String studentRef,
-          Instant monthFrom,
-          Instant monthTo,
-          Boolean isMpbs,
-          CriteriaQuery<FeesStats> query) {
+      CriteriaBuilder builder,
+      Root<Fee> root,
+      List<Predicate> predicates,
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
+      FeeStatusEnum status,
+      String studentRef,
+      Instant monthFrom,
+      Instant monthTo,
+      Boolean isMpbs,
+      CriteriaQuery<FeesStats> query) {
     if (feeType != null) {
       predicates.add(builder.equal(root.get("type"), feeType));
     }
@@ -251,32 +253,32 @@ public class FeeDao {
   }
 
   private List<Predicate> getStatPredicate(
-          Root<Fee> root,
-          CriteriaQuery<FeesStats> query,
-          MpbsStatus mpbsStatus,
-          FeeTypeEnum feeType,
-          FeeStatusEnum status,
-          String studentRef,
-          Instant monthFrom,
-          Instant monthTo,
-          Boolean isMpbs,
-          CriteriaBuilder builder) {
+      Root<Fee> root,
+      CriteriaQuery<FeesStats> query,
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
+      FeeStatusEnum status,
+      String studentRef,
+      Instant monthFrom,
+      Instant monthTo,
+      Boolean isMpbs,
+      CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
     if (isCriteriaEmpty(status, studentRef, monthFrom, monthTo, isMpbs)) {
       predicates.add(builder.equal(root.get("status"), LATE));
     } else {
       buildStatPredicates(
-              builder,
-              root,
-              predicates,
-              mpbsStatus,
-              feeType,
-              status,
-              studentRef,
-              monthFrom,
-              monthTo,
-              isMpbs,
-              query);
+          builder,
+          root,
+          predicates,
+          mpbsStatus,
+          feeType,
+          status,
+          studentRef,
+          monthFrom,
+          monthTo,
+          isMpbs,
+          query);
     }
     return predicates;
   }
@@ -313,11 +315,11 @@ public class FeeDao {
   }
 
   private void addDatePredicates(
-          CriteriaBuilder builder,
-          Root<Fee> root,
-          List<Predicate> predicates,
-          Instant monthFrom,
-          Instant monthTo) {
+      CriteriaBuilder builder,
+      Root<Fee> root,
+      List<Predicate> predicates,
+      Instant monthFrom,
+      Instant monthTo) {
 
     if (monthFrom != null && monthTo != null) {
       predicates.add(builder.between(root.get("dueDatetime"), monthFrom, monthTo));
@@ -326,9 +328,5 @@ public class FeeDao {
     } else if (monthTo != null) {
       predicates.add(builder.lessThanOrEqualTo(root.get("dueDatetime"), monthTo));
     }
-  }
-
-  private Join<Fee, Mpbs> handleMpbsJoining(Root<Fee> root) {
-    return root.join("mpbs");
   }
 }
