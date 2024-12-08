@@ -74,67 +74,14 @@ public class FeeDao {
         .getResultList();
   }
 
-  private List<Expression<?>> handleGroupByFilterStat(
-      Root<Fee> root,
+  public List<FeesStats> getStatByCriteria(
+      MpbsStatus mpbsStatus,
       FeeTypeEnum feeType,
       FeeStatusEnum status,
+      String studentRef,
       Instant monthFrom,
-      Instant monthTo) {
-    List<Expression<?>> groupByExpressions = new ArrayList<>();
-
-    if (feeType != null) {
-      groupByExpressions.add(root.get("type"));
-    }
-    if (status != null) {
-      groupByExpressions.add(root.get("status"));
-    }
-    if (monthFrom != null) {
-      groupByExpressions.add(root.get("dueDatetime"));
-      groupByExpressions.add(root.get("creationDatetime"));
-    }
-    if (monthTo != null) {
-      groupByExpressions.add(root.get("dueDatetime"));
-      groupByExpressions.add(root.get("creationDatetime"));
-    }
-    return groupByExpressions;
-  }
-
-  private List<Expression<?>> handleGroupByFilterStat(
-          Root<Fee> root,
-          FeeTypeEnum feeType,
-          FeeStatusEnum status,
-          Instant monthFrom,
-          Instant monthTo,
-          boolean isMpbs) {
-    List<Expression<?>> groupByExpressions = new ArrayList<>();
-
-    if (feeType != null) {
-      groupByExpressions.add(root.get("type"));
-    }
-    if (status != null) {
-      groupByExpressions.add(root.get("status"));
-    }
-    if (monthFrom != null) {
-      groupByExpressions.add(root.get("creationDatetime"));
-    }
-    if (monthTo != null) {
-      groupByExpressions.add(root.get("creationDatetime"));
-    }
-    if (isMpbs) {
-      Join<Fee, Mpbs> mpbsJoin = handleMpbsJoining(root);
-      groupByExpressions.add(mpbsJoin.get("creationDatetime"));
-    }
-    return groupByExpressions;
-  }
-
-  public List<FeesStats> getStatByCriteria(
-          MpbsStatus mpbsStatus,
-          FeeTypeEnum feeType,
-          FeeStatusEnum status,
-          String studentRef,
-          Instant monthFrom,
-          Instant monthTo,
-          Boolean isMpbs) {
+      Instant monthTo,
+      Boolean isMpbs) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<FeesStats> query = builder.createQuery(FeesStats.class);
     Root<Fee> root = query.from(Fee.class);
@@ -153,7 +100,6 @@ public class FeeDao {
 
     query
         .where(predicates.toArray(new Predicate[0]))
-        .groupBy(handleGroupByFilterStat(root, feeType, status, monthFrom, monthTo))
         .multiselect(
             builder.count(root),
             builder.sum(
@@ -199,7 +145,7 @@ public class FeeDao {
                     .otherwise(0L)
                     .as(Long.class)));
 
-    return entityManager.createQuery(query).getSingleResult();
+    return entityManager.createQuery(query).getResultList();
   }
 
   private boolean isCriteriaEmpty(

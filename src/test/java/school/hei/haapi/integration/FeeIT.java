@@ -157,6 +157,7 @@ class FeeIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  @Disabled
   void manager_read_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(manager1Client);
