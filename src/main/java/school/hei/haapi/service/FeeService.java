@@ -168,11 +168,9 @@ public class FeeService {
           .totalYearlyFees(0L)
           .totalMonthlyFees(0L)
           .totalFees(0L)
-          .countOfPendingTransaction(0L)
           .totalLateFees(0L)
           .totalUnpaidFees(0L)
           .totalPaidFees(0L)
-          .countOfSuccessTransaction(0L)
           .build();
     }
     return feesStats.getFirst();

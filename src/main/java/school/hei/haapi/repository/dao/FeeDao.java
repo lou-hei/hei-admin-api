@@ -98,6 +98,20 @@ public class FeeDao {
                     isMpbs,
                     builder);
 
+    Subquery<Long> pendingSubquery = query.subquery(Long.class);
+    Root<Mpbs> pendingRoot = pendingSubquery.from(Mpbs.class);
+    pendingSubquery.select(builder.literal(1L))
+            .where(
+                    builder.equal(pendingRoot.get("status"), PENDING)
+            );
+
+    Subquery<Long> successSubquery = query.subquery(Long.class);
+    Root<Mpbs> successRoot = successSubquery.from(Mpbs.class);
+    successSubquery.select(builder.literal(1L))
+            .where(
+                    builder.equal(successRoot.get("status"), SUCCESS)
+            );
+
     query
         .where(predicates.toArray(new Predicate[0]))
         .multiselect(
@@ -123,13 +137,13 @@ public class FeeDao {
             builder.sum(
                 builder
                     .selectCase()
-                    .when(builder.equal(handleMpbsJoining(root).get("status"), PENDING), 1L)
+                    .when(builder.exists(pendingSubquery), 1L)
                     .otherwise(0L)
                     .as(Long.class)),
             builder.sum(
                 builder
                     .selectCase()
-                    .when(builder.equal(handleMpbsJoining(root).get("status"), SUCCESS), 1L)
+                    .when(builder.exists(successSubquery), 1L)
                     .otherwise(0L)
                     .as(Long.class)),
             builder.sum(
