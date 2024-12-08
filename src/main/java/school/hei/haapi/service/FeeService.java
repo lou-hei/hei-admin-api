@@ -32,6 +32,7 @@ import school.hei.haapi.model.validator.FeeValidator;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
 import school.hei.haapi.repository.FeeRepository;
 import school.hei.haapi.repository.dao.FeeDao;
+import school.hei.haapi.repository.model.FeesStats;
 import school.hei.haapi.service.utils.DateUtils;
 import school.hei.haapi.service.utils.XlsxCellsGenerator;
 
@@ -127,6 +128,20 @@ public class FeeService {
     return feeRepository.saveAll(fees);
   }
 
+  public FeesStats getFeesStats(
+      MpbsStatus mpbsStatus,
+      FeeTypeEnum feeType,
+      FeeStatusEnum status,
+      Instant monthFrom,
+      Instant monthTo,
+      boolean isMpbs,
+      String studentRef) {
+    var stats =
+        feeDao.getStatByCriteria(
+            mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs);
+    return getHandledNullDataStats(stats);
+  }
+
   public List<Fee> getFees(
       PageFromOne page,
       BoundedPageSize pageSize,
@@ -143,16 +158,24 @@ public class FeeService {
   }
 
   public FeesStatistics getFeesStats(Instant monthFrom, Instant monthTo) {
-    Instant[] defaultRange = dateUtils.getDefaultMonthRange(monthFrom, monthTo);
-    monthFrom = defaultRange[0];
-    monthTo = defaultRange[1];
-    List<User.Status> statuses = List.of(User.Status.ENABLED, User.Status.SUSPENDED);
-    Object[] stats = feeRepository.getMonthlyFeeStatistics(monthFrom, monthTo, statuses).get(0);
+    var result = feeDao.getStatByCriteria(null, null, null, null, monthFrom, monthTo, false);
+    return FeesStats.to(getHandledNullDataStats(result));
+  }
 
-    return new FeesStatistics()
-        .totalFees(toInt(stats[0]))
-        .paidFees(toInt(stats[1]))
-        .unpaidFees(toInt(stats[2]));
+  private FeesStats getHandledNullDataStats(List<FeesStats> feesStats) {
+    if (feesStats.isEmpty()) {
+      return FeesStats.builder()
+          .totalYearlyFees(0L)
+          .totalMonthlyFees(0L)
+          .totalFees(0L)
+          .countOfPendingTransaction(0L)
+          .totalLateFees(0L)
+          .totalUnpaidFees(0L)
+          .totalPaidFees(0L)
+          .countOfSuccessTransaction(0L)
+          .build();
+    }
+    return feesStats.getFirst();
   }
 
   private int toInt(Object value) {
