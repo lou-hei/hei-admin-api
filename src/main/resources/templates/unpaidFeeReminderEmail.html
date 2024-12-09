@@ -1,78 +1,166 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
     <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-        }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+      }
 
-        h1,section, footer {
-            margin: 2vh 2vw;
-        }
+      h1,
+      section,
+      footer {
+        margin: 2vh 2vw;
+      }
 
-        h1 {
-            font-size: 1.5em;
-            font-weight: 500;
-        }
+      h1 {
+        font-size: 1.5em;
+        font-weight: 500;
+      }
 
-        section, footer{
-            font-size: 1.1em;
-            line-height: 1.5em;
-        }
+      section,
+      footer {
+        font-size: 1.1em;
+        line-height: 1.5em;
+      }
 
-        a {
-            color: rgb(195, 128, 3);
-            text-decoration: none;
-            margin: 0 2px;
-        }
+      a {
+        color: rgb(195, 128, 3);
+        text-decoration: none;
+        margin: 0 2px;
+      }
 
-        a:hover {
-            color: rgb(251, 189, 73);
-        }
+      a:hover {
+        color: rgb(251, 189, 73);
+      }
 
-        .contacts {
-            width: 1000px;
-            height: 500px;
-            margin: 0 auto;
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
+      .contacts {
+        width: 1000px;
+        height: 500px;
+        margin: 0 auto;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
 
-        .signature {
-            width: 100%;
-            height: 100%;
-        }
+      footer {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background-color: white;
+        color: #002147;
+      }
 
-        .motto {
-            color: rgb(0, 0, 125);
-        }
+      .logo {
+        background-color: #002147;
+        color: #ffd700;
+        font-family: Garamond, serif;
+        font-size: 2em;
+        padding: 20px;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 150px;
+        height: 150px;
+      }
 
-        .hei {
-            color: rgb(164, 164, 164);
-        }
+      .logo span {
+        margin: 0 10px;
+      }
 
+      .separator {
+        width: 2px;
+        height: 200px;
+        background-color: #002147;
+        margin: 0 20px;
+      }
+
+      .info {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-direction: column;
+        -moz-flex-direction: column;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        height: 200px;
+      }
+
+      .info h1 {
+        margin: 0;
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+
+      .info p {
+        margin: 5px 0;
+      }
+
+      .social-icons {
+        margin-top: 10px;
+      }
+
+      .social-icons a {
+        color: #002147;
+        margin-right: 10px;
+        font-size: 1.5em;
+      }
     </style>
-</head>
-<body>
-<main>
-    <section>
-        <p>Bonjour,</p>
-    </section>
-    <section>
-        Nous tenons à vous rappeler que la date d'échéance du paiement des frais de scolarité est le <span th:text="${dueDatetime}"></span>,
-    </section>
-    <section>
-        Si vous avez déjà effectué vos paiements, veuillez insérer la référence de votre transaction dans Hei Admin.
-    </section>
-    <section>
-        N'hésitez pas à contacter l’administration via l’adresse email  <a href="mailto:contact@hei.school">contact@hei.school</a>  ou appeler le numéro <a href="tel:+261349404116">+261 34 94 041 16</a> pour toutes informations complémentaires.
-    </section>
-</main>
-<footer>
-    <div class="contacts" th:style="'background-image: url(data:image/png;base64,'+${emailSignature}+');'"></div>
-</footer>
-</body>
+  </head>
+  <body>
+    <main>
+      <section>
+        <p>Bonjour <span th:text="${fullName}"></span>,</p>
+      </section>
+      <section>
+        Nous tenons à vous rappeler que le paiement des frais mensuels L2/L3,
+        d’un montant de
+        <strong> <span th:text="${remainingAmount}"></span> MGA (<span th:text="${remainingAmWords} "></span>Ariary)</strong>,
+        est fixé le <strong th:text="${dueDatetime} + '.'"></strong>
+      </section>
+      <section>
+        Nous vous invitons à effectuer ce paiement dans les meilleurs délais. Si
+        le paiement a déjà été effectué, merci d’insérer la référence de votre
+        transaction dans HEI Admin pour la mise à jour de vos frais.
+      </section>
+      <section>
+        Pour toute question ou besoin d’assistance, n’hésitez pas à contacter
+        l’administration à l’adresse <strong>contact@mail.hei.school</strong> ou au
+        numéro <strong>+261 34 94 041 16.</strong>
+      </section>
+      <section>Cordialement,</section>
+    </main>
+    <footer>
+      <div class="logo"><span></span>HEI<span></span></div>
+      <div class="separator"></div>
+      <div class="info">
+        <h1>HEI MADAGASCAR</h1>
+        <p>II J 161 R Ivandry, Antananarivo</p>
+        <p>+261 (0) 34 94 041 16</p>
+        <p>
+          <a href="mailto:contact@mail.hei.school">contact@mail.hei.school</a>
+        </p>
+        <p><a href="https://www.hei.school">www.hei.school</a></p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+    </footer>
+  </body>
 </html>

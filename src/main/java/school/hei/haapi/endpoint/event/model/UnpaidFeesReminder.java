@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import school.hei.haapi.model.User;
 
 @EqualsAndHashCode
 @Builder
@@ -15,11 +16,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @Data
 public class UnpaidFeesReminder extends PojaEvent {
-  @JsonProperty("id")
-  private String id;
-
-  @JsonProperty("email")
-  private String studentEmail;
+  @JsonProperty("concerned_student")
+  UnpaidFeesUser user;
 
   @JsonProperty("remainingAmount")
   private Integer remainingAmount;
@@ -39,4 +37,13 @@ public class UnpaidFeesReminder extends PojaEvent {
   public Duration maxConsumerBackoffBetweenRetries() {
     return Duration.ofSeconds(30);
   }
+
+  public record UnpaidFeesUser(
+      String id, String ref, String lastName, String firstName, String email) {
+    public static UnpaidFeesUser from(User user) {
+      return new UnpaidFeesUser(
+          user.getId(), user.getRef(), user.getLastName(), user.getFirstName(), user.getEmail());
+    }
+  }
+  ;
 }
