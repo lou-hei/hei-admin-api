@@ -86,6 +86,11 @@ public class UserService {
     userToRefresh.setStatus(refreshedUser.getStatus());
     userToRefresh.setSpecializationField(refreshedUser.getSpecializationField());
     userToRefresh.setHighSchoolOrigin(refreshedUser.getHighSchoolOrigin());
+    userToRefresh.setDegree(refreshedUser.getDegree());
+    userToRefresh.setCnaps(refreshedUser.getCnaps());
+    userToRefresh.setEndingService(refreshedUser.getEndingService());
+    userToRefresh.setOstie(refreshedUser.getOstie());
+    userToRefresh.setFunction(refreshedUser.getFunction());
     return userToRefresh;
   }
 
