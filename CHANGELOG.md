@@ -1,3 +1,17 @@
+# [1.86.0](https://github.com/hei-school/hei-admin-api/compare/v1.85.0...v1.86.0) (2024-12-09)
+
+
+### Bug Fixes
+
+* use subquery for joining case  ([5e902d9](https://github.com/hei-school/hei-admin-api/commit/5e902d90fa2245a07e269446b4ccf4a6a9e29529))
+
+
+### Features
+
+* fee stats depends on fee criteria filter   ([e9a8206](https://github.com/hei-school/hei-admin-api/commit/e9a820656f2387d4fdff1da8c6d400c126f445e5))
+
+
+
 # [1.85.0](https://github.com/hei-school/hei-admin-api/compare/v1.83.1...v1.85.0) (2024-12-06)
 
 
@@ -114,15 +128,6 @@
 ### Bug Fixes
 
 * make mpbs idempotant ([27ab987](https://github.com/hei-school/hei-admin-api/commit/27ab98709d157a64578d47fa0ccd42e502410b1e))
-
-
-
-# [1.77.0](https://github.com/hei-school/hei-admin-api/compare/v1.76.0...v1.77.0) (2024-11-13)
-
-
-### Features
-
-* implement grades resources ([e370dad](https://github.com/hei-school/hei-admin-api/commit/e370dad2ba64c22a85a849bcb1dee52b7a32973c))
 
 
 
