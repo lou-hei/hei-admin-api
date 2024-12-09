@@ -140,5 +140,10 @@ public class StaffMemberIT extends FacadeITMockedThirdParties {
     List<StaffMember> actual = api.crupdateStaffMembers(List.of(staffMember));
     assertEquals(1, actual.size());
     assertEquals(staffMember.getDegree(), actual.getFirst().getDegree());
+    assertEquals(staffMember.getFunction(), actual.getFirst().getFunction());
+
+    List<StaffMember> after = api.getStaffMembers(1, 15, null, null, null, null);
+    log.info(after.toString());
+    assertEquals(4, after.size());
   }
 }
