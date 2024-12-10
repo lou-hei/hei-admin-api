@@ -264,22 +264,19 @@ public class FeeDao {
       Boolean isMpbs,
       CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
-    if (isCriteriaEmpty(status, studentRef, monthFrom, monthTo, isMpbs)) {
-      predicates.add(builder.equal(root.get("status"), LATE));
-    } else {
-      buildStatPredicates(
-          builder,
-          root,
-          predicates,
-          mpbsStatus,
-          feeType,
-          status,
-          studentRef,
-          monthFrom,
-          monthTo,
-          isMpbs,
-          query);
-    }
+    buildStatPredicates(
+        builder,
+        root,
+        predicates,
+        mpbsStatus,
+        feeType,
+        status,
+        studentRef,
+        monthFrom,
+        monthTo,
+        isMpbs,
+        query);
+
     return predicates;
   }
 
