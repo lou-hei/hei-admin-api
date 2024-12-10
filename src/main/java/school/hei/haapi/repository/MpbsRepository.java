@@ -14,4 +14,6 @@ public interface MpbsRepository extends JpaRepository<Mpbs, String> {
   Optional<Mpbs> findByPspId(String pspId);
 
   List<Mpbs> findAllByStatus(MpbsStatus status);
+
+  Long countMpbsByStatusAndStudentId(MpbsStatus status, String studentId);
 }
