@@ -3,9 +3,14 @@ package school.hei.haapi.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static school.hei.haapi.integration.MpbsIT.createableMpbsFromFeeIdForStudent;
 import static school.hei.haapi.integration.conf.TestUtils.FEE4_ID;
 import static school.hei.haapi.integration.conf.TestUtils.FEE5_ID;
+import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT2_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
+import static school.hei.haapi.integration.conf.TestUtils.creatableFee1;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.model.User.Sex.F;
@@ -26,10 +31,21 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import school.hei.haapi.endpoint.rest.api.PayingApi;
+import school.hei.haapi.endpoint.rest.client.ApiClient;
+import school.hei.haapi.endpoint.rest.client.ApiException;
+import school.hei.haapi.endpoint.rest.model.Fee;
+import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
+import school.hei.haapi.endpoint.rest.model.Mpbs;
 import school.hei.haapi.integration.conf.AbstractContextInitializer;
 import school.hei.haapi.integration.conf.MockedThirdParties;
+import school.hei.haapi.integration.conf.TestUtils;
+import school.hei.haapi.model.BoundedPageSize;
+import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.User;
 import school.hei.haapi.repository.UserRepository;
+import school.hei.haapi.service.FeeService;
+import school.hei.haapi.service.MpbsService;
 import school.hei.haapi.service.PaymentService;
 import school.hei.haapi.service.UserService;
 import school.hei.haapi.service.event.CheckSuspendedStudentsStatusService;
@@ -47,6 +63,8 @@ public class CheckStudentsStatusTest extends MockedThirdParties {
   @Autowired private PaymentService paymentService;
   @Autowired private UserService userService;
   @Autowired private UserRepository userRepository;
+  @Autowired private MpbsService mpbsService;
+  @Autowired private FeeService feeService;
   @MockBean private EventBridgeClient eventBridgeClientMock;
 
   @BeforeEach
@@ -114,12 +132,47 @@ public class CheckStudentsStatusTest extends MockedThirdParties {
   }
 
   @Test
+  @DirtiesContext
+  void pending_students_status_ok() throws ApiException {
+    ApiClient managerClient = anApiClient(MANAGER1_TOKEN);
+    ApiClient studentClient = anApiClient(STUDENT2_TOKEN);
+    PayingApi managerPayingApi = new PayingApi(managerClient);
+    PayingApi studentPayingApi = new PayingApi(studentClient);
+
+    // Student2 must enable
+    assertEquals(ENABLED, userService.findById(STUDENT2_ID).getStatus());
+
+    // Create student 2 fee
+    Fee student2Fee =
+        managerPayingApi.createStudentFees(STUDENT2_ID, List.of(creatableFee1())).getFirst();
+    Mpbs pendingMpbs =
+        studentPayingApi.crupdateMpbs(
+            STUDENT2_ID,
+            student2Fee.getId(),
+            createableMpbsFromFeeIdForStudent(STUDENT2_ID, student2Fee.getId()));
+
+    suspendStudentsWithOverdueFeesService.suspendStudentsWithUnpaidOrLateFee();
+
+    // student2 have unpaid or late fee
+    assertTrue(
+        userService.getStudentsWithUnpaidOrLateFee().contains(userService.findById(STUDENT2_ID)));
+
+    // student2 is still ENABLE, because of the pending Mbps
+    assertEquals(1, mpbsService.countPendingOfStudent(STUDENT2_ID));
+    assertEquals(ENABLED, userService.findById(STUDENT2_ID).getStatus());
+  }
+
+  @Test
   void get_all_students_with_unpaid_or_late_fee_ok() {
     List<User> studentsWithUnpaidOrLateFee = userRepository.getStudentsWithUnpaidOrLateFee();
 
     assertEquals(2, studentsWithUnpaidOrLateFee.size());
     assertTrue(studentsWithUnpaidOrLateFee.contains(student1()));
     assertTrue(studentsWithUnpaidOrLateFee.contains(student2()));
+  }
+
+  private ApiClient anApiClient(String token) {
+    return TestUtils.anApiClient(token, localPort);
   }
 
   static class ContextInitializer extends AbstractContextInitializer {

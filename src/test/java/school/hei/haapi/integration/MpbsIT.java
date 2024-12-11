@@ -200,8 +200,12 @@ public class MpbsIT extends FacadeITMockedThirdParties {
   }
 
   public static CrupdateMpbs createableMpbsFromFeeIdWithStudent1(String feeId) {
+    return createableMpbsFromFeeIdForStudent(STUDENT1_ID, feeId);
+  }
+
+  public static CrupdateMpbs createableMpbsFromFeeIdForStudent(String studentId, String feeId) {
     return new CrupdateMpbs()
-        .studentId(STUDENT1_ID)
+        .studentId(studentId)
         .feeId(feeId)
         .pspType(ORANGE_MONEY)
         .pspId("MP240726.1541.D88425");

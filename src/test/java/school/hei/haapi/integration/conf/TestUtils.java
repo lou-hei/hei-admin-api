@@ -159,6 +159,7 @@ public class TestUtils {
   public static final String GROUP2_REF = "GRP21002";
   public static final String BAD_TOKEN = "bad_token";
   public static final String STUDENT1_TOKEN = "student1_token";
+  public static final String STUDENT2_TOKEN = "student2_token";
   public static final String TEACHER1_TOKEN = "teacher1_token";
   public static final String MONITOR1_TOKEN = "monitor1_token";
   public static final String MONITOR2_TOKEN = "monitor2_token";
@@ -221,6 +222,7 @@ public class TestUtils {
   public static void setUpCognito(CognitoComponent cognitoComponent) {
     when(cognitoComponent.getEmailByIdToken(BAD_TOKEN)).thenReturn(null);
     when(cognitoComponent.getEmailByIdToken(STUDENT1_TOKEN)).thenReturn("test+ryan@hei.school");
+    when(cognitoComponent.getEmailByIdToken(STUDENT2_TOKEN)).thenReturn("test+student2@hei.school");
     when(cognitoComponent.getEmailByIdToken(MONITOR1_TOKEN)).thenReturn("test+monitor@hei.school");
     when(cognitoComponent.getEmailByIdToken(MONITOR2_TOKEN)).thenReturn("test+monitor2@hei.school");
     when(cognitoComponent.getEmailByIdToken(STUDENT8_TOKEN))
