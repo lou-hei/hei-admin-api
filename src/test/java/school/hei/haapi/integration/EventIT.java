@@ -3,14 +3,10 @@ package school.hei.haapi.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.MISSING;
-import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.PRESENT;
 import static school.hei.haapi.endpoint.rest.model.EventType.COURSE;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT2_ID;
-import static school.hei.haapi.integration.conf.TestUtils.EVENT_PARTICIPANT1_ID;
-import static school.hei.haapi.integration.conf.TestUtils.EVENT_PARTICIPANT2_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
@@ -33,7 +29,6 @@ import java.time.Instant;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -81,7 +76,8 @@ public class EventIT extends FacadeITMockedThirdParties {
     assertEquals(expectedIntegrationEventCreated().getBeginDatetime(), event2.getBeginDatetime());
     assertEquals(expectedIntegrationEventCreated().getDescription(), event2.getDescription());
 
-    List<EventParticipant> eventParticipantsToUpdate = api.getEventParticipants(event2.getId(), 1, 15, null);
+    List<EventParticipant> eventParticipantsToUpdate =
+        api.getEventParticipants(event2.getId(), 1, 15, null);
   }
 
   @Test

@@ -19,7 +19,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -178,18 +177,6 @@ public class MonitorIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled("dirty")
-  void manager_update_ok() throws ApiException {
-    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
-
-    UsersApi api = new UsersApi(manager1Client);
-    Monitor actual = api.updateMonitorById(MONITOR1_ID, someUpdatableMonitor1());
-    Monitor expected = api.getMonitorById(MONITOR1_ID);
-
-    assertEquals(actual, expected);
-  }
-
-  @Test
   void manager_write_monitor_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     UsersApi api = new UsersApi(manager1Client);
@@ -205,6 +192,11 @@ public class MonitorIT extends FacadeITMockedThirdParties {
     assertEquals(expectedCreated().getFirstName(), actualCreated.getFirstName());
     assertEquals(expectedCreated().getAddress(), actualCreated.getAddress());
     assertEquals(expectedCreated().getLastName(), actualCreated.getLastName());
+
+    Monitor actual = api.updateMonitorById(actualCreated.getId(), someUpdatableMonitor1());
+    Monitor expected = api.getMonitorById(actualCreated.getId());
+
+    assertEquals(actual, expected);
   }
 
   @Test

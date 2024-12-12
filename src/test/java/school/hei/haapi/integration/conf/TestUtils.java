@@ -745,7 +745,6 @@ public class TestUtils {
 
   public static CrupdateExam createExam1() {
     return new CrupdateExam()
-        .id(EXAM1_ID)
         .coefficient(2)
         .title("Algorithmics")
         .awardedCourseId(awardedCourse1().getId())
@@ -1307,6 +1306,15 @@ public class TestUtils {
         .eventType(COURSE)
         .plannerId(MANAGER_ID)
         .groups(List.of(createGroupIdentifier(group1())));
+  }
+
+  public static CreateFee createFeeForTest() {
+    return new CreateFee()
+        .comment("test")
+        .totalAmount(5000)
+        .creationDatetime(Instant.now())
+        .dueDatetime(Instant.parse("2026-11-09T10:10:10.00Z"))
+        .type(TUITION);
   }
 
   public static CreateEvent createIntegrationEvent() {

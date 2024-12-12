@@ -30,24 +30,18 @@ import static school.hei.haapi.integration.conf.TestUtils.fee3;
 import static school.hei.haapi.integration.conf.TestUtils.fee4;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
-import static school.hei.haapi.integration.conf.TestUtils.updatableStudentFee;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import java.time.Instant;
 import java.util.List;
-
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.event.consumer.EventConsumer;
-import school.hei.haapi.endpoint.event.consumer.model.ConsumableEvent;
-import school.hei.haapi.endpoint.event.consumer.model.TypedEvent;
-import school.hei.haapi.endpoint.event.model.UpdateFeesStatusToLateTriggered;
 import school.hei.haapi.endpoint.rest.api.PayingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
@@ -122,7 +116,6 @@ class FeeIT extends FacadeITMockedThirdParties {
     List<Fee> actual = api.getStudentFees(STUDENT1_ID, 1, 20, null);
 
     log.info(String.valueOf(actual.size()));
-
 
     assertEquals(fee1(), actualFee);
     assertTrue(actual.contains(fee1()));
@@ -266,8 +259,7 @@ class FeeIT extends FacadeITMockedThirdParties {
     assertEquals(actualUpdated.getFirst().getComment(), updatedFee.getComment());
     assertEquals(actualUpdated.getFirst().getDueDatetime(), updatedFee.getDueDatetime());
 
-    List<Fee> crupdatedStudentFees =
-        api.crupdateStudentFees(List.of(creatableStudentFee()));
+    List<Fee> crupdatedStudentFees = api.crupdateStudentFees(List.of(creatableStudentFee()));
 
     List<Fee> student1Fees = api.getStudentFees(STUDENT1_ID, 1, 10, null);
 

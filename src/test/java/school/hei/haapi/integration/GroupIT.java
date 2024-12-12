@@ -24,7 +24,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -184,7 +183,6 @@ class GroupIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled("dirty")
   void manager_write_create_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     CreateGroup toCreate3 = someCreatableGroup(new ArrayList<>());
@@ -195,17 +193,17 @@ class GroupIT extends FacadeITMockedThirdParties {
     List<Group> created = api.createOrUpdateGroups(List.of(toCreate3, toCreate4));
     List<Group> createdWithStudent = api.createOrUpdateGroups(List.of(toCreate5));
     List<Student> students =
-        api.getStudentsByGroupId(createdWithStudent.get(0).getId(), 1, 10, null);
+        api.getStudentsByGroupId(createdWithStudent.getFirst().getId(), 1, 10, null);
 
     assertEquals(2, created.size());
-    Group created3 = created.get(0);
+    Group created3 = created.getFirst();
     assertTrue(isValidUUID(created3.getId()));
     toCreate3.setId(created3.getId());
     assertNotNull(created3.getCreationDatetime());
     toCreate3.setCreationDatetime(created3.getCreationDatetime());
 
     assertEquals(created3, createGroupToGroup(toCreate3));
-    Group created4 = created.get(0);
+    Group created4 = created.getFirst();
     assertTrue(isValidUUID(created4.getId()));
     toCreate4.setId(created4.getId());
     assertNotNull(created4.getCreationDatetime());
@@ -216,20 +214,19 @@ class GroupIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled("dirty")
   void manager_write_update_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     TeachingApi api = new TeachingApi(manager1Client);
 
-    List<CreateGroup> ModifyGroups =
-        List.of(
-            groupToCreateGroup(group1()).name("A new name zero"),
-            groupToCreateGroup(group2()).name("A new name zero"));
+    Group group =
+        api.createOrUpdateGroups(
+                List.of(new CreateGroup().name("name").ref("ref").creationDatetime(Instant.now())))
+            .getFirst();
+
+    List<CreateGroup> ModifyGroups = List.of(groupToCreateGroup(group).name("A new name zero"));
 
     List<Group> updated = api.createOrUpdateGroups(ModifyGroups);
 
-    assertEquals(2, updated.size());
-    assertTrue(updated.contains(createGroupToGroup(ModifyGroups.get(0))));
-    assertTrue(updated.contains(createGroupToGroup(ModifyGroups.get(1))));
+    assertTrue(updated.contains(createGroupToGroup(ModifyGroups.getFirst())));
   }
 }
