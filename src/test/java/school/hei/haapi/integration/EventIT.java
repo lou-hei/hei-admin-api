@@ -62,7 +62,7 @@ public class EventIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  void manager_create_event_ok() throws ApiException {
+  void manager_create_event_and_event_participant_ok() throws ApiException {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
 
@@ -80,6 +80,8 @@ public class EventIT extends FacadeITMockedThirdParties {
     assertEquals(expectedIntegrationEventCreated().getEndDatetime(), event2.getEndDatetime());
     assertEquals(expectedIntegrationEventCreated().getBeginDatetime(), event2.getBeginDatetime());
     assertEquals(expectedIntegrationEventCreated().getDescription(), event2.getDescription());
+
+    List<EventParticipant> eventParticipantsToUpdate = api.getEventParticipants(event2.getId(), 1, 15, null);
   }
 
   @Test
@@ -158,28 +160,6 @@ public class EventIT extends FacadeITMockedThirdParties {
     assertTrue(participantsFilteredByGroupRef.contains(student2AttendEvent2()));
     assertFalse(participantsFilteredByGroupRef.contains(student1AttendEvent2()));
     assertFalse(participantsFilteredByGroupRef.contains(student3MissEvent2()));
-  }
-
-  @Test
-  @Disabled("dirty")
-  void manager_update_event_participant_ok() throws ApiException {
-    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
-    EventsApi api = new EventsApi(apiClient);
-
-    UpdateEventParticipant updateStudent1StatusEvent1 =
-        new UpdateEventParticipant().id(EVENT_PARTICIPANT1_ID).eventStatus(PRESENT);
-
-    UpdateEventParticipant updateStudent3StatusInEvent1 =
-        new UpdateEventParticipant().id(EVENT_PARTICIPANT2_ID).eventStatus(MISSING);
-
-    EventParticipant student1IsPresentInEvent1 = student1MissEvent1().eventStatus(PRESENT);
-    EventParticipant student3MissEvent1 = student3AttendEvent1().eventStatus(MISSING);
-
-    List<EventParticipant> actual =
-        api.updateEventParticipantsStatus(
-            EVENT1_ID, List.of(updateStudent1StatusEvent1, updateStudent3StatusInEvent1));
-
-    assertEquals(actual, List.of(student1IsPresentInEvent1, student3MissEvent1));
   }
 
   @Test
