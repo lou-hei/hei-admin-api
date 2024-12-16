@@ -5,6 +5,7 @@ import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PENDING;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import school.hei.haapi.endpoint.rest.model.MpbsStatus;
 import school.hei.haapi.model.Fee;
 import school.hei.haapi.model.Mpbs.Mpbs;
 import school.hei.haapi.model.exception.NotFoundException;
@@ -32,5 +33,9 @@ public class MpbsService {
     return mpbsRepository
         .findByPspId(pspId)
         .orElseThrow(() -> new NotFoundException("Mpbs not found #" + pspId));
+  }
+
+  public Long countPendingOfStudent(String studentId) {
+    return mpbsRepository.countMpbsByStatusAndStudentId(MpbsStatus.PENDING, studentId);
   }
 }
