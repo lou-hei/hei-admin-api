@@ -86,9 +86,9 @@ public class SecurityConf {
             bearerFilter(
                 new OrRequestMatcher(
                     antMatcher(GET, "/whoami"),
+                    antMatcher(GET, "/staff_members/xlsx/raw"),
                     antMatcher(GET, "/staff_members"),
                     antMatcher(PUT, "/staff_members"),
-                    antMatcher(GET, "/staff_members/*"),
                     antMatcher(PUT, "/staff_members/*"),
                     antMatcher(GET, "/teachers/announcements"),
                     antMatcher(GET, "/students/announcements"),
@@ -679,14 +679,14 @@ public class SecurityConf {
                     //
                     // Staff resources
                     //
+                    .requestMatchers(GET, "/staff_members/xlsx/raw")
+                    .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(GET, "/staff_members")
                     .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(PUT, "/staff_members")
                     .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(new SelfMatcher(GET, "/staff_members/*", "staff_members"))
                     .hasAnyRole(STAFF_MEMBER.getRole())
-                    .requestMatchers(GET, "/staff_members/*")
-                    .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(PUT, "/staff_members/*")
                     .hasAnyRole(ADMIN.getRole(), STAFF_MEMBER.getRole())
                     //

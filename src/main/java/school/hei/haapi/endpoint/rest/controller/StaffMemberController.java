@@ -7,7 +7,14 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import school.hei.haapi.endpoint.rest.mapper.SexEnumMapper;
 import school.hei.haapi.endpoint.rest.mapper.StatusEnumMapper;
@@ -48,6 +55,12 @@ public class StaffMemberController {
         .stream()
         .map(userMapper::toRestStaffMember)
         .toList();
+  }
+
+  @GetMapping("/staff_members/xlsx/raw")
+  public byte[] getStaffMembersXlsx() {
+    return userService.getByRoleAndStatusAsXlsx(
+        STAFF_MEMBER, User.Status.ENABLED, userMapper::toRestStaffMember);
   }
 
   @PostMapping(value = "/staff_members/{id}/picture/raw", consumes = MULTIPART_FORM_DATA_VALUE)
