@@ -2,6 +2,7 @@ package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
@@ -144,6 +145,15 @@ class FeeIT extends FacadeITMockedThirdParties {
 
     FeesWithStats actual = api.getFees(null, null, null, null, null, 1, 10, true, null);
     assertEquals(1, actual.getData().size());
+  }
+
+  @Test
+  void read_fee_contains_student_first_name() throws ApiException {
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    PayingApi api = new PayingApi(manager1Client);
+
+    FeesWithStats actual = api.getFees(null, null, null, null, null, 1, 10, true, null);
+    assertNotNull(actual.getData().getFirst().getStudentFirstName());
   }
 
   @Test

@@ -47,6 +47,7 @@ public class FeeMapper {
         .creationDatetime(fee.getCreationDatetime())
         .updatedAt(fee.getUpdatedAt())
         .dueDatetime(fee.getDueDatetime())
+        .studentFirstName(fee.getStudent().getFirstName())
         .letter(letter == null ? null : toLetterFee(letter));
   }
 
