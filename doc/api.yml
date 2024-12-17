@@ -2747,6 +2747,36 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/mpbs/verify':
+    post:
+      tags:
+       - Paying
+      summary: Verify mpbs from xls provided by Orange
+      operationId: verifyMpbs
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadFile"
+      responses:
+        '200':
+          description: The mpbs updated
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Mpbs'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /students/{student_id}/fees/{fee_id}/mpbs/verifications:
     get:
       tags:
