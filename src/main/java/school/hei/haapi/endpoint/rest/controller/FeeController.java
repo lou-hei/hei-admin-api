@@ -2,11 +2,20 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.IMAGE_PNG;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,10 +30,12 @@ import school.hei.haapi.endpoint.rest.model.*;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.User;
+import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
 import school.hei.haapi.repository.model.FeesStats;
 import school.hei.haapi.service.FeeService;
 import school.hei.haapi.service.FeeTemplateService;
+import school.hei.haapi.service.PatrimoineService;
 import school.hei.haapi.service.UserService;
 
 @RestController
@@ -36,6 +47,7 @@ public class FeeController {
   private final UpdateFeeValidator updateFeeValidator;
   private final FeeTemplateService feeTemplateService;
   private final FeeTemplateMapper feeTemplateMapper;
+  private final PatrimoineService patrimoineService;
 
   @GetMapping("/fees/{fee_id}")
   public Fee getFeeById(@PathVariable(name = "fee_id") String id) {
@@ -164,5 +176,21 @@ public class FeeController {
       @PathVariable String id, @RequestBody CrupdateFeeTemplate feeType) {
     return feeTemplateMapper.toRest(
         feeTemplateService.createOrUpdateFeeTemplate(feeTemplateMapper.toDomain(feeType)));
+  }
+
+  @GetMapping(value = "/fees/projection", produces = IMAGE_PNG_VALUE)
+  public ResponseEntity<Resource> getUnpaidFeesProjection() {
+    Instant now = Instant.now();
+    File unpaidFeesGraph = patrimoineService.visualizeUnpaidFees(now);
+
+    if (unpaidFeesGraph == null || !unpaidFeesGraph.exists()) {
+      return ResponseEntity.status(NOT_FOUND).body(null);
+    }
+
+    Resource resource = new FileSystemResource(unpaidFeesGraph);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(IMAGE_PNG);
+
+    return new ResponseEntity<>(resource, headers, OK);
   }
 }
