@@ -44,12 +44,12 @@ public class LetterEventIT extends MockedThirdParties {
         .build();
   }
 
-  static UpdateLetterEmail update() {
+  static UpdateLetterEmail letter1() {
     return UpdateLetterEmail.builder()
-        .id("test_id")
-        .email("test@gmail.com")
-        .description("description")
-        .ref("ref")
+        .id("letter1_id")
+        .email("test+ryan@hei.school")
+        .description("Certificat de residence")
+        .ref("letter1_ref")
         .build();
   }
 
@@ -62,7 +62,7 @@ public class LetterEventIT extends MockedThirdParties {
 
   @Test
   void should_invoke_event_producer_when_pinging_student() {
-    updateLetterEmailService.accept(update());
+    updateLetterEmailService.accept(letter1());
 
     verify(mailerMock, times(1)).accept(any());
   }

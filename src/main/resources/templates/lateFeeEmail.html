@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Notification de Paiement</title>
+    <meta charset="UTF-8" />
+    <title>Payement Notification</title>
     <link
+            type="text/css"
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
@@ -15,7 +16,7 @@
         h1,
         section,
         footer {
-            margin: 2vh 2vw;
+            margin: 20px 20px;
         }
 
         h1 {
@@ -35,90 +36,75 @@
             margin: 0 2px;
         }
 
-        a:hover {
-            color: rgb(251, 189, 73);
-        }
-
         .contacts {
             width: 1000px;
             height: 500px;
-            margin: 0 auto;
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
         }
 
-        footer {
-            display: -webkit-box;
-            display: -moz-box;
-            display: -ms-flexbox;
-            display: -webkit-flex;
-            display: flex;
-            align-items: center;
-            padding: 20px;
+        .footer {
+            width: 100%;
             background-color: white;
             color: #002147;
+            font-size: 1.1em;
+            line-height: 1.5em;
         }
 
-        .logo {
+        .footer__content {
+            display: table;
+            table-layout: fixed;
+        }
+
+        .footer__logo {
             background-color: #002147;
             color: #ffd700;
             font-family: Garamond, serif;
-            font-size: 2em;
+            font-size: 3em;
             padding: 20px;
-            display: -webkit-box;
-            display: -moz-box;
-            display: -ms-flexbox;
-            display: -webkit-flex;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-align: center;
+            vertical-align: middle;
+            display: table-cell;
             width: 150px;
             height: 150px;
         }
 
-        .logo span {
-            margin: 0 10px;
-        }
-
-        .separator {
+        .footer__separator {
             width: 2px;
-            height: 200px;
+            height: auto;
             background-color: #002147;
-            margin: 0 20px;
+            display: table-cell;
         }
 
-        .info {
-            display: -webkit-box;
-            display: -moz-box;
-            display: -ms-flexbox;
-            display: -webkit-flex;
-            display: flex;
-            -webkit-flex-direction: column;
-            -moz-flex-direction: column;
-            -ms-flex-direction: column;
-            flex-direction: column;
-            height: 200px;
+        .footer__info {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 20px;
         }
 
-        .info h1 {
-            margin: 0;
+        .footer__info-title {
             font-size: 1.5em;
             font-weight: bold;
+            margin: 0 0 10px;
         }
 
-        .info p {
+        .footer__info p {
             margin: 5px 0;
         }
 
-        .social-icons {
+        .footer__info a {
+            color: rgb(195, 128, 3);
+            text-decoration: none;
+            margin: 0 2px;
+        }
+
+        .footer__social-icons {
             margin-top: 10px;
         }
 
-        .social-icons a {
+        .footer__social-icons a {
             color: #002147;
             margin-right: 10px;
             font-size: 1.5em;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -155,25 +141,27 @@
     <section>
         Pour toute question ou besoin d’assistance, n’hésitez pas à contacter
         l’administration à l’adresse
-        <strong>contact@mail.hei.school</strong> ou au numéro
+        <strong>contact@hei.school</strong> ou au numéro
         <strong>+261 34 94 041 16</strong>.
     </section>
     <section>Cordialement,</section>
 </main>
-<footer>
-    <div class="logo"><span></span>HEI<span></span></div>
-    <div class="separator"></div>
-    <div class="info">
-        <h1>HEI MADAGASCAR</h1>
-        <p>II J 161 R Ivandry, Antananarivo</p>
-        <p>+261 (0) 34 94 041 16</p>
-        <p>
-            <a href="mailto:contact@mail.hei.school">contact@mail.hei.school</a>
-        </p>
-        <p><a href="https://www.hei.school">www.hei.school</a></p>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-linkedin"></i></a>
+<footer class="footer">
+    <div class="footer__content">
+        <div class="footer__logo">HEI</div>
+        <div class="footer__separator"></div>
+        <div class="footer__info">
+            <h1 class="footer__info-title">HEI MADAGASCAR</h1>
+            <p>II J 161 R Ivandry, Antananarivo</p>
+            <p>+261 (0) 34 94 041 16</p>
+            <p>
+                <a href="mailto:contact@mail.hei.school">contact@mail.hei.school</a>
+            </p>
+            <p><a href="https://www.hei.school">www.hei.school</a></p>
+            <div class="footer__social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
         </div>
     </div>
 </footer>

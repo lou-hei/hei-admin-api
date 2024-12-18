@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import school.hei.haapi.endpoint.event.model.UpdateLetterEmail;
 import school.hei.haapi.mail.Email;
 import school.hei.haapi.mail.Mailer;
-import school.hei.haapi.service.utils.Base64Converter;
-import school.hei.haapi.service.utils.ClassPathResourceResolver;
+import school.hei.haapi.model.User;
+import school.hei.haapi.service.UserService;
 
 @AllArgsConstructor
 @Service
@@ -23,14 +22,16 @@ import school.hei.haapi.service.utils.ClassPathResourceResolver;
 public class UpdateLetterEmailService implements Consumer<UpdateLetterEmail> {
 
   private final Mailer mailer;
-  private final Base64Converter base64Converter;
-  private final ClassPathResourceResolver classPathResourceResolver;
+  private final UserService userService;
+
+  private static String formatName(User student) {
+    return student.getLastName() + " " + student.getFirstName();
+  }
 
   private Context getMailContext(UpdateLetterEmail letter) {
     Context initial = new Context();
-    Resource emailSignatureImage = classPathResourceResolver.apply("HEI_signature", ".png");
 
-    initial.setVariable("emailSignature", base64Converter.apply(emailSignatureImage));
+    initial.setVariable("fullName", formatName(userService.getByEmail(letter.getEmail())));
     initial.setVariable("description", letter.getDescription());
     initial.setVariable("reason", letter.getReason());
     return initial;

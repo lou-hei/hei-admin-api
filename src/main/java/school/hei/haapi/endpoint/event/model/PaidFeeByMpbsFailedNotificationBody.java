@@ -28,11 +28,15 @@ public class PaidFeeByMpbsFailedNotificationBody extends PojaEvent {
   @JsonProperty("amount")
   private int amount;
 
+  @JsonProperty("fee_id")
+  private String feeId;
+
   public static PaidFeeByMpbsFailedNotificationBody from(Payment payment) {
     return PaidFeeByMpbsFailedNotificationBody.builder()
         .amount(payment.getAmount())
         .mpbsAuthor(defineMpbsAuthorEntireName(payment.getFee()))
         .mpbsAuthorEmail(payment.getFee().getStudent().getEmail())
+        .feeId(payment.getFee().getId())
         .build();
   }
 
