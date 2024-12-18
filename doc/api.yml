@@ -463,7 +463,9 @@ paths:
           in: query
           description: Filter students by status value return all by default
           schema:
-            $ref: '#/components/schemas/EnableStatus'
+            type: array
+            items:
+              $ref: '#/components/schemas/EnableStatus'
         - name: sex
           required: false
           in: query
