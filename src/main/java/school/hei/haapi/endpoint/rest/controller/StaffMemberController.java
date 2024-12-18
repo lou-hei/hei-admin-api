@@ -58,7 +58,7 @@ public class StaffMemberController {
         .toList();
   }
 
-  @GetMapping("/staff_members/xlsx/raw")
+  @GetMapping(value = "/staff_members/raw/xlsx", produces = "application/vnd.ms-excel")
   public byte[] getStaffMembersIntoXlsx() {
     return userService.getByRoleAndStatusAsXlsx(
         STAFF_MEMBER, ENABLED, userMapper::toRestStaffMember);
