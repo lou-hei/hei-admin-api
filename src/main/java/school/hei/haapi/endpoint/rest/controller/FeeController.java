@@ -2,6 +2,10 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.IMAGE_PNG;
+import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +15,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,7 @@ import school.hei.haapi.endpoint.rest.model.*;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.User;
+import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
 import school.hei.haapi.service.FeeService;
 import school.hei.haapi.service.FeeTemplateService;
@@ -171,20 +174,19 @@ public class FeeController {
         feeTemplateService.createOrUpdateFeeTemplate(feeTemplateMapper.toDomain(feeType)));
   }
 
-  @GetMapping(value = "/fees/projection", produces = MediaType.IMAGE_PNG_VALUE)
+  @GetMapping(value = "/fees/projection", produces = IMAGE_PNG_VALUE)
   public ResponseEntity<Resource> getUnpaidFeesProjection() {
     Instant now = Instant.now();
     File unpaidFeesGraph = patrimoineService.visualizeUnpaidFees(now);
 
     if (unpaidFeesGraph == null || !unpaidFeesGraph.exists()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+      return ResponseEntity.status(NOT_FOUND).body(null);
     }
 
     Resource resource = new FileSystemResource(unpaidFeesGraph);
-
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.IMAGE_PNG);
+    headers.setContentType(IMAGE_PNG);
 
-    return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    return new ResponseEntity<>(resource, headers, OK);
   }
 }
