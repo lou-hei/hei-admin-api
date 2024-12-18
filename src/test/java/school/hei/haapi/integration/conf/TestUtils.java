@@ -637,7 +637,8 @@ public class TestUtils {
         .mpbs(expectedMpbs1())
         .updatedAt(Instant.parse("2023-02-08T08:30:24Z"))
         .creationDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
-        .dueDatetime(Instant.parse("2021-12-08T08:25:24.00Z"));
+        .dueDatetime(Instant.parse("2021-12-08T08:25:24.00Z"))
+        .studentFirstName("Ryan");
   }
 
   public static Fee fee2() {
@@ -652,7 +653,8 @@ public class TestUtils {
         .comment("Comment")
         .updatedAt(Instant.parse("2023-02-08T08:30:24Z"))
         .creationDatetime(Instant.parse("2021-11-10T08:25:24.00Z"))
-        .dueDatetime(Instant.parse("2021-12-10T08:25:24.00Z"));
+        .dueDatetime(Instant.parse("2021-12-10T08:25:24.00Z"))
+        .studentFirstName("Ryan");
   }
 
   public static Fee fee3() {
@@ -667,7 +669,8 @@ public class TestUtils {
         .comment("Comment")
         .updatedAt(Instant.parse("2023-02-08T08:30:24Z"))
         .creationDatetime(Instant.parse("2022-12-08T08:25:24.00Z"))
-        .dueDatetime(Instant.parse("2021-12-09T08:25:24.00Z"));
+        .dueDatetime(Instant.parse("2021-12-09T08:25:24.00Z"))
+        .studentFirstName("Ryan");
   }
 
   public static Fee fee4() {
@@ -682,7 +685,8 @@ public class TestUtils {
         .comment("Comment")
         .updatedAt(Instant.parse("2023-02-08T08:30:24.00Z"))
         .creationDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
-        .dueDatetime(Instant.parse("2021-12-09T08:25:25.00Z"));
+        .dueDatetime(Instant.parse("2021-12-09T08:25:25.00Z"))
+        .studentFirstName("Two");
   }
 
   public static Course course1() {

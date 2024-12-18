@@ -5518,6 +5518,8 @@ components:
           $ref: '#/components/schemas/Mpbs'
         letter:
           $ref: '#/components/schemas/FeeLetter'
+        student_first_name:
+          type: string
     FeeLetter:
       type: object
       properties:
