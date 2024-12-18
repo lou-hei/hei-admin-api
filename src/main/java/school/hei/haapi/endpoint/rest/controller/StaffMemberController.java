@@ -2,6 +2,7 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import static school.hei.haapi.model.User.Role.STAFF_MEMBER;
+import static school.hei.haapi.model.User.Status.ENABLED;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -58,9 +59,9 @@ public class StaffMemberController {
   }
 
   @GetMapping("/staff_members/xlsx/raw")
-  public byte[] getStaffMembersXlsx() {
+  public byte[] getStaffMembersIntoXlsx() {
     return userService.getByRoleAndStatusAsXlsx(
-        STAFF_MEMBER, User.Status.ENABLED, userMapper::toRestStaffMember);
+        STAFF_MEMBER, ENABLED, userMapper::toRestStaffMember);
   }
 
   @PostMapping(value = "/staff_members/{id}/picture/raw", consumes = MULTIPART_FORM_DATA_VALUE)

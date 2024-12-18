@@ -2016,12 +2016,12 @@ paths:
         '500':
           $ref: '#/components/responses/500'
 
-  /staff_members/xslx/raw:
+  /staff_members/raw/xlsx:
     get:
       tags:
         - Users
       summary: Get all staff members as xlsx file
-      operationId: getStaffMembersXlsx
+      operationId: getStaffMembersIntoXlsx
       responses:
         '200':
           description: An excel file containing a list of all staff members.
