@@ -146,4 +146,23 @@ public class StaffMemberIT extends FacadeITMockedThirdParties {
     log.info(after.toString());
     assertEquals(4, after.size());
   }
+
+  @Test
+  void admin_read_staff_xlsx_ok() throws ApiException {
+    ApiClient apiClient = anApiClient(ADMIN1_TOKEN);
+
+    UsersApi api = new UsersApi(apiClient);
+    byte[] actual = api.getStaffMembersIntoXlsx();
+
+    assertNotNull(actual);
+  }
+
+  @Test
+  void manager_read_staff_xlsx_ko() throws ApiException {
+    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
+
+    UsersApi api = new UsersApi(apiClient);
+
+    assertThrowsForbiddenException(api::getStaffMembersIntoXlsx);
+  }
 }
