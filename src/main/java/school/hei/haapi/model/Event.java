@@ -47,6 +47,10 @@ public class Event {
 
   private String description;
 
+  private String colorCode;
+
+  // TODO : Add promotion
+
   @Column(name = "begin_datetime")
   private Instant beginDatetime;
 
