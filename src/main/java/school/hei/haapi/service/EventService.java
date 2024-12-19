@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.Event;
+import school.hei.haapi.endpoint.rest.model.Group;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.repository.EventRepository;
@@ -48,10 +49,11 @@ public class EventService {
       Instant to,
       String title,
       EventType eventType,
+      Group group,
       PageFromOne page,
       BoundedPageSize pageSize) {
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(DESC, "beginDatetime"));
-    return eventDao.findByCriteria(title, from, to, eventType, pageable);
+    return eventDao.findByCriteria(title, from, to, eventType, group, pageable);
   }
 }
