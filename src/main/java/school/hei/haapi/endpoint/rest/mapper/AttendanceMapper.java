@@ -29,6 +29,7 @@ public class AttendanceMapper {
         .lateOf((int) domain.lateOf(courseSession.getBegin()))
         .place(domain.getPlace())
         .courseSession(courseSession)
+        .attendanceMovementType(domain.getAttendanceMovementType())
         .isLate(domain.isLate());
   }
 

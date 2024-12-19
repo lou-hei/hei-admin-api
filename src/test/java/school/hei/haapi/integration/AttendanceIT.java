@@ -2,6 +2,7 @@ package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static school.hei.haapi.endpoint.rest.model.AttendanceMovementType.IN;
 import static school.hei.haapi.integration.StudentIT.*;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.StudentIT.student2;
@@ -9,6 +10,7 @@ import static school.hei.haapi.integration.conf.TestUtils.*;
 
 import java.time.Instant;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 import school.hei.haapi.service.event.CheckAttendanceTriggeredService;
 
+@Slf4j
 @Testcontainers
 @AutoConfigureMockMvc
 class AttendanceIT extends FacadeITMockedThirdParties {
@@ -52,6 +55,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         api.getStudentsAttendance(
             1, 10, List.of("course2_id"), null, null, DEFAULT_FROM, DEFAULT_TO, null);
     assertEquals(3, actualWithCourse2Id.size());
+    log.info("actualCourseWithCourse2Id elements: {}", actualWithCourse2Id);
     assertTrue(
         actualWithCourse2Id.containsAll(
             List.of(attendance2Ok(), attendance4Late(), attendance6Missing())));
@@ -235,7 +239,8 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         .place(PlaceEnum.ANDRAHARO)
         .isLate(false)
         .courseSession(courseSession2())
-        .createdAt(Instant.parse("2021-08-08T14:15:00.00Z"));
+        .createdAt(Instant.parse("2021-08-08T14:15:00.00Z"))
+        .attendanceMovementType(IN);
   }
 
   public static StudentAttendance attendance3Late() {
@@ -246,7 +251,8 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         .lateOf(35)
         .courseSession(courseSession1())
         .student(student2())
-        .createdAt(Instant.parse("2021-11-08T08:35:00.00Z"));
+        .createdAt(Instant.parse("2021-11-08T08:35:00.00Z"))
+        .attendanceMovementType(IN);
   }
 
   public static StudentAttendance attendance4Late() {
@@ -257,7 +263,8 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         .place(PlaceEnum.ANDRAHARO)
         .courseSession(courseSession2())
         .student(student2())
-        .createdAt(Instant.parse("2021-08-08T15:15:00.00Z"));
+        .createdAt(Instant.parse("2021-08-08T15:15:00.00Z"))
+        .attendanceMovementType(IN);
   }
 
   public static StudentAttendance attendance5Missing() {
@@ -267,7 +274,8 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         .isLate(false)
         .student(student3())
         .courseSession(courseSession1())
-        .createdAt(null);
+        .createdAt(null)
+        .attendanceMovementType(IN);
   }
 
   public static StudentAttendance attendance6Missing() {
@@ -277,7 +285,8 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         .isLate(false)
         .student(student3())
         .courseSession(courseSession2())
-        .createdAt(null);
+        .createdAt(null)
+        .attendanceMovementType(IN);
   }
 
   public static StudentAttendance attendance7Out() {

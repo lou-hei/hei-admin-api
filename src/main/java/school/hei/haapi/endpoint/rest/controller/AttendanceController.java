@@ -2,7 +2,6 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,13 +27,10 @@ public class AttendanceController {
   public List<StudentAttendanceMovement> createAttendanceMovement(
       @RequestBody List<CreateAttendanceMovement> movement) {
     return attendanceService
-        .createStudentAttendanceMovement(
-            movement.stream()
-                .map(attendanceMapper::toDomain)
-                .collect(Collectors.toUnmodifiableList()))
+        .createStudentAttendanceMovement(movement.stream().map(attendanceMapper::toDomain).toList())
         .stream()
         .map(attendanceMapper::toRestMovement)
-        .collect(Collectors.toUnmodifiableList());
+        .toList();
   }
 
   @GetMapping("/attendance")
@@ -54,6 +50,6 @@ public class AttendanceController {
             studentKeyWord, coursesIds, teacherIds, attendanceStatuses, from, to, page, pageSize)
         .stream()
         .map(attendanceMapper::toRestAttendance)
-        .collect(Collectors.toUnmodifiableList());
+        .toList();
   }
 }
