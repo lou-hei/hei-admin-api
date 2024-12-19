@@ -41,6 +41,7 @@ public class LetterEventIT extends MockedThirdParties {
         .studentRef("ref")
         .description("description")
         .studentEmail("email")
+        .receiver("contact@mail.hei.school")
         .build();
   }
 
