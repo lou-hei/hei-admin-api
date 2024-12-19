@@ -5384,6 +5384,8 @@ components:
           $ref: '#/components/schemas/CourseSession'
         student:
           $ref: '#/components/schemas/Student'
+        attendance_movement_type:
+          $ref: "#/components/schemas/AttendanceMovementType"
     CourseSession:
       type: object
       properties:
