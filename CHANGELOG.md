@@ -1,3 +1,20 @@
+# [1.87.0](https://github.com/hei-school/hei-admin-api/compare/v1.86.0...v1.87.0) (2024-12-19)
+
+
+### Bug Fixes
+
+* take off LATE status by default for fees stats  ([1d5e253](https://github.com/hei-school/hei-admin-api/commit/1d5e253adeb0ff811b84c09b2e6dadf1fa3f00b3))
+
+
+### Features
+
+* add student_first_name field in fee endpoint response  ([ebc870f](https://github.com/hei-school/hei-admin-api/commit/ebc870f9aa811804cf43acb1b027f64673415d47))
+* manually upgrade code version ([54bb3e2](https://github.com/hei-school/hei-admin-api/commit/54bb3e25fad98153dae7d7063cfd8c75fa947292))
+* **not-implemented:** verify mpbs via xls file ([d9b6107](https://github.com/hei-school/hei-admin-api/commit/d9b610716c818cb027cea518699c7368abd5af32))
+* verify mpbs via xls file provided by orange ([b902d9e](https://github.com/hei-school/hei-admin-api/commit/b902d9e820c5e17e3ce8597d2007148a39b10eda))
+
+
+
 # [1.86.0](https://github.com/hei-school/hei-admin-api/compare/v1.85.0...v1.86.0) (2024-12-09)
 
 
@@ -119,15 +136,6 @@
 ### Features
 
 * teacher can upload letter ([6902230](https://github.com/hei-school/hei-admin-api/commit/690223033c50fc43a5efb19ee314784edbaa660d))
-
-
-
-## [1.77.1](https://github.com/hei-school/hei-admin-api/compare/v1.77.0...v1.77.1) (2024-11-14)
-
-
-### Bug Fixes
-
-* make mpbs idempotant ([27ab987](https://github.com/hei-school/hei-admin-api/commit/27ab98709d157a64578d47fa0ccd42e502410b1e))
 
 
 
