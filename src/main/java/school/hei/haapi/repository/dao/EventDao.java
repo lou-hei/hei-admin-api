@@ -22,7 +22,12 @@ public class EventDao {
   private final EntityManager entityManager;
 
   public List<Event> findByCriteria(
-          String title, Instant from, Instant to, EventType eventType, Group groupName, Pageable pageable) {
+      String title,
+      Instant from,
+      Instant to,
+      EventType eventType,
+      Group groupName,
+      Pageable pageable) {
 
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Event> query = builder.createQuery(Event.class);
@@ -49,11 +54,7 @@ public class EventDao {
     }
 
     if (groupName != null) {
-      predicates.add(
-              builder.equal(
-                      root.join("groups").get("name"), groupName
-              )
-      );
+      predicates.add(builder.equal(root.join("groups").get("name"), groupName));
     }
 
     if (!predicates.isEmpty()) {
