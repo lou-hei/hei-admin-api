@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -39,6 +41,7 @@ import school.hei.haapi.model.Fee;
 import school.hei.haapi.model.MobileTransactionDetails;
 import school.hei.haapi.model.Mpbs.Mpbs;
 import school.hei.haapi.model.Mpbs.MpbsVerification;
+import school.hei.haapi.model.Mpbs.TypedMobileMoneyTransaction;
 import school.hei.haapi.model.Payment;
 import school.hei.haapi.repository.MobileTransactionDetailsRepository;
 import school.hei.haapi.repository.MpbsRepository;
@@ -88,12 +91,18 @@ public class MpbsVerificationService {
 
   @Transactional
   public List<Mpbs> computeFromXls(MultipartFile file) throws IOException {
-    generateMobileTransactionDetailsFromXlsFile(file);
-    List<Mpbs> pendingMpbs = mpbsRepository.findAllByStatus(PENDING);
-    pendingMpbs.forEach(mpbs -> log.info(mpbs.getPspId()));
+    List<String> pspToCheck = generateMobileTransactionDetailsFromXlsFile(file);
+    List<String> pendingMpbsPspIds =
+        mpbsRepository.findAllByStatus(PENDING).stream()
+            .map(TypedMobileMoneyTransaction::getPspId)
+            .toList();
+
+    List<Mpbs> mpbsToCheck =
+        mpbsRepository.findByPspIdIn(findCommonStrings(pspToCheck, pendingMpbsPspIds));
+
     List<Mpbs> mpbsToReturn = new ArrayList<>();
 
-    for (Mpbs mpbs : pendingMpbs) {
+    for (Mpbs mpbs : mpbsToCheck) {
       verifyMobilePaymentAndSaveResult(mpbs, Instant.now());
       mpbsToReturn.add(mpbs);
     }
@@ -114,8 +123,19 @@ public class MpbsVerificationService {
     }
   }
 
-  public List<MobileTransactionDetails> generateMobileTransactionDetailsFromXlsFile(
-      MultipartFile file) throws IOException {
+  public static List<String> findCommonStrings(List<String> list1, List<String> list2) {
+    // Convertir list2 en Set pour des recherches plus rapides
+    Set<String> set2 = Set.copyOf(list2);
+
+    // Utiliser un Stream pour filtrer les éléments communs
+    return list1.stream()
+        .filter(set2::contains) // Garder uniquement les éléments présents dans set2
+        .distinct() // Éviter les doublons
+        .collect(Collectors.toList()); // Convertir le résultat en List
+  }
+
+  public List<String> generateMobileTransactionDetailsFromXlsFile(MultipartFile file)
+      throws IOException {
     List<MobileTransactionDetails> transactions = new ArrayList<>();
     Workbook workbook = generateWorkBook(file);
 
@@ -157,12 +177,16 @@ public class MpbsVerificationService {
 
       transactions.add(transaction);
     }
-    return mobilePaymentService.saveAll(transactions);
+    mobilePaymentService.saveAll(transactions);
+    return transactions.stream()
+        .map(MobileTransactionDetails::getPspTransactionRef)
+        .collect(Collectors.toList());
   }
 
   private Mpbs saveTheUnverifiedMpbs(Mpbs mpbs, Instant toCompare) {
     mpbs.setLastVerificationDatetime(Instant.now());
     mpbs.setStatus(defineMpbsStatusWithoutOrangeTransactionDetails(mpbs, toCompare));
+    if (mpbs.getFee() == null) {}
     return mpbsRepository.save(mpbs);
   }
 

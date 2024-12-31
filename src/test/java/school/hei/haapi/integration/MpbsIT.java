@@ -169,7 +169,7 @@ public class MpbsIT extends FacadeITMockedThirdParties {
     // Upload xls file
     HttpResponse<InputStream> streamHttpResponse = uploadXls(localPort, MANAGER1_TOKEN);
 
-    Mpbs actualMpbs = convertResponseToStudentList(streamHttpResponse).get(1);
+    Mpbs actualMpbs = convertResponseToStudentList(streamHttpResponse).getFirst();
     assertEquals(SUCCESS, actualMpbs.getStatus());
     assertEquals(MPBS_FEE4_REF, actualMpbs.getPspId());
 
