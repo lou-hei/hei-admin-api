@@ -99,10 +99,10 @@ public class MpbsVerificationService {
 
     List<Mpbs> mpbsToCheck =
         mpbsRepository.findByPspIdIn(findCommonStrings(pspToCheck, pendingMpbsPspIds));
-
     List<Mpbs> mpbsToReturn = new ArrayList<>();
 
     for (Mpbs mpbs : mpbsToCheck) {
+      log.info("mpbs to update = {}", mpbs);
       verifyMobilePaymentAndSaveResult(mpbs, Instant.now());
       mpbsToReturn.add(mpbs);
     }
@@ -176,6 +176,7 @@ public class MpbsVerificationService {
               .build();
 
       transactions.add(transaction);
+      log.info("Generated mobile transaction psp id {}", transaction.getPspTransactionRef());
     }
     mobilePaymentService.saveAll(transactions);
     return transactions.stream()
@@ -186,7 +187,6 @@ public class MpbsVerificationService {
   private Mpbs saveTheUnverifiedMpbs(Mpbs mpbs, Instant toCompare) {
     mpbs.setLastVerificationDatetime(Instant.now());
     mpbs.setStatus(defineMpbsStatusWithoutOrangeTransactionDetails(mpbs, toCompare));
-    if (mpbs.getFee() == null) {}
     return mpbsRepository.save(mpbs);
   }
 
