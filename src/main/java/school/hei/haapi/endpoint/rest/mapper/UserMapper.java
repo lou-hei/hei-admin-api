@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import school.hei.haapi.endpoint.rest.model.*;
 import school.hei.haapi.model.User;
@@ -18,6 +19,7 @@ import school.hei.haapi.service.utils.IsStudentRepeatingYear;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class UserMapper {
   private final WorkDocumentService workDocumentService;
   private final StatusEnumMapper statusEnumMapper;
@@ -63,7 +65,14 @@ public class UserMapper {
     staffMember.setCoordinates(
         new Coordinates().longitude(user.getLongitude()).latitude(user.getLatitude()));
     staffMember.setHighSchoolOrigin(user.getHighSchoolOrigin());
+    staffMember.setCnaps(user.getCnaps());
+    staffMember.setDegree(user.getDegree());
+    staffMember.setFunction(user.getFunction());
+    staffMember.setEndingService(user.getEndingService());
+    staffMember.setOstie(user.getOstie());
 
+    log.info(staffMember.toString());
+    log.info("to rest aiza");
     return staffMember;
   }
 
@@ -268,7 +277,7 @@ public class UserMapper {
 
   public User toDomain(StaffMember teacher) {
     return User.builder()
-        .role(User.Role.TEACHER)
+        .role(User.Role.STAFF_MEMBER)
         .id(teacher.getId())
         .firstName(teacher.getFirstName())
         .lastName(teacher.getLastName())
@@ -287,6 +296,9 @@ public class UserMapper {
         .highSchoolOrigin(teacher.getHighSchoolOrigin())
         .degree(teacher.getDegree())
         .function(teacher.getFunction())
+        .ostie(teacher.getOstie())
+        .cnaps(teacher.getCnaps())
+        .endingService(teacher.getEndingService())
         .build();
   }
 

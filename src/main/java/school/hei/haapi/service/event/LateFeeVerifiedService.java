@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import school.hei.haapi.endpoint.event.model.LateFeeVerified;
@@ -20,8 +19,6 @@ import school.hei.haapi.mail.Email;
 import school.hei.haapi.mail.Mailer;
 import school.hei.haapi.model.exception.ApiException;
 import school.hei.haapi.service.UserService;
-import school.hei.haapi.service.utils.Base64Converter;
-import school.hei.haapi.service.utils.ClassPathResourceResolver;
 import school.hei.haapi.service.utils.DateUtils;
 
 @Service
@@ -30,8 +27,6 @@ import school.hei.haapi.service.utils.DateUtils;
 public class LateFeeVerifiedService implements Consumer<LateFeeVerified> {
   private final Mailer mailer;
   private final UserService userService;
-  private final Base64Converter base64Converter;
-  private final ClassPathResourceResolver classPathResourceResolver;
 
   private static String emailSubject(LateFeeVerified.FeeUser student, LateFeeVerified lateFee) {
     return "Retard de paiement - " + student.ref() + " - " + lateFee.getComment();
@@ -46,14 +41,11 @@ public class LateFeeVerifiedService implements Consumer<LateFeeVerified> {
     String dueDateString = instantToCommonDate(lateFee.getDueDatetime());
     String recoveryDate = DateUtils.getRecoveryDate(dueDateString);
 
-    Resource emailSignatureImage = classPathResourceResolver.apply("HEI_signature", ".png");
-
     initial.setVariable("fullName", formatName(lateFee.getStudent()));
     initial.setVariable("comment", lateFee.getComment());
     initial.setVariable("dueDatetime", instantToCommonDate(lateFee.getDueDatetime()));
     initial.setVariable("remainingAmount", numberToReadable(lateFee.getRemainingAmount()));
     initial.setVariable("remainingAmWords", numberToWords(lateFee.getRemainingAmount()));
-    initial.setVariable("emailSignature", base64Converter.apply(emailSignatureImage));
     initial.setVariable("recoveryDate", recoveryDate);
     return initial;
   }

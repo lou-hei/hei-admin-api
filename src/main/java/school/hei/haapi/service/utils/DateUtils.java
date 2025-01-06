@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 import java.util.Objects;
 import org.springframework.stereotype.Component;
@@ -41,5 +42,13 @@ public class DateUtils {
             monthTo, lastDayOfMonth.atTime(LocalTime.MAX).atZone(ZoneOffset.UTC).toInstant());
 
     return new Instant[] {monthFrom, monthTo};
+  }
+
+  public static Instant convertStringToInstant(String dateString) {
+    DateTimeFormatter formatter =
+        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").withZone(ZoneOffset.UTC);
+
+    TemporalAccessor temporalAccessor = formatter.parse(dateString);
+    return Instant.from(temporalAccessor);
   }
 }

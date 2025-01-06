@@ -5,10 +5,6 @@ import static school.hei.haapi.endpoint.rest.mapper.FileInfoMapper.ONE_DAY_DURAT
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.UNPAID;
-import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.HARDWARE;
-import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.REMEDIAL_COSTS;
-import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.STUDENT_INSURANCE;
-import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
 
 import java.time.Instant;
 import java.util.List;
@@ -27,32 +23,11 @@ import school.hei.haapi.service.utils.DataFormatterUtils;
 @Component
 @AllArgsConstructor
 public class FeeMapper {
-
   private final CreateFeeValidator createFeeValidator;
-  private PaymentMapper paymentMapper;
   private final MpbsMapper mpbsMapper;
   private final LetterService letterService;
   private final FileService fileService;
   private final UserService userService;
-
-  public ModelFee toRestModelFee(school.hei.haapi.model.Fee fee) {
-    var studentFee = fee.getStudent();
-    return new ModelFee()
-        .studentId(studentFee.getId())
-        .studentRef(studentFee.getRef())
-        .status(fee.getStatus())
-        .type(fee.getType())
-        .totalAmount(fee.getTotalAmount())
-        .remainingAmount(fee.getRemainingAmount())
-        .comment(fee.getComment())
-        .creationDatetime(fee.getCreationDatetime())
-        .updatedAt(fee.getUpdatedAt())
-        .dueDatetime(fee.getDueDatetime())
-        .payments(
-            fee.getPayments().stream()
-                .map(paymentMapper::toRestPayment)
-                .collect(toUnmodifiableList()));
-  }
 
   public Fee toRestFee(school.hei.haapi.model.Fee fee) {
     Mpbs feeMpbs = fee.getMpbs() != null ? mpbsMapper.toRest(fee.getMpbs()) : null;
@@ -72,6 +47,7 @@ public class FeeMapper {
         .creationDatetime(fee.getCreationDatetime())
         .updatedAt(fee.getUpdatedAt())
         .dueDatetime(fee.getDueDatetime())
+        .studentFirstName(fee.getStudent().getFirstName())
         .letter(letter == null ? null : toLetterFee(letter));
   }
 
@@ -158,20 +134,5 @@ public class FeeMapper {
     return toCreate.stream()
         .map(createFee -> toDomainFee(student, createFee))
         .collect(toUnmodifiableList());
-  }
-
-  private FeeTypeEnum toDomainFeeType(FeeTypeEnum createFeeType) {
-    switch (createFeeType) {
-      case TUITION:
-        return TUITION;
-      case HARDWARE:
-        return HARDWARE;
-      case REMEDIAL_COSTS:
-        return REMEDIAL_COSTS;
-      case STUDENT_INSURANCE:
-        return STUDENT_INSURANCE;
-      default:
-        throw new BadRequestException("Unexpected feeType: " + createFeeType.getValue());
-    }
   }
 }

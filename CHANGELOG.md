@@ -1,3 +1,52 @@
+# [1.87.0](https://github.com/hei-school/hei-admin-api/compare/v1.86.0...v1.87.0) (2024-12-19)
+
+
+### Bug Fixes
+
+* take off LATE status by default for fees stats  ([1d5e253](https://github.com/hei-school/hei-admin-api/commit/1d5e253adeb0ff811b84c09b2e6dadf1fa3f00b3))
+
+
+### Features
+
+* add student_first_name field in fee endpoint response  ([ebc870f](https://github.com/hei-school/hei-admin-api/commit/ebc870f9aa811804cf43acb1b027f64673415d47))
+* manually upgrade code version ([54bb3e2](https://github.com/hei-school/hei-admin-api/commit/54bb3e25fad98153dae7d7063cfd8c75fa947292))
+* **not-implemented:** verify mpbs via xls file ([d9b6107](https://github.com/hei-school/hei-admin-api/commit/d9b610716c818cb027cea518699c7368abd5af32))
+* verify mpbs via xls file provided by orange ([b902d9e](https://github.com/hei-school/hei-admin-api/commit/b902d9e820c5e17e3ce8597d2007148a39b10eda))
+
+
+
+# [1.86.0](https://github.com/hei-school/hei-admin-api/compare/v1.85.0...v1.86.0) (2024-12-09)
+
+
+### Bug Fixes
+
+* use subquery for joining case  ([5e902d9](https://github.com/hei-school/hei-admin-api/commit/5e902d90fa2245a07e269446b4ccf4a6a9e29529))
+
+
+### Features
+
+* fee stats depends on fee criteria filter   ([e9a8206](https://github.com/hei-school/hei-admin-api/commit/e9a820656f2387d4fdff1da8c6d400c126f445e5))
+
+
+
+# [1.85.0](https://github.com/hei-school/hei-admin-api/compare/v1.83.1...v1.85.0) (2024-12-06)
+
+
+### Bug Fixes
+
+* crupdate staff member access ([b375d3a](https://github.com/hei-school/hei-admin-api/commit/b375d3a547b08f5b9b80d495e17d45e7b9ff076f))
+
+
+### Features
+
+* filter fees by status and type  ([c838c1b](https://github.com/hei-school/hei-admin-api/commit/c838c1bfa4822a8de03966183ac6211fdbf1ea9a))
+
+
+### Reverts
+
+* Revert "chore: lower min code coverage(line)" ([8c13767](https://github.com/hei-school/hei-admin-api/commit/8c1376736009c117d09fb558d2ae427348e3b878))
+
+
 ## [1.83.1](https://github.com/hei-school/hei-admin-api/compare/v1.83.0...v1.83.1) (2024-12-04)
 
 
@@ -86,38 +135,6 @@
 ### Features
 
 * teacher can upload letter ([6902230](https://github.com/hei-school/hei-admin-api/commit/690223033c50fc43a5efb19ee314784edbaa660d))
-
-
-
-## [1.77.1](https://github.com/hei-school/hei-admin-api/compare/v1.77.0...v1.77.1) (2024-11-14)
-
-
-### Bug Fixes
-
-* make mpbs idempotant ([27ab987](https://github.com/hei-school/hei-admin-api/commit/27ab98709d157a64578d47fa0ccd42e502410b1e))
-
-
-
-# [1.77.0](https://github.com/hei-school/hei-admin-api/compare/v1.76.0...v1.77.0) (2024-11-13)
-
-
-### Features
-
-* implement grades resources ([e370dad](https://github.com/hei-school/hei-admin-api/commit/e370dad2ba64c22a85a849bcb1dee52b7a32973c))
-
-
-
-# [1.76.0](https://github.com/hei-school/hei-admin-api/compare/v1.75.0...v1.76.0) (2024-11-08)
-
-
-### Bug Fixes
-
-* fetch only for enabled and suspended students  ([08ed33a](https://github.com/hei-school/hei-admin-api/commit/08ed33a1b9a1e3823e7442c8e2854b13927fb1db))
-
-
-### Features
-
-* filter exams and get exam by id ([834db9d](https://github.com/hei-school/hei-admin-api/commit/834db9d1fad3e57e3714585be9a1adeb3317a2f9))
 
 
 

@@ -1,14 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <title>Suspension Lifted</title>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
         }
 
-        h1, section, footer {
+        h1,
+        section,
+        footer {
             margin: 2vh 2vw;
         }
 
@@ -17,7 +23,8 @@
             font-weight: 500;
         }
 
-        section, footer {
+        section,
+        footer {
             font-size: 1.1em;
             line-height: 1.5em;
         }
@@ -41,47 +48,112 @@
             background-repeat: no-repeat;
         }
 
-        .signature {
+        .footer {
             width: 100%;
-            height: 100%;
+            background-color: white;
+            color: #002147;
+            font-size: 1.1em;
+            line-height: 1.5em;
         }
 
-        .motto {
-            color: rgb(0, 0, 125);
+        .footer__content {
+            display: table;
+            table-layout: fixed;
         }
 
-        .hei {
-            color: rgb(164, 164, 164);
+        .footer__logo {
+            background-color: #002147;
+            color: #ffd700;
+            font-family: Garamond, serif;
+            font-size: 3em;
+            padding: 20px;
+            text-align: center;
+            vertical-align: middle;
+            display: table-cell;
+            width: 150px;
+            height: 150px;
         }
 
+        .footer__separator {
+            width: 2px;
+            height: auto;
+            background-color: #002147;
+            display: table-cell;
+        }
+
+        .footer__info {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 20px;
+        }
+
+        .footer__info-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0 0 10px;
+        }
+
+        .footer__info p {
+            margin: 5px 0;
+        }
+
+        .footer__info a {
+            color: rgb(195, 128, 3);
+            text-decoration: none;
+            margin: 0 2px;
+        }
+
+        .footer__social-icons {
+            margin-top: 10px;
+        }
+
+        .footer__social-icons a {
+            color: #002147;
+            margin-right: 10px;
+            font-size: 1.5em;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
 <main>
     <section>
-        <p>Bonjour
-            <span th:text="${fullName}"></span>,
+        <p>Bonjour <span th:text="${fullName}"></span>,</p>
+        <p>
+            Nous avons le plaisir de vous informer que votre suspension a été
+            levée à la suite de la régularisation de votre situation.
+        </p>
+        <p>
+            Vous êtes autorisé(e) à reprendre vos cours dès demain. De plus, votre
+            accès aux documents via la plateforme HEI Admin a été rétabli.
         </p>
     </section>
     <section>
-        Nous vous informons que nous avons bien reçu votre paiement de <span th:text="${amountPaid}"></span> MGA,
-        (<span th:text="${amountInWords}"></span> ARIARY) effectué pour vos frais de scolarité.
+        Pour toute question ou besoin d’assistance, n’hésitez pas à contacter
+        l’administration à l’adresse
+        <strong>contact@hei.school</strong> ou au numéro
+        <strong>+261 34 94 041 16</strong>.
     </section>
-    <section>
-        Votre suspension académique est désormais levée, et vous êtes autorisé à reprendre vos cours ainsi que vos examens à compter de cette date.
-    </section>
-    <section>
-        Nous vous encourageons à continuer de respecter les échéances de paiement afin d’éviter toute nouvelle suspension.
-    </section>
-    <section>
-        N'hésitez pas à contacter l’administration via l’adresse email  <a href="mailto:contact@hei.school">contact@hei.school</a>  ou appeler le numéro <a href="tel:+261349404116">+261 34 94 041 16</a> pour toutes informations complémentaires.
-    </section>
-    <section>
-        Cordialement,
-    </section>
+    <section>Cordialement,</section>
 </main>
-<footer>
-    <div class="contacts" th:style="'background-image: url(data:image/png;base64,'+${emailSignature}+');'"></div>
+<footer class="footer">
+    <div class="footer__content">
+        <div class="footer__logo">HEI</div>
+        <div class="footer__separator"></div>
+        <div class="footer__info">
+            <h1 class="footer__info-title">HEI MADAGASCAR</h1>
+            <p>II J 161 R Ivandry, Antananarivo</p>
+            <p>+261 (0) 34 94 041 16</p>
+            <p>
+                <a href="mailto:contact@mail.hei.school">contact@mail.hei.school</a>
+            </p>
+            <p><a href="https://www.hei.school">www.hei.school</a></p>
+            <div class="footer__social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
 </footer>
 </body>
 </html>

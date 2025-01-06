@@ -70,6 +70,12 @@ public class User implements Serializable {
 
   private String function;
 
+  private String ostie;
+
+  private String cnaps;
+
+  private Instant endingService;
+
   private LocalDate birthDate;
 
   private String birthPlace;

@@ -1,0 +1,1 @@
+alter type "fee_status" add value 'PENDING';

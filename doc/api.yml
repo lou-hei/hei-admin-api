@@ -4,7 +4,7 @@ info:
   title: HEI Admin API
   description: |
     _Programmatically connect to a computer programming [school](https://hei.school)._
-    After [joining us](mailto:contact@hei.school),
+    After [joining us](mailto:contact@mail.hei.school),
     you can get an identification token from
     our [dev](https://dev-hei-admin.auth.eu-west-3.amazoncognito.com/oauth2/authorize?client_id=5s8cg50doahmu855rlc8fr6qmp&response_type=token&scope=email+openid&redirect_uri=https%3A%2F%2Fapi-dev.hei.school%2Fwhoami)
     or [prod](https://prod-hei-admin.auth.eu-west-3.amazoncognito.com/oauth2/authorize?client_id=i8bg538jpfu6mqmqb61m26trd&response_type=token&scope=email+openid&redirect_uri=https%3A%2F%2Fapi-prod.hei.school%2Fwhoami)
@@ -2729,6 +2729,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Mpbs'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  '/mpbs/verify':
+    post:
+      tags:
+       - Paying
+      summary: Verify mpbs from xls provided by Orange
+      operationId: verifyMpbs
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadFile"
+      responses:
+        '200':
+          description: The mpbs updated
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Mpbs'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -5472,6 +5502,8 @@ components:
           $ref: '#/components/schemas/Mpbs'
         letter:
           $ref: '#/components/schemas/FeeLetter'
+        student_first_name:
+          type: string
     FeeLetter:
       type: object
       properties:
@@ -5787,6 +5819,7 @@ components:
         - UNPAID
         - PAID
         - LATE
+        - PENDING
     FeeTypeEnum:
       type: string
       enum:

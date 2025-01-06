@@ -6,12 +6,18 @@ import static school.hei.haapi.endpoint.rest.model.WorkStudyStatus.*;
 import static school.hei.haapi.model.User.Role.STUDENT;
 import static school.hei.haapi.model.User.Sex.F;
 import static school.hei.haapi.model.User.Sex.M;
-import static school.hei.haapi.model.User.Status.*;
+import static school.hei.haapi.model.User.Status.DISABLED;
+import static school.hei.haapi.model.User.Status.ENABLED;
+import static school.hei.haapi.model.User.Status.SUSPENDED;
 import static school.hei.haapi.service.aws.FileService.getFormattedBucketKey;
 
 import java.io.File;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -86,6 +92,11 @@ public class UserService {
     userToRefresh.setStatus(refreshedUser.getStatus());
     userToRefresh.setSpecializationField(refreshedUser.getSpecializationField());
     userToRefresh.setHighSchoolOrigin(refreshedUser.getHighSchoolOrigin());
+    userToRefresh.setDegree(refreshedUser.getDegree());
+    userToRefresh.setCnaps(refreshedUser.getCnaps());
+    userToRefresh.setEndingService(refreshedUser.getEndingService());
+    userToRefresh.setOstie(refreshedUser.getOstie());
+    userToRefresh.setFunction(refreshedUser.getFunction());
     return userToRefresh;
   }
 
