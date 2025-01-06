@@ -2750,7 +2750,7 @@ paths:
   '/mpbs/verify':
     post:
       tags:
-       - Paying
+        - Paying
       summary: Verify mpbs from xls provided by Orange
       operationId: verifyMpbs
       requestBody:
