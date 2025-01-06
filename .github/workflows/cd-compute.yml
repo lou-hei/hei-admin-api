@@ -80,6 +80,8 @@ jobs:
       - name: Update github state if step fails
         if: failure()
         run: |
+          commit_message=$(git log -1 --pretty=%B)
+          commit_author=$(git log -1 --pretty=%an)
           app_env_deployment_id_value=${{ env.app_env_deployment_id }}
           if [ -z "$app_env_deployment_id_value" ]; then
             app_env_deployment_id_value=null
