@@ -4,7 +4,7 @@ info:
   title: HEI Admin API
   description: |
     _Programmatically connect to a computer programming [school](https://hei.school)._
-    After [joining us](mailto:contact@hei.school),
+    After [joining us](mailto:contact@mail.hei.school),
     you can get an identification token from
     our [dev](https://dev-hei-admin.auth.eu-west-3.amazoncognito.com/oauth2/authorize?client_id=5s8cg50doahmu855rlc8fr6qmp&response_type=token&scope=email+openid&redirect_uri=https%3A%2F%2Fapi-dev.hei.school%2Fwhoami)
     or [prod](https://prod-hei-admin.auth.eu-west-3.amazoncognito.com/oauth2/authorize?client_id=i8bg538jpfu6mqmqb61m26trd&response_type=token&scope=email+openid&redirect_uri=https%3A%2F%2Fapi-prod.hei.school%2Fwhoami)
@@ -2033,7 +2033,7 @@ paths:
           content:
             application/json:
               schema:
-                 $ref: '#/components/schemas/StaffMember'
+                $ref: '#/components/schemas/StaffMember'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -2408,6 +2408,16 @@ paths:
         - Paying
       summary: Get all student fees filtered by status and month
       parameters:
+        - name: transaction_status
+          required: false
+          in: query
+          schema:
+            $ref: '#/components/schemas/MpbsStatus'
+        - name: type
+          required: false
+          in: query
+          schema:
+            $ref: '#/components/schemas/FeeTypeEnum'
         - name: status
           in: query
           description: "See the PaymentStatus object for its value."
@@ -2454,9 +2464,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Fee'
+                $ref: '#/components/schemas/FeesWithStats'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -2729,6 +2737,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Mpbs'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  '/mpbs/verify':
+    post:
+      tags:
+        - Paying
+      summary: Verify mpbs from xls provided by Orange
+      operationId: verifyMpbs
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadFile"
+      responses:
+        '200':
+          description: The mpbs updated
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Mpbs'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -5450,6 +5488,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Payment'
+    FeesWithStats:
+      properties:
+        statistics:
+          $ref: '#/components/schemas/FeesStatistics'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fee'
     Fee:
       allOf:
         - $ref: '#/components/schemas/CreateFee'
@@ -5472,6 +5518,8 @@ components:
           $ref: '#/components/schemas/Mpbs'
         letter:
           $ref: '#/components/schemas/FeeLetter'
+        student_first_name:
+          type: string
     FeeLetter:
       type: object
       properties:
@@ -5787,6 +5835,7 @@ components:
         - UNPAID
         - PAID
         - LATE
+        - PENDING
     FeeTypeEnum:
       type: string
       enum:
@@ -5974,17 +6023,13 @@ components:
           type: integer
         late_fees:
           type: integer
+        pending_transaction:
+          type: integer
+        paid_by_transaction:
+          type: integer
         total_monthly_fees:
           type: integer
         total_yearly_fees:
-          type: integer
-        total_of_actual_month_fees:
-          type: integer
-        total_paid_of_actual_month_fees:
-          type: integer
-        total_unpaid_of_actual_month_fees:
-          type: integer
-        total_late_of_actual_month_fees:
           type: integer
     Letter:
       type: object

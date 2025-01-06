@@ -159,6 +159,7 @@ public class TestUtils {
   public static final String GROUP2_REF = "GRP21002";
   public static final String BAD_TOKEN = "bad_token";
   public static final String STUDENT1_TOKEN = "student1_token";
+  public static final String STUDENT2_TOKEN = "student2_token";
   public static final String TEACHER1_TOKEN = "teacher1_token";
   public static final String MONITOR1_TOKEN = "monitor1_token";
   public static final String MONITOR2_TOKEN = "monitor2_token";
@@ -221,6 +222,7 @@ public class TestUtils {
   public static void setUpCognito(CognitoComponent cognitoComponent) {
     when(cognitoComponent.getEmailByIdToken(BAD_TOKEN)).thenReturn(null);
     when(cognitoComponent.getEmailByIdToken(STUDENT1_TOKEN)).thenReturn("test+ryan@hei.school");
+    when(cognitoComponent.getEmailByIdToken(STUDENT2_TOKEN)).thenReturn("test+student2@hei.school");
     when(cognitoComponent.getEmailByIdToken(MONITOR1_TOKEN)).thenReturn("test+monitor@hei.school");
     when(cognitoComponent.getEmailByIdToken(MONITOR2_TOKEN)).thenReturn("test+monitor2@hei.school");
     when(cognitoComponent.getEmailByIdToken(STUDENT8_TOKEN))
@@ -635,7 +637,8 @@ public class TestUtils {
         .mpbs(expectedMpbs1())
         .updatedAt(Instant.parse("2023-02-08T08:30:24Z"))
         .creationDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
-        .dueDatetime(Instant.parse("2021-12-08T08:25:24.00Z"));
+        .dueDatetime(Instant.parse("2021-12-08T08:25:24.00Z"))
+        .studentFirstName("Ryan");
   }
 
   public static Fee fee2() {
@@ -650,7 +653,8 @@ public class TestUtils {
         .comment("Comment")
         .updatedAt(Instant.parse("2023-02-08T08:30:24Z"))
         .creationDatetime(Instant.parse("2021-11-10T08:25:24.00Z"))
-        .dueDatetime(Instant.parse("2021-12-10T08:25:24.00Z"));
+        .dueDatetime(Instant.parse("2021-12-10T08:25:24.00Z"))
+        .studentFirstName("Ryan");
   }
 
   public static Fee fee3() {
@@ -665,7 +669,8 @@ public class TestUtils {
         .comment("Comment")
         .updatedAt(Instant.parse("2023-02-08T08:30:24Z"))
         .creationDatetime(Instant.parse("2022-12-08T08:25:24.00Z"))
-        .dueDatetime(Instant.parse("2021-12-09T08:25:24.00Z"));
+        .dueDatetime(Instant.parse("2021-12-09T08:25:24.00Z"))
+        .studentFirstName("Ryan");
   }
 
   public static Fee fee4() {
@@ -680,7 +685,8 @@ public class TestUtils {
         .comment("Comment")
         .updatedAt(Instant.parse("2023-02-08T08:30:24.00Z"))
         .creationDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
-        .dueDatetime(Instant.parse("2021-12-09T08:25:25.00Z"));
+        .dueDatetime(Instant.parse("2021-12-09T08:25:25.00Z"))
+        .studentFirstName("Two");
   }
 
   public static Course course1() {
@@ -743,7 +749,6 @@ public class TestUtils {
 
   public static CrupdateExam createExam1() {
     return new CrupdateExam()
-        .id(EXAM1_ID)
         .coefficient(2)
         .title("Algorithmics")
         .awardedCourseId(awardedCourse1().getId())
@@ -1305,6 +1310,15 @@ public class TestUtils {
         .eventType(COURSE)
         .plannerId(MANAGER_ID)
         .groups(List.of(createGroupIdentifier(group1())));
+  }
+
+  public static CreateFee createFeeForTest() {
+    return new CreateFee()
+        .comment("test")
+        .totalAmount(5000)
+        .creationDatetime(Instant.now())
+        .dueDatetime(Instant.parse("2026-11-09T10:10:10.00Z"))
+        .type(TUITION);
   }
 
   public static CreateEvent createIntegrationEvent() {

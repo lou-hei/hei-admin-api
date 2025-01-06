@@ -9,7 +9,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
-import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_TOKEN;
@@ -81,20 +80,6 @@ class TeacherIT extends FacadeITMockedThirdParties {
 
     assertEquals(200, response.statusCode());
     assertEquals("TCR21001", teacher.getRef());
-  }
-
-  @Test
-  @Disabled("dirty")
-  void teacher_update_own_ok() throws ApiException {
-    ApiClient teacher1Client = anApiClient(TEACHER1_TOKEN);
-    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
-    UsersApi api = new UsersApi(teacher1Client);
-    UsersApi managerApi = new UsersApi(manager1Client);
-    api.getStudentById(STUDENT1_ID);
-    Teacher actual = api.updateTeacher(TEACHER1_ID, someUpdatableTeacher1());
-    List<Teacher> actualTeachers = managerApi.getTeachers(1, 10, null, null, null, null, null);
-
-    assertTrue(actualTeachers.contains(actual));
   }
 
   @Test

@@ -42,7 +42,10 @@ public class StaffMemberController {
       @RequestParam(name = "status", required = false) EnableStatus status) {
     User.Sex domainSex = sexEnumMapper.toDomainSexEnum(sex);
     User.Status domainStatus = statusEnumMapper.toDomainStatus(status);
-    return userService.getByRole(STAFF_MEMBER, page, pageSize, domainStatus, domainSex).stream()
+    return userService
+        .getByCriteria(
+            STAFF_MEMBER, firstName, lastName, "", page, pageSize, domainStatus, domainSex)
+        .stream()
         .map(userMapper::toRestStaffMember)
         .toList();
   }

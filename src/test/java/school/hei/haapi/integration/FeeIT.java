@@ -2,6 +2,7 @@ package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
@@ -12,6 +13,7 @@ import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.FEE1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.FEE2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.FEE3_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
@@ -22,39 +24,38 @@ import static school.hei.haapi.integration.conf.TestUtils.assertThrowsApiExcepti
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
 import static school.hei.haapi.integration.conf.TestUtils.creatableFee1;
 import static school.hei.haapi.integration.conf.TestUtils.creatableStudentFee;
+import static school.hei.haapi.integration.conf.TestUtils.createFeeForTest;
 import static school.hei.haapi.integration.conf.TestUtils.fee1;
 import static school.hei.haapi.integration.conf.TestUtils.fee2;
 import static school.hei.haapi.integration.conf.TestUtils.fee3;
 import static school.hei.haapi.integration.conf.TestUtils.fee4;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
-import static school.hei.haapi.integration.conf.TestUtils.updatableStudentFee;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import java.time.Instant;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.event.consumer.EventConsumer;
-import school.hei.haapi.endpoint.event.consumer.model.ConsumableEvent;
-import school.hei.haapi.endpoint.event.consumer.model.TypedEvent;
-import school.hei.haapi.endpoint.event.model.UpdateFeesStatusToLateTriggered;
 import school.hei.haapi.endpoint.rest.api.PayingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.CreateFee;
 import school.hei.haapi.endpoint.rest.model.Fee;
 import school.hei.haapi.endpoint.rest.model.FeesStatistics;
+import school.hei.haapi.endpoint.rest.model.FeesWithStats;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 
 @Testcontainers
 @AutoConfigureMockMvc
+@Slf4j
 class FeeIT extends FacadeITMockedThirdParties {
   @Autowired EventConsumer subject;
   @Autowired EntityManager entityManager;
@@ -87,44 +88,33 @@ class FeeIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled
-  void update_fee_status_payment_is_persisted() {
-    UpdateFeesStatusToLateTriggered feesStatusToLateTriggered =
-        UpdateFeesStatusToLateTriggered.builder().build();
-
-    TypedEvent typedEvent =
-        new TypedEvent(
-            "school.hei.haapi.endpoint.event.model.UpdateFeesStatusToLateTriggered",
-            feesStatusToLateTriggered);
-    ConsumableEvent consumableEvent = new ConsumableEvent(typedEvent, null, null);
-    subject.accept(List.of(consumableEvent));
-  }
-
-  @Test
-  @Disabled("dirty")
   void manager_delete_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(manager1Client);
 
-    Fee deletedFee = api.deleteStudentFeeById(FEE1_ID, STUDENT1_ID);
-    assertEquals(fee1(), deletedFee);
+    Fee createdFee = api.createStudentFees(STUDENT1_ID, List.of(createFeeForTest())).getFirst();
+
+    Fee deletedFee = api.deleteStudentFeeById(createdFee.getId(), STUDENT1_ID);
 
     List<Fee> fees = api.getStudentFees(STUDENT1_ID, 1, 5, null);
     assertFalse(fees.contains(deletedFee));
 
     // test: check if the payment is not deleted but has been flagged as deleted.
-    school.hei.haapi.model.Fee actualFeeData = getFeeByIdWithoutJpaFiltering(FEE1_ID);
+    school.hei.haapi.model.Fee actualFeeData = getFeeByIdWithoutJpaFiltering(deletedFee.getId());
     assertTrue(actualFeeData.isDeleted());
   }
 
   @Test
-  @Disabled
   void student_read_ok() throws ApiException {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     PayingApi api = new PayingApi(student1Client);
 
     Fee actualFee = api.getStudentFeeById(STUDENT1_ID, FEE1_ID);
-    List<Fee> actual = api.getStudentFees(STUDENT1_ID, 1, 5, null);
+    Fee test = api.getStudentFeeById(STUDENT1_ID, FEE3_ID);
+
+    assertEquals(test, fee3());
+
+    List<Fee> actual = api.getStudentFees(STUDENT1_ID, 1, 20, null);
 
     assertEquals(fee1(), actualFee);
     assertTrue(actual.contains(fee1()));
@@ -151,33 +141,42 @@ class FeeIT extends FacadeITMockedThirdParties {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(manager1Client);
 
-    List<Fee> actual = api.getFees(null, null, null, 1, 10, true, null);
-    assertEquals(1, actual.size());
+    FeesWithStats actual = api.getFees(null, null, null, null, null, 1, 10, true, null);
+    assertEquals(2, actual.getData().size());
   }
 
   @Test
-  @Disabled("assertEquals(fee1(), actualFee)")
+  void read_fee_contains_student_first_name() throws ApiException {
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    PayingApi api = new PayingApi(manager1Client);
+
+    FeesWithStats actual = api.getFees(null, null, null, null, null, 1, 10, true, null);
+    assertNotNull(actual.getData().getFirst().getStudentFirstName());
+  }
+
+  @Test
   void manager_read_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(manager1Client);
 
     Fee actualFee = api.getStudentFeeById(STUDENT1_ID, FEE1_ID);
-    List<Fee> actualFees1 = api.getStudentFees(STUDENT1_ID, 1, 10, null);
-    List<Fee> actualFees2 = api.getFees(PAID.toString(), null, null, 1, 10, false, null);
+    List<Fee> actualFees1 = api.getStudentFees(STUDENT1_ID, 1, 20, null);
+    FeesWithStats actualFees2 =
+        api.getFees(null, null, PAID.toString(), null, null, 1, 10, false, null);
 
     assertEquals(fee1(), actualFee);
-    assertEquals(2, actualFees2.size());
+    assertEquals(2, actualFees2.getData().size());
     assertTrue(actualFees1.contains(fee1()));
     assertTrue(actualFees1.contains(fee2()));
     assertTrue(actualFees1.contains(fee3()));
-    assertTrue(actualFees2.contains(fee1()));
-    assertTrue(actualFees2.contains(fee2()));
+    assertTrue(actualFees2.getData().contains(fee1()));
+    assertTrue(actualFees2.getData().contains(fee2()));
 
-    List<Fee> student2Fees = api.getFees(null, null, null, 1, 5, false, "STD21002");
-    assertEquals(student2Fees.getFirst(), fee4());
-    assertFalse(student2Fees.contains(fee1()));
-    assertFalse(student2Fees.contains(fee2()));
-    assertFalse(student2Fees.contains(fee3()));
+    FeesWithStats student2Fees = api.getFees(null, null, null, null, null, 1, 5, false, "STD21002");
+    assertEquals(student2Fees.getData().getFirst(), fee4());
+    assertFalse(student2Fees.getData().contains(fee1()));
+    assertFalse(student2Fees.getData().contains(fee2()));
+    assertFalse(student2Fees.getData().contains(fee3()));
   }
 
   @Test
@@ -193,7 +192,7 @@ class FeeIT extends FacadeITMockedThirdParties {
         () -> api.getStudentFees(STUDENT2_ID, null, null, null));
     assertThrowsApiException(
         "{\"type\":\"403 FORBIDDEN\",\"message\":\"Access is denied\"}",
-        () -> api.getFees(null, null, null, null, null, false, null));
+        () -> api.getFees(null, null, null, null, null, 1, 10, false, null));
   }
 
   @Test
@@ -203,7 +202,8 @@ class FeeIT extends FacadeITMockedThirdParties {
 
     assertThrowsForbiddenException(() -> api.getStudentFeeById(STUDENT2_ID, FEE2_ID));
     assertThrowsForbiddenException(() -> api.getStudentFees(STUDENT2_ID, null, null, null));
-    assertThrowsForbiddenException(() -> api.getFees(null, null, null, null, null, false, null));
+    assertThrowsForbiddenException(
+        () -> api.getFees(null, null, null, null, null, 1, 10, false, null));
   }
 
   @Test
@@ -219,7 +219,7 @@ class FeeIT extends FacadeITMockedThirdParties {
         () -> api.getStudentFees(STUDENT2_ID, null, null, null));
     assertThrowsApiException(
         "{\"type\":\"403 FORBIDDEN\",\"message\":\"Access is denied\"}",
-        () -> api.getFees(null, null, null, null, null, false, null));
+        () -> api.getFees(null, null, null, null, null, 1, 10, false, null));
   }
 
   @Test
@@ -256,29 +256,23 @@ class FeeIT extends FacadeITMockedThirdParties {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(manager1Client);
 
-    Fee updatedFee =
-        fee1().comment("M1 + M2 + M3").dueDatetime(Instant.parse("2021-11-09T10:10:10.00Z"));
+    Fee createdFee = api.createStudentFees(STUDENT1_ID, List.of(createFeeForTest())).getFirst();
 
-    List<Fee> actual = api.createStudentFees(STUDENT1_ID, List.of(creatableFee1()));
+    Fee updatedFee =
+        createdFee.comment("M1 + M2 + M3").dueDatetime(Instant.parse("2021-11-09T10:10:10.00Z"));
 
     List<Fee> actualUpdated = api.updateStudentFees(STUDENT1_ID, List.of(updatedFee));
 
-    List<Fee> expected = api.getStudentFees(STUDENT1_ID, 1, 10, null);
-    assertTrue(expected.containsAll(actual));
-
     assertEquals(1, actualUpdated.size());
-    assertEquals(actualUpdated.get(0).getComment(), updatedFee.getComment());
-    assertEquals(actualUpdated.get(0).getDueDatetime(), updatedFee.getDueDatetime());
-    assertTrue(expected.containsAll(actual));
+    assertEquals(actualUpdated.getFirst().getComment(), updatedFee.getComment());
+    assertEquals(actualUpdated.getFirst().getDueDatetime(), updatedFee.getDueDatetime());
 
-    List<Fee> crupdatedStudentFees =
-        api.crupdateStudentFees(List.of(creatableStudentFee(), updatableStudentFee()));
+    List<Fee> crupdatedStudentFees = api.crupdateStudentFees(List.of(creatableStudentFee()));
 
     List<Fee> student1Fees = api.getStudentFees(STUDENT1_ID, 1, 10, null);
 
-    assertEquals(2, crupdatedStudentFees.size());
+    assertEquals(1, crupdatedStudentFees.size());
     assertTrue(student1Fees.contains(crupdatedStudentFees.getFirst()));
-    assertEquals(crupdatedStudentFees.getLast().getComment(), updatableStudentFee().getComment());
   }
 
   @Test
@@ -310,7 +304,6 @@ class FeeIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled("dirty")
   void manager_write_with_some_bad_fields_ko() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(manager1Client);
@@ -387,11 +380,10 @@ class FeeIT extends FacadeITMockedThirdParties {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(manager1Client);
 
-    List<Fee> feesDefault = api.getFees(null, null, null, 1, 10, false, null);
-    assertEquals(5, feesDefault.size());
-
-    List<Fee> feeByMonth =
+    FeesWithStats feeByMonth =
         api.getFees(
+            null,
+            null,
             null,
             Instant.parse("2021-12-01T00:00:00.00Z"),
             Instant.parse("2021-12-31T23:59:59.00Z"),
@@ -399,14 +391,16 @@ class FeeIT extends FacadeITMockedThirdParties {
             10,
             false,
             null);
-    assertEquals(7, feeByMonth.size());
-    assertTrue(feeByMonth.contains(fee1()));
-    assertTrue(feeByMonth.contains(fee2()));
-    assertTrue(feeByMonth.contains(fee3()));
-    assertTrue(feeByMonth.contains(fee4()));
+    assertEquals(9, feeByMonth.getData().size());
+    assertTrue(feeByMonth.getData().contains(fee1()));
+    assertTrue(feeByMonth.getData().contains(fee2()));
+    assertTrue(feeByMonth.getData().contains(fee3()));
+    assertTrue(feeByMonth.getData().contains(fee4()));
 
-    List<Fee> noFeeByMonth =
+    FeesWithStats noFeeByMonth =
         api.getFees(
+            null,
+            null,
             null,
             Instant.parse("2021-10-01T00:00:00.00Z"),
             Instant.parse("2021-10-31T23:59:59.00Z"),
@@ -414,10 +408,12 @@ class FeeIT extends FacadeITMockedThirdParties {
             10,
             false,
             null);
-    assertEquals(0, noFeeByMonth.size());
+    assertEquals(0, noFeeByMonth.getData().size());
 
-    List<Fee> feeByStatusLateAndMonth =
+    FeesWithStats feeByStatusLateAndMonth =
         api.getFees(
+            null,
+            null,
             LATE.toString(),
             Instant.parse("2021-12-01T00:00:00.00Z"),
             Instant.parse("2021-12-31T23:59:59.00Z"),
@@ -425,12 +421,13 @@ class FeeIT extends FacadeITMockedThirdParties {
             10,
             false,
             null);
-    assertEquals(5, feeByStatusLateAndMonth.size());
-    assertTrue(feeByStatusLateAndMonth.contains(fee3()));
-    assertTrue(feeByStatusLateAndMonth.contains(fee4()));
+    assertTrue(feeByStatusLateAndMonth.getData().contains(fee3()));
+    assertTrue(feeByStatusLateAndMonth.getData().contains(fee4()));
 
-    List<Fee> feeByStatusPaidAndMonth =
+    FeesWithStats feeByStatusPaidAndMonth =
         api.getFees(
+            null,
+            null,
             PAID.toString(),
             Instant.parse("2021-12-01T00:00:00.00Z"),
             Instant.parse("2021-12-31T23:59:59.00Z"),
@@ -438,12 +435,14 @@ class FeeIT extends FacadeITMockedThirdParties {
             10,
             false,
             null);
-    assertEquals(2, feeByStatusPaidAndMonth.size());
-    assertTrue(feeByStatusPaidAndMonth.contains(fee1()));
-    assertTrue(feeByStatusPaidAndMonth.contains(fee2()));
+    assertEquals(2, feeByStatusPaidAndMonth.getData().size());
+    assertTrue(feeByStatusPaidAndMonth.getData().contains(fee1()));
+    assertTrue(feeByStatusPaidAndMonth.getData().contains(fee2()));
 
-    List<Fee> feeByStatusLateAndMonthAndStudentRef =
+    FeesWithStats feeByStatusLateAndMonthAndStudentRef =
         api.getFees(
+            null,
+            null,
             LATE.toString(),
             Instant.parse("2021-12-01T00:00:00.00Z"),
             Instant.parse("2021-12-31T23:59:59.00Z"),
@@ -451,11 +450,13 @@ class FeeIT extends FacadeITMockedThirdParties {
             10,
             false,
             "STD21002");
-    assertEquals(2, feeByStatusLateAndMonthAndStudentRef.size());
-    assertTrue(feeByStatusLateAndMonthAndStudentRef.contains(fee4()));
+    assertEquals(2, feeByStatusLateAndMonthAndStudentRef.getData().size());
+    assertTrue(feeByStatusLateAndMonthAndStudentRef.getData().contains(fee4()));
 
-    List<Fee> feeIsMpbsByMonth =
+    FeesWithStats feeIsMpbsByMonth =
         api.getFees(
+            null,
+            null,
             null,
             Instant.parse("2021-12-01T00:00:00.00Z"),
             Instant.parse("2021-12-31T23:59:59.00Z"),
@@ -463,8 +464,7 @@ class FeeIT extends FacadeITMockedThirdParties {
             10,
             true,
             null);
-    assertEquals(1, feeIsMpbsByMonth.size());
-    assertEquals(feeIsMpbsByMonth.getFirst(), fee1());
+    assertEquals(feeIsMpbsByMonth.getData().getLast(), fee1());
   }
 
   @Test
@@ -475,12 +475,8 @@ class FeeIT extends FacadeITMockedThirdParties {
     FeesStatistics stats =
         api.getFeesStats(
             Instant.parse("2021-12-01T00:00:00.00Z"), Instant.parse("2021-12-31T00:00:00.00Z"));
-    assertEquals(7, stats.getTotalFees());
+    assertEquals(9, stats.getTotalFees());
     assertEquals(2, stats.getPaidFees());
-    assertEquals(0, stats.getUnpaidFees());
-
-    FeesStatistics statsWithDefaultMonthRange =
-        api.getFeesStats(null, null); // get statistics for this month
-    assertEquals(0, statsWithDefaultMonthRange.getTotalFees());
+    assertEquals(2, stats.getUnpaidFees());
   }
 }

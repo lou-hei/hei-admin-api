@@ -17,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import school.hei.haapi.endpoint.rest.model.MpbsStatus;
 
@@ -27,6 +28,7 @@ import school.hei.haapi.endpoint.rest.model.MpbsStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class MobileTransactionDetails implements Serializable {
   @Id
   @GeneratedValue(strategy = IDENTITY)

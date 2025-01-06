@@ -78,6 +78,22 @@ public class Fee implements Serializable {
     return creationDatetime.truncatedTo(ChronoUnit.MILLIS);
   }
 
+  public Fee(Fee fee) {
+    this.id = fee.getId();
+    this.student = fee.getStudent();
+    this.status = fee.getStatus();
+    this.type = fee.getType();
+    this.totalAmount = fee.getTotalAmount();
+    this.remainingAmount = fee.getRemainingAmount();
+    this.comment = fee.getComment();
+    this.mpbs = fee.getMpbs();
+    this.creationDatetime = fee.getCreationDatetime();
+    this.dueDatetime = fee.getDueDatetime();
+    this.payments = fee.getPayments();
+    this.isDeleted = fee.isDeleted();
+    this.updatedAt = fee.getUpdatedAt();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

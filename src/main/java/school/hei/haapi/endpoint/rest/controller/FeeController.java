@@ -22,6 +22,7 @@ import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
+import school.hei.haapi.repository.model.FeesStats;
 import school.hei.haapi.service.FeeService;
 import school.hei.haapi.service.FeeTemplateService;
 import school.hei.haapi.service.UserService;
@@ -92,19 +93,35 @@ public class FeeController {
   }
 
   @GetMapping("/fees")
-  public List<Fee> getFees(
+  public FeesWithStats getFees(
       @RequestParam PageFromOne page,
       @RequestParam("page_size") BoundedPageSize pageSize,
+      @RequestParam(name = "transaction_status", required = false) MpbsStatus transactionStatus,
+      @RequestParam(name = "type", required = false) FeeTypeEnum feeType,
       @RequestParam(required = false) FeeStatusEnum status,
       @RequestParam(name = "month_from", required = false) Instant monthFrom,
       @RequestParam(name = "month_to", required = false) Instant monthTo,
       @RequestParam(name = "isMpbs", required = false) boolean isMpbs,
       @RequestParam(name = "student_ref", required = false) String studentRef) {
-    return feeService
-        .getFees(page, pageSize, status, monthFrom, monthTo, isMpbs, studentRef)
-        .stream()
-        .map(feeMapper::toRestFee)
-        .collect(toUnmodifiableList());
+    var feesStats =
+        feeService.getFeesStats(
+            transactionStatus, feeType, status, monthFrom, monthTo, isMpbs, studentRef);
+    var restFees =
+        feeService
+            .getFees(
+                page,
+                pageSize,
+                transactionStatus,
+                feeType,
+                status,
+                monthFrom,
+                monthTo,
+                isMpbs,
+                studentRef)
+            .stream()
+            .map(feeMapper::toRestFee)
+            .collect(toUnmodifiableList());
+    return new FeesWithStats().data(restFees).statistics(FeesStats.to(feesStats));
   }
 
   @GetMapping("/fees/stats")

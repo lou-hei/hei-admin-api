@@ -7,7 +7,6 @@ import static school.hei.haapi.integration.conf.TestUtils.*;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -190,7 +189,6 @@ class AwardedCourseIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled("dirty")
   void manager_create_or_update_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     TeachingApi api = new TeachingApi(manager1Client);

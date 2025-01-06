@@ -1,19 +1,36 @@
 package school.hei.haapi.service;
 
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.FAILED;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.PENDING;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.SUCCESS;
 import static school.hei.haapi.endpoint.rest.model.Payment.TypeEnum.MOBILE_MONEY;
+import static school.hei.haapi.service.utils.DateUtils.convertStringToInstant;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import school.hei.haapi.endpoint.event.EventProducer;
 import school.hei.haapi.endpoint.event.model.PaidFeeByMpbsFailedNotificationBody;
 import school.hei.haapi.endpoint.event.model.PojaEvent;
@@ -24,10 +41,12 @@ import school.hei.haapi.model.Fee;
 import school.hei.haapi.model.MobileTransactionDetails;
 import school.hei.haapi.model.Mpbs.Mpbs;
 import school.hei.haapi.model.Mpbs.MpbsVerification;
+import school.hei.haapi.model.Mpbs.TypedMobileMoneyTransaction;
 import school.hei.haapi.model.Payment;
 import school.hei.haapi.repository.MobileTransactionDetailsRepository;
 import school.hei.haapi.repository.MpbsRepository;
 import school.hei.haapi.repository.MpbsVerificationRepository;
+import school.hei.haapi.service.aws.FileService;
 
 @Service
 @AllArgsConstructor
@@ -42,6 +61,8 @@ public class MpbsVerificationService {
   private final ExternalResponseMapper externalResponseMapper;
   private final MobileTransactionDetailsRepository mobileTransactionDetailsRepository;
   private final EventProducer<PojaEvent> eventProducer;
+  private final MultipartFileConverter multipartFileConverter;
+  private final FileService fileService;
 
   public List<MpbsVerification> findAllByStudentIdAndFeeId(String studentId, String feeId) {
     return repository.findAllByStudentIdAndFeeId(studentId, feeId);
@@ -66,6 +87,101 @@ public class MpbsVerificationService {
     log.info("mobile transaction not found");
     saveTheUnverifiedMpbs(mpbs, toCompare);
     return null;
+  }
+
+  @Transactional
+  public List<Mpbs> computeFromXls(MultipartFile file) throws IOException {
+    List<String> pspToCheck = generateMobileTransactionDetailsFromXlsFile(file);
+    List<String> pendingMpbsPspIds =
+        mpbsRepository.findAllByStatus(PENDING).stream()
+            .map(TypedMobileMoneyTransaction::getPspId)
+            .toList();
+
+    List<Mpbs> mpbsToCheck =
+        mpbsRepository.findByPspIdIn(findCommonStrings(pspToCheck, pendingMpbsPspIds));
+    List<Mpbs> mpbsToReturn = new ArrayList<>();
+
+    for (Mpbs mpbs : mpbsToCheck) {
+      log.info("mpbs to update = {}", mpbs);
+      verifyMobilePaymentAndSaveResult(mpbs, Instant.now());
+      mpbsToReturn.add(mpbs);
+    }
+    return mpbsToReturn;
+  }
+
+  public Workbook generateWorkBook(MultipartFile multipartFile) throws IOException {
+    try {
+      String fileExtension = fileService.getFileExtension(multipartFile);
+      File file = multipartFileConverter.apply(multipartFile);
+      return switch (fileExtension) {
+        case ".vnd.ms-excel" -> new HSSFWorkbook(new FileInputStream(file));
+        case ".xlsx" -> new XSSFWorkbook(new FileInputStream(file));
+        default -> throw new IllegalStateException("Unexpected value: " + fileExtension);
+      };
+    } catch (Exception e) {
+      throw new IOException(e);
+    }
+  }
+
+  public static List<String> findCommonStrings(List<String> list1, List<String> list2) {
+    // Convertir list2 en Set pour des recherches plus rapides
+    Set<String> set2 = Set.copyOf(list2);
+
+    // Utiliser un Stream pour filtrer les éléments communs
+    return list1.stream()
+        .filter(set2::contains) // Garder uniquement les éléments présents dans set2
+        .distinct() // Éviter les doublons
+        .collect(Collectors.toList()); // Convertir le résultat en List
+  }
+
+  public List<String> generateMobileTransactionDetailsFromXlsFile(MultipartFile file)
+      throws IOException {
+    List<MobileTransactionDetails> transactions = new ArrayList<>();
+    Workbook workbook = generateWorkBook(file);
+
+    Sheet sheet = workbook.getSheetAt(0);
+
+    for (Row row : sheet) {
+      if (row.getRowNum() < 27) continue;
+
+      Cell dateCell = row.getCell(1);
+      Cell timeCell = row.getCell(2);
+      Cell refCell = row.getCell(3);
+      Cell statusCell = row.getCell(6);
+      Cell montantCell = row.getCell(14);
+
+      if (dateCell == null
+          || timeCell == null
+          || StringUtils.isBlank(dateCell.getStringCellValue())
+          || StringUtils.isBlank(timeCell.getStringCellValue())) {
+        log.warn("Row ignored because of an empty cell");
+        continue;
+      }
+
+      String dateTimeStr =
+          dateCell.getStringCellValue().trim() + " " + timeCell.getStringCellValue().trim();
+
+      MobileTransactionDetails transaction =
+          MobileTransactionDetails.builder()
+              .id(randomUUID().toString())
+              .pspDatetimeTransactionCreation(Instant.from(convertStringToInstant(dateTimeStr)))
+              .pspTransactionRef(refCell.getStringCellValue().trim())
+              .pspTransactionAmount((int) montantCell.getNumericCellValue())
+              .status(
+                  MpbsStatus.fromValue(
+                      Objects.equals(statusCell.getStringCellValue().trim(), "Succès")
+                          ? "SUCCESS"
+                          : "FAILED"))
+              .pspOwnDatetimeVerification(Instant.now())
+              .build();
+
+      transactions.add(transaction);
+      log.info("Generated mobile transaction psp id {}", transaction.getPspTransactionRef());
+    }
+    mobilePaymentService.saveAll(transactions);
+    return transactions.stream()
+        .map(MobileTransactionDetails::getPspTransactionRef)
+        .collect(Collectors.toList());
   }
 
   private Mpbs saveTheUnverifiedMpbs(Mpbs mpbs, Instant toCompare) {
@@ -119,12 +235,12 @@ public class MpbsVerificationService {
     return verifiedMobileTransaction;
   }
 
-  public List<MpbsVerification> checkMobilePaymentThenSaveVerification() {
+  public void checkMobilePaymentThenSaveVerification() {
     List<Mpbs> pendingMpbs = mpbsRepository.findAllByStatus(PENDING);
     log.info("pending mpbs = {}", pendingMpbs.size());
     Instant now = Instant.now();
 
-    return pendingMpbs.stream()
+    pendingMpbs.stream()
         .map((mpbs -> this.verifyMobilePaymentAndSaveResult(mpbs, now)))
         .collect(toList());
   }
