@@ -2144,6 +2144,44 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /fee/payement/receipts/raw:
+    get:
+      tags:
+        - Paying
+      summary: Get a zip of fee receipts in a mandatory date range
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      operationId: getZipFeeReceipts
+      responses:
+        '200':
+          description: Zip contain fee receipts
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: byte
+                example: ZIP VERSION
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /students/{student_id}/fees/{fee_id}:
     get:
       tags:
