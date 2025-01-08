@@ -19,6 +19,7 @@ public class AdminController {
   private final UserMapper userMapper;
   private final CoordinatesValidator validator;
 
+  // code comment to trigger redepl
   @GetMapping(value = "/admins/{id}")
   public Admin getAdminById(@PathVariable String id) {
     return userMapper.toRestAdmin(userService.findById(id));
