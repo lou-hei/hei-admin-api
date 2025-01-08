@@ -19,6 +19,9 @@ import static school.hei.haapi.integration.conf.TestUtils.uploadProfilePicture;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.List;
@@ -28,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.UsersApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
@@ -145,5 +149,47 @@ public class StaffMemberIT extends FacadeITMockedThirdParties {
     List<StaffMember> after = api.getStaffMembers(1, 15, null, null, null, null);
     log.info(after.toString());
     assertEquals(4, after.size());
+  }
+
+  @Test
+  void admin_read_staff_xlsx_ok() throws IOException, InterruptedException {
+    String STAFF_MEMBER_XLSX_PATH = "/staff_members/raw/xlsx";
+
+    HttpClient httpClient = HttpClient.newBuilder().build();
+    String basePath = "http://localhost:" + localPort;
+
+    HttpResponse<byte[]> response =
+        httpClient.send(
+            HttpRequest.newBuilder()
+                .uri(URI.create(basePath + STAFF_MEMBER_XLSX_PATH))
+                .GET()
+                .header("Authorization", "Bearer " + ADMIN1_TOKEN)
+                .build(),
+            HttpResponse.BodyHandlers.ofByteArray());
+
+    assertEquals(HttpStatus.OK.value(), response.statusCode());
+    assertNotNull(response.body());
+    assertNotNull(response);
+  }
+
+  @Test
+  void manager_read_staff_xlsx_ko() throws IOException, InterruptedException {
+    String STAFF_MEMBER_XLSX_PATH = "/staff_members/raw/xlsx";
+
+    HttpClient httpClient = HttpClient.newBuilder().build();
+    String basePath = "http://localhost:" + localPort;
+
+    HttpResponse<byte[]> response =
+        httpClient.send(
+            HttpRequest.newBuilder()
+                .uri(URI.create(basePath + STAFF_MEMBER_XLSX_PATH))
+                .GET()
+                .header("Authorization", "Bearer " + MANAGER1_TOKEN)
+                .build(),
+            HttpResponse.BodyHandlers.ofByteArray());
+
+    assertEquals(HttpStatus.FORBIDDEN.value(), response.statusCode());
+    assertNotNull(response.body());
+    assertNotNull(response);
   }
 }

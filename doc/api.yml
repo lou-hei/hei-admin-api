@@ -2015,6 +2015,33 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+
+  /staff_members/raw/xlsx:
+    get:
+      tags:
+        - Users
+      summary: Get all staff members as xlsx file
+      operationId: getStaffMembersIntoXlsx
+      responses:
+        '200':
+          description: An excel file containing a list of all staff members.
+          content:
+            application/xlsx:
+              schema:
+                type: string
+                format: byte
+                example: XLSX VERSION
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /staff_members/{id}:
     get:
       tags:
