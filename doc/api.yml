@@ -2145,33 +2145,25 @@ paths:
         '500':
           $ref: '#/components/responses/500'
   /fee/payement/receipts/raw:
-    get:
+    put:
       tags:
         - Paying
-      summary: Get a zip of fee receipts in a mandatory date range
-      parameters:
-        - name: from
-          in: query
-          required: true
-          schema:
-            type: string
-            format: date-time
-        - name: to
-          in: query
-          required: false
-          schema:
-            type: string
-            format: date-time
+      summary: Send email with a zip of fee receipts in a mandatory date range
+      requestBody:
+        description: fee receipts info to send
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZipReceiptsRequest'
       operationId: getZipFeeReceipts
       responses:
         '200':
-          description: Zip contain fee receipts
+          description: statistic about fee receipts to send
           content:
             application/zip:
               schema:
-                type: string
-                format: byte
-                example: ZIP VERSION
+                $ref: '#/components/schemas/ZipReceiptsStatistic'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -6185,6 +6177,23 @@ components:
           type: string
         degree:
           type: string
+    ZipReceiptsRequest:
+      type: object
+      properties:
+        from:
+          type: string
+          format: date-time
+        to:
+          type: string
+          format: date-time
+        destinationEmail:
+          type: string
+    ZipReceiptsStatistic:
+      type: object
+      properties:
+        fileCount:
+          type: string
+          format: date-time
     Exception:
       type: object
       properties:
