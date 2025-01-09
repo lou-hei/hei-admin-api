@@ -17,12 +17,14 @@ import school.hei.haapi.endpoint.rest.validator.CoordinatesValidator;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.User;
+import school.hei.haapi.service.MonitoringStudentService;
 import school.hei.haapi.service.UserService;
 
 @RestController
 @AllArgsConstructor
 public class MonitorController {
   private final UserService userService;
+  private final MonitoringStudentService monitoringStudentService;
   private final UserMapper userMapper;
   private final CoordinatesValidator validator;
 
@@ -42,9 +44,7 @@ public class MonitorController {
   @PutMapping(value = "/monitors")
   public List<Monitor> createOrUpdateMonitors(@RequestBody List<CrupdateMonitor> toWrite) {
     toWrite.forEach(monitor -> validator.accept(monitor.getCoordinates()));
-    return userService
-        .saveAll(toWrite.stream().map(userMapper::toDomain).collect(toUnmodifiableList()))
-        .stream()
+    return monitoringStudentService.crupdateAndLinkMonitorFollowingStudents(toWrite).stream()
         .map(userMapper::toRestMonitor)
         .collect(toUnmodifiableList());
   }
