@@ -1447,7 +1447,7 @@ public class TestUtils {
     return new Promotion()
         .id(PROMOTION1_ID)
         .ref("PROM21")
-        .name("Promotion 21-22")
+        .name("Promotion 2021-2022")
         .creationDatetime(Instant.parse("2021-11-08T08:30:24.00Z"))
         .groups(List.of(createGroupIdentifier(group1()), createGroupIdentifier(group2())));
   }
@@ -1456,7 +1456,7 @@ public class TestUtils {
     return new Promotion()
         .id(PROMOTION2_ID)
         .ref("PROM22")
-        .name("Promotion 22-23")
+        .name("Promotion 2022-2023")
         .creationDatetime(Instant.parse("2021-11-08T08:30:24.00Z"))
         .groups(List.of(createGroupIdentifier(group3()), createGroupIdentifier(group4())));
   }
@@ -1465,7 +1465,7 @@ public class TestUtils {
     return new Promotion()
         .id(PROMOTION3_ID)
         .ref("PROM23")
-        .name("Promotion 23-24")
+        .name("Promotion 2023-2024")
         .creationDatetime(Instant.parse("2021-11-08T08:30:24.00Z"))
         .groups(List.of());
   }

@@ -3,8 +3,9 @@ package school.hei.haapi.service.utils;
 import static school.hei.haapi.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import school.hei.haapi.endpoint.rest.model.SpecializationField;
@@ -20,25 +21,32 @@ public class ScholarshipCertificateDataProvider {
   private final PromotionService promotionService;
 
   public String getAcademicYearSentence(User student) {
-    String academicYear = getAcademicYear(student, Instant.now());
+    String academicYear =
+        getAcademicYear(findLastStudentPromotion(student).getName(), Instant.now());
     return academicYear + " année d'informatique - parcours " + specializationFiledString(student);
   }
 
-  public String getAcademicYear(User student, Instant from) {
-    ZonedDateTime lastPromotionStartDatetime =
-        ZonedDateTime.ofInstant(
-            findLastStudentPromotion(student).getStartDatetime(), ZoneId.of("UTC+3"));
-    ZonedDateTime zonedDateTimeNow = from.atZone(ZoneId.of("UTC+3"));
-    int currentYear = zonedDateTimeNow.getYear();
-    int lastPromotionYear = lastPromotionStartDatetime.getYear();
+  public String getAcademicYear(String promotionName, Instant from) {
 
-    int year = currentYear - lastPromotionYear;
+    int firstYear =
+        Integer.parseInt(
+            promotionName.substring(promotionName.indexOf("2"), promotionName.indexOf("-")));
 
-    return switch (year) {
+    LocalDate date = from.atZone(ZoneId.systemDefault()).toLocalDate();
+    int year = date.getYear();
+    int month = date.getMonthValue();
+
+    int scholarYear = (month >= 11) ? year : year - 1;
+
+    int difference = scholarYear - firstYear;
+
+    return switch (difference) {
       case 0 -> "Première";
       case 1 -> "Deuxième";
-      case 2, 3 -> "Troisième";
-      default -> throw new ApiException(SERVER_EXCEPTION, "Invalid year");
+      case 2 -> "Troisième";
+      case 3 -> "Quatrième";
+      case 4 -> "Cinquième";
+      default -> "Non defini";
     };
   }
 
@@ -53,6 +61,24 @@ public class ScholarshipCertificateDataProvider {
       case TN -> "Transformation Numérique";
       case EL -> "Écosystème Logiciel";
       default -> throw new ApiException(SERVER_EXCEPTION, "Invalid specialization field");
+    };
+  }
+
+  public static String determinerAnneeEtudes(String nomPromotion, Instant startDateTime) {
+    // Calcul de la différence en années entre maintenant et le début de la promotion
+    Instant maintenant = Instant.now();
+    long differenceAnnees =
+        ChronoUnit.YEARS.between(
+            startDateTime.atZone(ZoneId.systemDefault()).toLocalDate(),
+            maintenant.atZone(ZoneId.systemDefault()).toLocalDate());
+
+    return switch ((int) differenceAnnees) {
+      case 0 -> "première année";
+      case 1 -> "deuxième année";
+      case 2 -> "troisième année";
+      case 3 -> "quatrième année";
+      case 4 -> "cinquième année";
+      default -> "cinquième année";
     };
   }
 
