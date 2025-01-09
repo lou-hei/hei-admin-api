@@ -19,6 +19,9 @@ import lombok.ToString;
 @Getter
 public class SendReceiptZipToEmail extends PojaEvent {
 
+  @JsonProperty("idWork")
+  private int idWork;
+
   @JsonProperty("startRequest")
   private Instant startRequest;
 
