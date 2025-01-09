@@ -3,6 +3,10 @@ package school.hei.haapi.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.AttendanceMovementType.IN;
+import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.LATE;
+import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.MISSING;
+import static school.hei.haapi.endpoint.rest.model.PlaceEnum.ANDRAHARO;
+import static school.hei.haapi.endpoint.rest.model.PlaceEnum.IVANDRY;
 import static school.hei.haapi.integration.StudentIT.*;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.StudentIT.student2;
@@ -11,7 +15,6 @@ import static school.hei.haapi.model.User.Status.ENABLED;
 
 import java.time.Instant;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +31,6 @@ import school.hei.haapi.model.User;
 import school.hei.haapi.repository.UserRepository;
 import school.hei.haapi.service.event.CheckAttendanceTriggeredService;
 
-@Slf4j
 @Testcontainers
 @AutoConfigureMockMvc
 class AttendanceIT extends FacadeITMockedThirdParties {
@@ -63,7 +65,6 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         api.getStudentsAttendance(
             1, 10, List.of("course2_id"), null, null, DEFAULT_FROM, DEFAULT_TO, null);
     assertEquals(3, actualWithCourse2Id.size());
-    log.info("actualCourseWithCourse2Id elements: {}", actualWithCourse2Id);
     assertTrue(
         actualWithCourse2Id.containsAll(
             List.of(attendance2Ok(), attendance4Late(), attendance6Missing())));
@@ -79,7 +80,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
             null,
             DEFAULT_FROM,
             DEFAULT_TO,
-            List.of(AttendanceStatus.MISSING, AttendanceStatus.LATE));
+            List.of(MISSING, LATE));
     assertEquals(2, actualWithCourse2IdAndMissingAndLate.size());
     assertTrue(
         actualWithCourse2IdAndMissingAndLate.containsAll(
@@ -96,7 +97,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
             null,
             DEFAULT_FROM,
             DEFAULT_TO,
-            List.of(AttendanceStatus.MISSING));
+            List.of(MISSING));
     assertEquals(2, actualWithCourse1Idand2IdAndMissing.size());
     assertTrue(
         actualWithCourse1Idand2IdAndMissing.containsAll(
@@ -112,7 +113,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
     // /attendance?page=1&page_size=10&attendance_statuses=MISSING&from={DEFAULT_FROM}&to={DEFAULT_TO}
     List<StudentAttendance> actualWithStudentMissing =
         api.getStudentsAttendance(
-            1, 10, null, null, null, DEFAULT_FROM, DEFAULT_TO, List.of(AttendanceStatus.MISSING));
+            1, 10, null, null, null, DEFAULT_FROM, DEFAULT_TO, List.of(MISSING));
     assertEquals(2, actualWithStudentMissing.size());
     assertTrue(
         actualWithStudentMissing.containsAll(List.of(attendance6Missing(), attendance5Missing())));
@@ -121,14 +122,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
     // /attendance?page=1&page_size=10&attendance_statuses=LATE,MISSING&from={DEFAULT_FROM}&to={DEFAULT_TO}
     List<StudentAttendance> actualWithStudentMissingAndLate =
         api.getStudentsAttendance(
-            1,
-            10,
-            null,
-            null,
-            null,
-            DEFAULT_FROM,
-            DEFAULT_TO,
-            List.of(AttendanceStatus.MISSING, AttendanceStatus.LATE));
+            1, 10, null, null, null, DEFAULT_FROM, DEFAULT_TO, List.of(MISSING, LATE));
     assertEquals(4, actualWithStudentMissingAndLate.size());
     assertTrue(
         actualWithStudentMissingAndLate.containsAll(
@@ -146,7 +140,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
             null,
             DEFAULT_FROM,
             DEFAULT_TO,
-            List.of(AttendanceStatus.MISSING));
+            List.of(MISSING));
     assertEquals(1, actualWithCourse2IdAndMissing.size());
     assertTrue(actualWithCourse2IdAndMissing.contains(attendance6Missing()));
   }
@@ -167,7 +161,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
             "tw",
             DEFAULT_FROM,
             DEFAULT_TO,
-            List.of(AttendanceStatus.LATE));
+            List.of(LATE));
     assertEquals(1, actualWithStudentKeyowrdAndTeacher1AndAttendanceLate.size());
   }
 
@@ -181,7 +175,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
     StudentAttendanceMovement expected =
         new StudentAttendanceMovement()
             .id("attendance1_id")
-            .place(PlaceEnum.ANDRAHARO)
+            .place(ANDRAHARO)
             .createdAt(Instant.parse("2021-11-08T07:30:00.00Z"))
             .student(student1())
             .attendanceMovementType(AttendanceMovementType.IN);
@@ -233,7 +227,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         .id("attendance1_id")
         .lateOf(0)
         .student(student1())
-        .place(PlaceEnum.ANDRAHARO)
+        .place(ANDRAHARO)
         .isLate(false)
         .courseSession(courseSession1())
         .createdAt(Instant.parse("2021-11-08T07:30:00.00Z"));
@@ -244,7 +238,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         .id("attendance2_id")
         .student(student1())
         .lateOf(0)
-        .place(PlaceEnum.ANDRAHARO)
+        .place(ANDRAHARO)
         .isLate(false)
         .courseSession(courseSession2())
         .createdAt(Instant.parse("2021-08-08T14:15:00.00Z"))
@@ -254,7 +248,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
   public static StudentAttendance attendance3Late() {
     return new StudentAttendance()
         .id("attendance3_id")
-        .place(PlaceEnum.IVANDRY)
+        .place(IVANDRY)
         .isLate(true)
         .lateOf(35)
         .courseSession(courseSession1())
@@ -268,7 +262,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         .id("attendance4_id")
         .isLate(true)
         .lateOf(15)
-        .place(PlaceEnum.ANDRAHARO)
+        .place(ANDRAHARO)
         .courseSession(courseSession2())
         .student(student2())
         .createdAt(Instant.parse("2021-08-08T15:15:00.00Z"))
@@ -308,7 +302,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
 
   public static CreateAttendanceMovement createAttendanceMovement() {
     return new CreateAttendanceMovement()
-        .place(PlaceEnum.ANDRAHARO)
+        .place(ANDRAHARO)
         .attendanceMovementType(AttendanceMovementType.IN)
         .studentId("student1_id")
         .createdAt(Instant.parse("2021-11-08T07:30:00.00Z"));
@@ -316,7 +310,7 @@ class AttendanceIT extends FacadeITMockedThirdParties {
 
   public static CreateAttendanceMovement createAttendanceMovementKo() {
     return new CreateAttendanceMovement()
-        .place(PlaceEnum.ANDRAHARO)
+        .place(ANDRAHARO)
         .attendanceMovementType(AttendanceMovementType.IN)
         .studentId("student_id_ko")
         .createdAt(Instant.parse("2021-11-08T07:30:00.00Z"));
