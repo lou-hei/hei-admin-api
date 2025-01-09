@@ -1,6 +1,7 @@
 package school.hei.haapi.endpoint.event.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -26,7 +27,7 @@ public class SendReceiptZipToEmail extends PojaEvent {
   private Instant startRequest;
 
   @JsonProperty("fileToZip")
-  private List<byte[]> fileToZip;
+  private List<File> fileToZip;
 
   @JsonProperty("emailRecipient")
   private String emailRecipient;

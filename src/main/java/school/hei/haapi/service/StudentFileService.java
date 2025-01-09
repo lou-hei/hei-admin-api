@@ -6,9 +6,13 @@ import static school.hei.haapi.service.utils.DataFormatterUtils.formatLocalDate;
 import static school.hei.haapi.service.utils.DataFormatterUtils.numberToReadable;
 import static school.hei.haapi.service.utils.DataFormatterUtils.numberToWords;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,7 +53,7 @@ public class StudentFileService {
   private final FileInfoService fileInfoService;
   private final WorkDocumentService workDocumentService;
   private final FileInfoDao fileInfoDao;
-  private final ListGrouper<byte[]> dataFileGrouper;
+  private final ListGrouper<File> dataFileGrouper;
 
   public WorkDocument uploadStudentWorkFile(
       String studentId,
@@ -117,21 +121,31 @@ public class StudentFileService {
     List<Payment> allPayementBetween =
         paymentService.getAllPayementBetween(
             zipReceiptsRequest.getFrom(), zipReceiptsRequest.getTo());
-    List<byte[]> pdfs =
+    List<File> pdfs =
         allPayementBetween.stream()
             .map(
-                payment ->
-                    generatePaidFeeReceipt(
-                        payment.getFee().getId(), payment.getId(), "paidFeeReceipt"))
+                (payment) -> {
+                  byte[] paidFeeReceiptsData =
+                      generatePaidFeeReceipt(
+                          payment.getFee().getId(), payment.getId(), "paidFeeReceipt");
+                  File file = null;
+                  try {
+                    file = File.createTempFile(UUID.randomUUID().toString(), ".pdf");
+                    FileUtils.writeByteArrayToFile(file, paidFeeReceiptsData);
+                  } catch (IOException e) {
+                    throw new RuntimeException(e);
+                  }
+                  return file;
+                })
             .toList();
 
     sendReceiptZipToEmail(pdfs, zipReceiptsRequest.getDestinationEmail());
 
-    return new ZipReceiptsStatistic().fileCount(pdfs.size());
+    return new ZipReceiptsStatistic().fileCountInZip(pdfs.size());
   }
 
-  public void sendReceiptZipToEmail(List<byte[]> pdfs, String destinationEmail) {
-    List<List<byte[]>> groups = dataFileGrouper.apply(pdfs, MAX_RECEIPT_PDF_IN_ZIP_FILE);
+  public void sendReceiptZipToEmail(List<File> pdfs, String destinationEmail) {
+    List<List<File>> groups = dataFileGrouper.apply(pdfs, MAX_RECEIPT_PDF_IN_ZIP_FILE);
     for (int groupId = 0; groupId < groups.size(); groupId++) {
       SendReceiptZipToEmail.builder()
           .startRequest(Instant.now())

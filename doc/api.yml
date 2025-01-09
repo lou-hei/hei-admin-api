@@ -6191,7 +6191,7 @@ components:
     ZipReceiptsStatistic:
       type: object
       properties:
-        fileCount:
+        fileCountInZip:
           type: integer
     Exception:
       type: object

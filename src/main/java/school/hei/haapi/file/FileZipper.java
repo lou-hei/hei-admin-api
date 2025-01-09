@@ -6,27 +6,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FileZipper implements Function<List<byte[]>, File> {
+public class FileZipper implements Function<List<File>, File> {
   private static final String ZIP_FILE_EXTENSION = ".zip";
 
   @SneakyThrows
   @Override
-  public File apply(List<byte[]> fileDataList) {
+  public File apply(List<File> fileDataList) {
     File zipFile = File.createTempFile(randomUUID().toString(), ZIP_FILE_EXTENSION, null);
     try (FileOutputStream fos = new FileOutputStream(zipFile);
         ZipOutputStream zipOut = new ZipOutputStream(fos)) {
-      for (byte[] fileData : fileDataList) {
-        File file = File.createTempFile(UUID.randomUUID().toString(), ".pdf");
-        FileUtils.writeByteArrayToFile(file, fileData);
+      for (File file : fileDataList) {
         try (FileInputStream fis = new FileInputStream(file)) {
           ZipEntry zipEntry = new ZipEntry(file.getName());
           zipOut.putNextEntry(zipEntry);
@@ -36,7 +32,6 @@ public class FileZipper implements Function<List<byte[]>, File> {
             zipOut.write(bytes, 0, length);
           }
         }
-        file.delete();
       }
     }
     return zipFile;
