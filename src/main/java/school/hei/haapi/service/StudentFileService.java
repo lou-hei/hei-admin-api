@@ -16,8 +16,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
+import school.hei.haapi.endpoint.event.model.SendReceiptZipToEmail;
 import school.hei.haapi.endpoint.rest.model.FileType;
 import school.hei.haapi.endpoint.rest.model.ProfessionalExperienceFileTypeEnum;
+import school.hei.haapi.endpoint.rest.model.ZipReceiptsRequest;
+import school.hei.haapi.endpoint.rest.model.ZipReceiptsStatistic;
 import school.hei.haapi.model.*;
 import school.hei.haapi.repository.FileInfoRepository;
 import school.hei.haapi.repository.dao.FileInfoDao;
@@ -104,6 +107,27 @@ public class StudentFileService {
     Context context = loadPaymentReceiptContext(fee, payment);
     String html = htmlParser.apply(template, context);
     return pdfRenderer.apply(html);
+  }
+
+  public ZipReceiptsStatistic getZipFeeReceipts(ZipReceiptsRequest zipReceiptsRequest) {
+    List<Payment> allPayementBetween =
+        paymentService.getAllPayementBetween(
+            zipReceiptsRequest.getFrom(), zipReceiptsRequest.getTo());
+    List<byte[]> pdfs =
+        allPayementBetween.stream()
+            .map(
+                payment ->
+                    generatePaidFeeReceipt(
+                        payment.getFee().getId(), payment.getId(), "paidFeeReceipt"))
+            .toList();
+
+    SendReceiptZipToEmail.builder()
+        .startRequest(Instant.now())
+        .fileToZip(pdfs)
+        .emailRecipient(zipReceiptsRequest.getDestinationEmail())
+        .build();
+
+    return new ZipReceiptsStatistic().fileCount(pdfs.size());
   }
 
   private Context loadPaymentReceiptContext(Fee fee, Payment payment) {
