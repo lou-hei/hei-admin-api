@@ -10,7 +10,6 @@ import static school.hei.haapi.integration.conf.TestUtils.*;
 
 import java.time.Instant;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 import school.hei.haapi.service.event.CheckAttendanceTriggeredService;
 
-@Slf4j
 @Testcontainers
 @AutoConfigureMockMvc
 class AttendanceIT extends FacadeITMockedThirdParties {
@@ -55,7 +53,6 @@ class AttendanceIT extends FacadeITMockedThirdParties {
         api.getStudentsAttendance(
             1, 10, List.of("course2_id"), null, null, DEFAULT_FROM, DEFAULT_TO, null);
     assertEquals(3, actualWithCourse2Id.size());
-    log.info("actualCourseWithCourse2Id elements: {}", actualWithCourse2Id);
     assertTrue(
         actualWithCourse2Id.containsAll(
             List.of(attendance2Ok(), attendance4Late(), attendance6Missing())));
