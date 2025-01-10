@@ -9,6 +9,7 @@ import static school.hei.haapi.service.utils.DataFormatterUtils.numberToWords;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 import school.hei.haapi.datastructure.ListGrouper;
+import school.hei.haapi.endpoint.event.EventProducer;
 import school.hei.haapi.endpoint.event.model.SendReceiptZipToEmail;
 import school.hei.haapi.endpoint.rest.model.FileType;
 import school.hei.haapi.endpoint.rest.model.ProfessionalExperienceFileTypeEnum;
@@ -54,6 +56,7 @@ public class StudentFileService {
   private final WorkDocumentService workDocumentService;
   private final FileInfoDao fileInfoDao;
   private final ListGrouper<File> dataFileGrouper;
+  private final EventProducer eventProducer;
 
   public WorkDocument uploadStudentWorkFile(
       String studentId,
@@ -147,12 +150,14 @@ public class StudentFileService {
   public void sendReceiptZipToEmail(List<File> pdfs, String destinationEmail) {
     List<List<File>> groups = dataFileGrouper.apply(pdfs, MAX_RECEIPT_PDF_IN_ZIP_FILE);
     for (int groupId = 0; groupId < groups.size(); groupId++) {
-      SendReceiptZipToEmail.builder()
-          .startRequest(Instant.now())
-          .idWork(groupId)
-          .fileToZip(groups.get(groupId))
-          .emailRecipient(destinationEmail)
-          .build();
+      eventProducer.accept(
+          Collections.singleton(
+              SendReceiptZipToEmail.builder()
+                  .startRequest(Instant.now())
+                  .idWork(groupId)
+                  .fileToZip(groups.get(groupId))
+                  .emailRecipient(destinationEmail)
+                  .build()));
     }
   }
 
