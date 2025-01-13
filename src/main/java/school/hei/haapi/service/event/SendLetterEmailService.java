@@ -40,7 +40,7 @@ public class SendLetterEmailService implements Consumer<SendLetterEmail> {
     String htmlBody = htmlToString("sendLetterEmail", getMailContext(sendLetterEmail));
     mailer.accept(
         new Email(
-            internetAddress("contact@mail.hei.school"),
+            internetAddress(sendLetterEmail.getReceiver()),
             List.of(internetAddress(sendLetterEmail.getStudentEmail())),
             List.of(),
             "HEI - Boîte aux lettres - " + sendLetterEmail.getStudentRef(),

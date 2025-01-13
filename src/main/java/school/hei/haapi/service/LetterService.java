@@ -4,6 +4,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 import static school.hei.haapi.endpoint.rest.model.FileType.OTHER;
 import static school.hei.haapi.endpoint.rest.model.LetterStatus.*;
 import static school.hei.haapi.endpoint.rest.model.Payment.TypeEnum.BANK_TRANSFER;
+import static school.hei.haapi.endpoint.rest.security.AuthProvider.getPrincipal;
 
 import java.io.File;
 import java.time.Instant;
@@ -23,6 +24,7 @@ import school.hei.haapi.endpoint.event.model.UpdateLetterEmail;
 import school.hei.haapi.endpoint.rest.model.LetterStats;
 import school.hei.haapi.endpoint.rest.model.LetterStatus;
 import school.hei.haapi.endpoint.rest.model.UpdateLettersStatus;
+import school.hei.haapi.endpoint.rest.security.model.Principal;
 import school.hei.haapi.model.*;
 import school.hei.haapi.model.exception.BadRequestException;
 import school.hei.haapi.model.exception.NotFoundException;
@@ -116,6 +118,14 @@ public class LetterService {
     return letterRepository.save(letterToSave);
   }
 
+  private String getLetterReceiver() {
+    Principal principal = getPrincipal();
+    if (Objects.equals(principal.getRole(), "STUDENT")) {
+      return "contact@mail.hei.school";
+    }
+    return "valisoa@mail.hei.school";
+  }
+
   public List<Letter> getLettersByStudentId(
       String userId, LetterStatus status, PageFromOne page, BoundedPageSize pageSize) {
     Pageable pageable =
@@ -204,6 +214,7 @@ public class LetterService {
         .id(letter.getId())
         .studentRef(letter.getUser().getRef())
         .studentEmail(letter.getUser().getEmail())
+        .receiver(getLetterReceiver())
         .build();
   }
 
