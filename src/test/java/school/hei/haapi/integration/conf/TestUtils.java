@@ -78,6 +78,7 @@ import school.hei.haapi.endpoint.rest.model.CreateFee;
 import school.hei.haapi.endpoint.rest.model.CrupdateExam;
 import school.hei.haapi.endpoint.rest.model.CrupdateFeeTemplate;
 import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
+import school.hei.haapi.endpoint.rest.model.CrupdateMonitor;
 import school.hei.haapi.endpoint.rest.model.CrupdatePromotion;
 import school.hei.haapi.endpoint.rest.model.CrupdateStudentFee;
 import school.hei.haapi.endpoint.rest.model.CrupdateTeacher;
@@ -622,6 +623,65 @@ public class TestUtils {
         .address("Adr 1")
         .coordinates(new Coordinates().longitude(-123.123).latitude(123.0))
         .highSchoolOrigin("Lycée Andohalo");
+  }
+
+  public static Monitor monitor2() {
+    return new Monitor()
+        .id(MONITOR2_ID)
+        .firstName("Monitor2")
+        .lastName("two")
+        .email("test+monitor2@hei.school")
+        .ref("MTR21002")
+        .phone("0322411123")
+        .status(EnableStatus.ENABLED)
+        .sex(Sex.M)
+        .birthDate(LocalDate.parse("2000-02-02"))
+        .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
+        .nic("")
+        .birthPlace("")
+        .address("Adr 2")
+        .coordinates(new Coordinates().longitude(-123.123).latitude(123.0))
+        .highSchoolOrigin("Lycée Andohalo");
+  }
+
+  public static CrupdateMonitor monitor1Link(List<String> studentRefs) {
+    return new CrupdateMonitor()
+        .id(MONITOR1_ID)
+        .firstName("Monitor")
+        .lastName("One")
+        .email("test+monitor@hei.school")
+        .ref("MTR21001")
+        .phone("0322411123")
+        .status(EnableStatus.ENABLED)
+        .sex(Sex.M)
+        .birthDate(LocalDate.parse("2000-01-01"))
+        .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
+        .nic("")
+        .birthPlace("")
+        .address("Adr 1")
+        .coordinates(new Coordinates().longitude(-123.123).latitude(123.0))
+        .highSchoolOrigin("Lycée Andohalo")
+        .studentRefs(studentRefs);
+  }
+
+  public static CrupdateMonitor monitor2Link(List<String> studentRefs) {
+    return new CrupdateMonitor()
+        .id(MONITOR2_ID)
+        .firstName("Monitor2")
+        .lastName("two")
+        .email("test+monitor2@hei.school")
+        .ref("MTR21002")
+        .phone("0322411123")
+        .status(EnableStatus.ENABLED)
+        .sex(Sex.M)
+        .birthDate(LocalDate.parse("2000-02-02"))
+        .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
+        .nic("")
+        .birthPlace("")
+        .address("Adr 2")
+        .coordinates(new Coordinates().longitude(-123.123).latitude(123.0))
+        .highSchoolOrigin("Lycée Andohalo")
+        .studentRefs(studentRefs);
   }
 
   public static Fee fee1() {

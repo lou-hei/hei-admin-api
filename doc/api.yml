@@ -5143,6 +5143,12 @@ components:
     CrupdateMonitor:
       allOf:
         - $ref: '#/components/schemas/CrupdateUser'
+      properties:
+        student_refs:
+          type: array
+          items:
+            type: string
+            example: "STD20001"
     CrupdateTeacher:
       allOf:
         - $ref: '#/components/schemas/CrupdateUser'
