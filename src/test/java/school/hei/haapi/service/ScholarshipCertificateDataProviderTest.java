@@ -35,21 +35,21 @@ class ScholarshipCertificateDataProviderTest extends FacadeITMockedThirdParties 
 
   @Test
   void get_academic_year_ok() {
-    Instant customInstant1 = Instant.parse("2025-11-08T08:25:24.00Z");
-    Instant customInstant2 = Instant.parse("2026-11-08T08:25:24.00Z");
+    Instant customInstant1 = Instant.parse("2025-12-08T08:25:24.00Z");
+    Instant customInstant2 = Instant.parse("2026-12-08T08:25:24.00Z");
 
-    String promotionName1 = "Promotion 2025-2026";
-    String promotionName2 = "Promotion 2024-2025";
+    Instant promotionStart1 = Instant.parse("2025-11-08T08:25:24.00Z");
+    Instant promotionStart2 = Instant.parse("2024-11-08T08:25:24.00Z");
 
     String academicYearStudent9 =
-        scholarshipCertificateDataProvider.getAcademicYear(promotionName1, customInstant1);
+        scholarshipCertificateDataProvider.getAcademicYear(promotionStart1, customInstant1);
     String academicYearStudent10 =
-        scholarshipCertificateDataProvider.getAcademicYear(promotionName2, customInstant1);
+        scholarshipCertificateDataProvider.getAcademicYear(promotionStart2, customInstant1);
 
     String academicYearStudent11 =
-        scholarshipCertificateDataProvider.getAcademicYear(promotionName1, customInstant2);
+        scholarshipCertificateDataProvider.getAcademicYear(promotionStart1, customInstant2);
     String academicYearStudent12 =
-        scholarshipCertificateDataProvider.getAcademicYear(promotionName2, customInstant2);
+        scholarshipCertificateDataProvider.getAcademicYear(promotionStart2, customInstant2);
 
     assertEquals("Première", academicYearStudent9);
     assertEquals("Deuxième", academicYearStudent10);
