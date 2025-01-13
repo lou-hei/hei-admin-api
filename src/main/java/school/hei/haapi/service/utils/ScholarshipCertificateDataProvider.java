@@ -22,15 +22,13 @@ public class ScholarshipCertificateDataProvider {
 
   public String getAcademicYearSentence(User student) {
     String academicYear =
-        getAcademicYear(findLastStudentPromotion(student).getName(), Instant.now());
+        getAcademicYear(findLastStudentPromotion(student).getStartDatetime(), Instant.now());
     return academicYear + " année d'informatique - parcours " + specializationFiledString(student);
   }
 
-  public String getAcademicYear(String promotionName, Instant from) {
+  public String getAcademicYear(Instant startDatetime, Instant from) {
 
-    int firstYear =
-        Integer.parseInt(
-            promotionName.substring(promotionName.indexOf("2"), promotionName.indexOf("-")));
+    int firstYear = startDatetime.atZone(ZoneId.systemDefault()).getYear();
 
     LocalDate date = from.atZone(ZoneId.systemDefault()).toLocalDate();
     int year = date.getYear();
