@@ -129,7 +129,9 @@ public class MpbsVerificationService {
       throws IOException {
 
     List<String> pendingMpbsPspIds =
-        mpbsRepository.findAll().stream().map(TypedMobileMoneyTransaction::getPspId).toList();
+        mpbsRepository.findAllByStatus(PENDING).stream()
+            .map(TypedMobileMoneyTransaction::getPspId)
+            .toList();
 
     List<MobileTransactionDetails> transactions = new ArrayList<>();
 
@@ -176,6 +178,7 @@ public class MpbsVerificationService {
         transactions.add(transaction);
         log.info("Generated mobile transaction psp id {}", transaction.getPspTransactionRef());
       }
+      ;
     }
     mobilePaymentService.saveAll(transactions);
     return transactions.stream()
