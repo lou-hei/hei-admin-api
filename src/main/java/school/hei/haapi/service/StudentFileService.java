@@ -6,9 +6,14 @@ import static school.hei.haapi.service.utils.DataFormatterUtils.formatLocalDate;
 import static school.hei.haapi.service.utils.DataFormatterUtils.numberToReadable;
 import static school.hei.haapi.service.utils.DataFormatterUtils.numberToWords;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +21,20 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
+import school.hei.haapi.datastructure.ListGrouper;
+import school.hei.haapi.endpoint.event.EventProducer;
+import school.hei.haapi.endpoint.event.model.SendReceiptZipToEmail;
 import school.hei.haapi.endpoint.rest.model.FileType;
 import school.hei.haapi.endpoint.rest.model.ProfessionalExperienceFileTypeEnum;
-import school.hei.haapi.model.*;
+import school.hei.haapi.endpoint.rest.model.ZipReceiptsRequest;
+import school.hei.haapi.endpoint.rest.model.ZipReceiptsStatistic;
+import school.hei.haapi.model.BoundedPageSize;
+import school.hei.haapi.model.Fee;
+import school.hei.haapi.model.FileInfo;
+import school.hei.haapi.model.PageFromOne;
+import school.hei.haapi.model.Payment;
+import school.hei.haapi.model.User;
+import school.hei.haapi.model.WorkDocument;
 import school.hei.haapi.repository.FileInfoRepository;
 import school.hei.haapi.repository.dao.FileInfoDao;
 import school.hei.haapi.service.utils.Base64Converter;
@@ -31,6 +47,8 @@ import school.hei.haapi.service.utils.ScholarshipCertificateDataProvider;
 @Service
 @AllArgsConstructor
 public class StudentFileService {
+  private final int MAX_RECEIPT_PDF_IN_ZIP_FILE = 3_600; // if pdf=27.3Ko, approximately 98,280 Mo
+
   private final Base64Converter base64Converter;
   private final ClassPathResourceResolver classPathResourceResolver;
   private final HtmlParser htmlParser;
@@ -43,6 +61,8 @@ public class StudentFileService {
   private final FileInfoService fileInfoService;
   private final WorkDocumentService workDocumentService;
   private final FileInfoDao fileInfoDao;
+  private final ListGrouper<File> dataFileGrouper;
+  private final EventProducer eventProducer;
 
   public WorkDocument uploadStudentWorkFile(
       String studentId,
@@ -104,6 +124,47 @@ public class StudentFileService {
     Context context = loadPaymentReceiptContext(fee, payment);
     String html = htmlParser.apply(template, context);
     return pdfRenderer.apply(html);
+  }
+
+  public ZipReceiptsStatistic getZipFeeReceipts(ZipReceiptsRequest zipReceiptsRequest) {
+    List<Payment> allPayementBetween =
+        paymentService.getAllPayementBetween(
+            zipReceiptsRequest.getFrom(), zipReceiptsRequest.getTo());
+    List<File> pdfs =
+        allPayementBetween.stream()
+            .map(
+                (payment) -> {
+                  byte[] paidFeeReceiptsData =
+                      generatePaidFeeReceipt(
+                          payment.getFee().getId(), payment.getId(), "paidFeeReceipt");
+                  File file = null;
+                  try {
+                    file = File.createTempFile(UUID.randomUUID().toString(), ".pdf");
+                    FileUtils.writeByteArrayToFile(file, paidFeeReceiptsData);
+                  } catch (IOException e) {
+                    throw new RuntimeException(e);
+                  }
+                  return file;
+                })
+            .toList();
+
+    sendReceiptZipToEmail(pdfs, zipReceiptsRequest.getDestinationEmail());
+
+    return new ZipReceiptsStatistic().fileCountInZip(pdfs.size());
+  }
+
+  public void sendReceiptZipToEmail(List<File> pdfs, String destinationEmail) {
+    List<List<File>> groups = dataFileGrouper.apply(pdfs, MAX_RECEIPT_PDF_IN_ZIP_FILE);
+    for (int groupId = 0; groupId < groups.size(); groupId++) {
+      eventProducer.accept(
+          Collections.singleton(
+              SendReceiptZipToEmail.builder()
+                  .startRequest(Instant.now())
+                  .idWork(groupId)
+                  .fileToZip(groups.get(groupId))
+                  .emailRecipient(destinationEmail)
+                  .build()));
+    }
   }
 
   private Context loadPaymentReceiptContext(Fee fee, Payment payment) {
