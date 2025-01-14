@@ -118,7 +118,7 @@
     <li th:text="'Prénom: ' + ${student.getFirstName()}"></li>
     <li th:text="'Nom: ' + ${student.getLastName()}"></li>
     <li th:text="'Date de naissance: ' + ${birthday}"></li>
-    <li th:text="'Lieu de naissance: ' + ${student.getBirthPlace()}"></li>
+    <li th:text="${student.getBirthPlace() == null or student.getBirthPlace().isEmpty()} ? 'Lieu de naissance non défini ' : 'Lieu de naissance: ' + ${student.getBirthPlace()}"></li>
     <li th:if="${student.getNic() != null and !#strings.isEmpty(student.getNic())}">
       <span th:text="'Numéro CIN: ' + ${student.getNic()}"></span>
     </li>
