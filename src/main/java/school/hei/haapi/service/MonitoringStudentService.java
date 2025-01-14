@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +40,16 @@ public class MonitoringStudentService {
   public List<User> crupdateAndLinkMonitorFollowingStudents(List<CrupdateMonitor> monitors) {
     List<User> savedMonitors =
         userRepository.saveAll(
-            monitors.stream().map(this::mapMonitorToDomain).collect(toUnmodifiableList()));
+            monitors.stream()
+                .map(
+                    monitor -> {
+                      User mappedMonitor = this.mapMonitorToDomain(monitor);
+                      if (monitor.getId() == null) {
+                        mappedMonitor.setId(UUID.randomUUID().toString());
+                      }
+                      return mappedMonitor;
+                    })
+                .collect(toUnmodifiableList()));
 
     monitors.forEach(
         monitor -> {
@@ -48,7 +58,8 @@ public class MonitoringStudentService {
                   .map(User::getId)
                   .collect(toUnmodifiableList());
 
-          linkMonitorFollowingStudents(monitor.getId(), studentsIds);
+          linkMonitorFollowingStudents(
+              userRepository.findByRef(monitor.getRef()).getId(), studentsIds);
         });
 
     return savedMonitors;
