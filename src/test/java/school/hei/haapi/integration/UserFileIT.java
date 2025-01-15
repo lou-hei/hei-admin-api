@@ -28,6 +28,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -41,12 +42,15 @@ import school.hei.haapi.endpoint.rest.api.PayingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.FileInfo;
+import school.hei.haapi.endpoint.rest.model.ZipReceiptsRequest;
+import school.hei.haapi.endpoint.rest.model.ZipReceiptsStatistic;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 @Testcontainers
 @AutoConfigureMockMvc
+@Slf4j
 public class UserFileIT extends FacadeITMockedThirdParties {
   @MockBean private EventBridgeClient eventBridgeClientMock;
   @MockBean RestTemplate restTemplateMock;
@@ -229,6 +233,20 @@ public class UserFileIT extends FacadeITMockedThirdParties {
 
     assertEquals(2, documents.size());
     assertTrue(documents.contains(file1()));
+  }
+
+  @Test
+  void manager_create_zip_contain_receipt_ok() throws ApiException {
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    PayingApi api = new PayingApi(manager1Client);
+
+    ZipReceiptsStatistic zipReceiptsStatistic =
+        api.getZipFeeReceipts(
+            new ZipReceiptsRequest()
+                .destinationEmail("email")
+                .from(Instant.parse("2021-11-08T08:25:24.00Z"))
+                .to(Instant.now()));
+    assertNotNull(zipReceiptsStatistic);
   }
 
   public static FileInfo file1() {

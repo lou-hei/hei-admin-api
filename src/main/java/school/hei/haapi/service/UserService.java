@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -157,6 +158,28 @@ public class UserService {
 
   public List<User> getByRoleAndStatus(User.Role role, User.Status status) {
     return userRepository.findAllByRoleAndStatus(role, status);
+  }
+
+  public <T> byte[] getByRoleAndStatusAsXlsx(
+      User.Role role, User.Status status, Function<User, T> mapper) {
+    List<User> users = getByRoleAndStatus(role, status);
+    XlsxCellsGenerator<T> generator = new XlsxCellsGenerator<>();
+    List<T> mappedUsers = users.stream().map(mapper).toList();
+
+    return generator.apply(
+        mappedUsers,
+        List.of(
+            "ref",
+            "firstName",
+            "lastName",
+            "sex",
+            "phone",
+            "email",
+            "nic",
+            "function",
+            "ostie",
+            "cnaps",
+            "address"));
   }
 
   public List<User> getAllEnabledUsers() {

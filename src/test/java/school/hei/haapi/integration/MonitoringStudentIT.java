@@ -7,12 +7,13 @@ import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR2_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR2_TOKEN;
-import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT2_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT3_ID;
 import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
+import static school.hei.haapi.integration.conf.TestUtils.monitor1Link;
+import static school.hei.haapi.integration.conf.TestUtils.monitor2Link;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.integration.conf.TestUtils.student1;
@@ -27,10 +28,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.MonitoringApi;
 import school.hei.haapi.endpoint.rest.api.PayingApi;
+import school.hei.haapi.endpoint.rest.api.UsersApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.Fee;
-import school.hei.haapi.endpoint.rest.model.LinkStudentsByMonitorIdRequest;
 import school.hei.haapi.endpoint.rest.model.Student;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
@@ -38,7 +39,6 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 @Testcontainers
 @AutoConfigureMockMvc
-@Disabled
 public class MonitoringStudentIT extends FacadeITMockedThirdParties {
   @MockBean private EventBridgeClient eventBridgeClientMock;
 
@@ -53,24 +53,18 @@ public class MonitoringStudentIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  @Disabled("Dirty")
   void monitor_follow_students_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     MonitoringApi api = new MonitoringApi(manager1Client);
+    UsersApi usersApi = new UsersApi(manager1Client);
 
     // 1. Link some students to a monitor ...
-    List<Student> studentsLinked =
-        api.linkStudentsByMonitorId(
-            MONITOR2_ID, new LinkStudentsByMonitorIdRequest().studentsIds(List.of(STUDENT1_ID)));
+    usersApi.createOrUpdateMonitors(List.of(monitor2Link(someStudentsRefsToLinkToAMonitor())));
+    List<Student> studentsLinked = api.getLinkedStudentsByMonitorId(MONITOR2_ID, 1, 10);
 
-    assertEquals(1, studentsLinked.size());
-    assertTrue(studentsLinked.contains(student1()));
-
-    List<Student> studentsLinkedByMonitor =
-        api.linkStudentsByMonitorId(
-            MONITOR2_ID, new LinkStudentsByMonitorIdRequest().studentsIds(List.of(STUDENT2_ID)));
-
-    assertEquals(1, studentsLinkedByMonitor.size());
-    assertTrue(studentsLinkedByMonitor.contains(student2()));
+    assertEquals(2, studentsLinked.size());
+    assertTrue(studentsLinked.containsAll(List.of(student1(), student2())));
 
     // 2. ... Except that the monitor access to his resources ...
     ApiClient monitor2Client = anApiClient(MONITOR2_TOKEN);
@@ -84,6 +78,7 @@ public class MonitoringStudentIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  @Disabled("Other tests outside this class alters data")
   void manager_read_students_followed_ok() throws ApiException {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     MonitoringApi api = new MonitoringApi(manager1Client);
@@ -96,22 +91,22 @@ public class MonitoringStudentIT extends FacadeITMockedThirdParties {
   @Test
   void monitor_follow_students_ko() {
     ApiClient teacher1client = anApiClient(TEACHER1_TOKEN);
-    MonitoringApi teacherApi = new MonitoringApi(teacher1client);
+    UsersApi teacherApi = new UsersApi(teacher1client);
 
     ApiClient student1client = anApiClient(STUDENT1_TOKEN);
-    MonitoringApi studentApi = new MonitoringApi(student1client);
+    UsersApi studentApi = new UsersApi(student1client);
 
     assertThrowsForbiddenException(
         () ->
-            teacherApi.linkStudentsByMonitorId(
-                MONITOR1_ID, someStudentsIdentifierToLinkToAMonitor()));
+            teacherApi.createOrUpdateMonitors(
+                List.of(monitor1Link(someStudentsRefsToLinkToAMonitor()))));
     assertThrowsForbiddenException(
         () ->
-            studentApi.linkStudentsByMonitorId(
-                MONITOR1_ID, someStudentsIdentifierToLinkToAMonitor()));
+            studentApi.createOrUpdateMonitors(
+                List.of(monitor1Link(someStudentsRefsToLinkToAMonitor()))));
   }
 
-  public static LinkStudentsByMonitorIdRequest someStudentsIdentifierToLinkToAMonitor() {
-    return new LinkStudentsByMonitorIdRequest().studentsIds(List.of(STUDENT1_ID, STUDENT2_ID));
+  public static List<String> someStudentsRefsToLinkToAMonitor() {
+    return List.of(student1().getRef(), student2().getRef());
   }
 }

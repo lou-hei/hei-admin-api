@@ -87,7 +87,7 @@ public class PromotionIT extends FacadeITMockedThirdParties {
     assertTrue(allPromotions.contains(promotion23()));
 
     List<Promotion> promotionsFilteredByName =
-        api.getPromotions(1, 15, "Promotion 21-22", null, null);
+        api.getPromotions(1, 15, "Promotion 2021-2022", null, null);
     assertTrue(promotionsFilteredByName.contains(promotion21()));
     assertFalse(promotionsFilteredByName.contains(promotion22()));
     assertFalse(promotionsFilteredByName.contains(promotion23()));

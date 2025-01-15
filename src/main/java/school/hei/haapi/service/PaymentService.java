@@ -166,4 +166,8 @@ public class PaymentService {
         payment -> computeRemainingAmount(payment.getFee().getId(), payment.getAmount()));
     return paymentRepository.saveAll(toCreate);
   }
+
+  public List<Payment> getAllPayementBetween(Instant from, Instant to) {
+    return paymentRepository.getAllByCreationDatetimeBetweenOrderByCreationDatetimeAsc(from, to);
+  }
 }

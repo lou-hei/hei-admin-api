@@ -109,6 +109,7 @@ public class LetterController {
       @RequestParam(name = "filename") String filename,
       @RequestPart(name = "file_to_upload") MultipartFile file) {
     validator.accept(feeId, eventParticipantId, amount);
+
     return letterMapper.toRest(
         letterService.createLetter(
             userId, description, filename, file, feeId, amount, eventParticipantId));

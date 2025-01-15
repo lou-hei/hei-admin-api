@@ -24,6 +24,9 @@ public class SendLetterEmail extends PojaEvent {
   @JsonProperty("description")
   private String description;
 
+  @JsonProperty("receiver")
+  private String receiver;
+
   @Override
   public Duration maxConsumerDuration() {
     return Duration.ofSeconds(60);

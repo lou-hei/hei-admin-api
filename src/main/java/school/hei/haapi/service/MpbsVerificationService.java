@@ -92,13 +92,9 @@ public class MpbsVerificationService {
   @Transactional
   public List<Mpbs> computeFromXls(MultipartFile file) throws IOException {
     List<String> pspToCheck = generateMobileTransactionDetailsFromXlsFile(file);
-    List<String> pendingMpbsPspIds =
-        mpbsRepository.findAllByStatus(PENDING).stream()
-            .map(TypedMobileMoneyTransaction::getPspId)
-            .toList();
 
-    List<Mpbs> mpbsToCheck =
-        mpbsRepository.findByPspIdIn(findCommonStrings(pspToCheck, pendingMpbsPspIds));
+    List<Mpbs> mpbsToCheck = mpbsRepository.findByPspIdIn(pspToCheck);
+
     List<Mpbs> mpbsToReturn = new ArrayList<>();
 
     for (Mpbs mpbs : mpbsToCheck) {
@@ -124,25 +120,27 @@ public class MpbsVerificationService {
   }
 
   public static List<String> findCommonStrings(List<String> list1, List<String> list2) {
-    // Convertir list2 en Set pour des recherches plus rapides
     Set<String> set2 = Set.copyOf(list2);
 
-    // Utiliser un Stream pour filtrer les éléments communs
-    return list1.stream()
-        .filter(set2::contains) // Garder uniquement les éléments présents dans set2
-        .distinct() // Éviter les doublons
-        .collect(Collectors.toList()); // Convertir le résultat en List
+    return list1.stream().filter(set2::contains).distinct().collect(Collectors.toList());
   }
 
   public List<String> generateMobileTransactionDetailsFromXlsFile(MultipartFile file)
       throws IOException {
+
+    List<String> pendingMpbsPspIds =
+        mpbsRepository.findAllByStatus(PENDING).stream()
+            .map(TypedMobileMoneyTransaction::getPspId)
+            .toList();
+
     List<MobileTransactionDetails> transactions = new ArrayList<>();
+
     Workbook workbook = generateWorkBook(file);
 
     Sheet sheet = workbook.getSheetAt(0);
 
     for (Row row : sheet) {
-      if (row.getRowNum() < 27) continue;
+      if (row.getRowNum() < 26) continue;
 
       Cell dateCell = row.getCell(1);
       Cell timeCell = row.getCell(2);
@@ -160,23 +158,27 @@ public class MpbsVerificationService {
 
       String dateTimeStr =
           dateCell.getStringCellValue().trim() + " " + timeCell.getStringCellValue().trim();
+      String ref = refCell.getStringCellValue().trim();
 
-      MobileTransactionDetails transaction =
-          MobileTransactionDetails.builder()
-              .id(randomUUID().toString())
-              .pspDatetimeTransactionCreation(Instant.from(convertStringToInstant(dateTimeStr)))
-              .pspTransactionRef(refCell.getStringCellValue().trim())
-              .pspTransactionAmount((int) montantCell.getNumericCellValue())
-              .status(
-                  MpbsStatus.fromValue(
-                      Objects.equals(statusCell.getStringCellValue().trim(), "Succès")
-                          ? "SUCCESS"
-                          : "FAILED"))
-              .pspOwnDatetimeVerification(Instant.now())
-              .build();
+      if (pendingMpbsPspIds.contains(ref)) {
+        MobileTransactionDetails transaction =
+            MobileTransactionDetails.builder()
+                .id(randomUUID().toString())
+                .pspDatetimeTransactionCreation(Instant.from(convertStringToInstant(dateTimeStr)))
+                .pspTransactionRef(refCell.getStringCellValue().trim())
+                .pspTransactionAmount((int) montantCell.getNumericCellValue())
+                .status(
+                    MpbsStatus.fromValue(
+                        Objects.equals(statusCell.getStringCellValue().trim(), "Succès")
+                            ? "SUCCESS"
+                            : "FAILED"))
+                .pspOwnDatetimeVerification(Instant.now())
+                .build();
 
-      transactions.add(transaction);
-      log.info("Generated mobile transaction psp id {}", transaction.getPspTransactionRef());
+        transactions.add(transaction);
+        log.info("Generated mobile transaction psp id {}", transaction.getPspTransactionRef());
+      }
+      ;
     }
     mobilePaymentService.saveAll(transactions);
     return transactions.stream()

@@ -1,3 +1,22 @@
+# [1.88.0](https://github.com/hei-school/hei-admin-api/compare/v1.87.0...v1.88.0) (2025-01-08)
+
+
+### Bug Fixes
+
+* verify mpbs via xls ([0c4b607](https://github.com/hei-school/hei-admin-api/commit/0c4b607ef24345f3bb9b37f635ad419e59b27d86))
+
+
+### Features
+
+* GET /staff_members/xlsx  ([f8339c3](https://github.com/hei-school/hei-admin-api/commit/f8339c3af319ee902436b010c402f2a280e50f68))
+
+
+### Reverts
+
+* Revert "feat: filter fees by status and type " ([f2b8345](https://github.com/hei-school/hei-admin-api/commit/f2b8345d51d3d1ddf5a1f44f9318893325bbd7be))
+
+
+
 # [1.87.0](https://github.com/hei-school/hei-admin-api/compare/v1.86.0...v1.87.0) (2024-12-19)
 
 
@@ -45,6 +64,7 @@
 ### Reverts
 
 * Revert "chore: lower min code coverage(line)" ([8c13767](https://github.com/hei-school/hei-admin-api/commit/8c1376736009c117d09fb558d2ae427348e3b878))
+
 
 
 ## [1.83.1](https://github.com/hei-school/hei-admin-api/compare/v1.83.0...v1.83.1) (2024-12-04)
@@ -121,20 +141,6 @@
 ### Features
 
 * teachers have their own files ([39e5331](https://github.com/hei-school/hei-admin-api/commit/39e533142be417f05b8d353387b23f0cabd5b43a))
-
-
-
-# [1.78.0](https://github.com/hei-school/hei-admin-api/compare/v1.77.1...v1.78.0) (2024-11-15)
-
-
-### Bug Fixes
-
-* if payment amount is more than expected remaining amount  ([67cc919](https://github.com/hei-school/hei-admin-api/commit/67cc919f96a947440360da3c77f431262af6493a))
-
-
-### Features
-
-* teacher can upload letter ([6902230](https://github.com/hei-school/hei-admin-api/commit/690223033c50fc43a5efb19ee314784edbaa660d))
 
 
 

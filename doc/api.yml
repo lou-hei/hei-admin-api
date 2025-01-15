@@ -2015,6 +2015,33 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+
+  /staff_members/raw/xlsx:
+    get:
+      tags:
+        - Users
+      summary: Get all staff members as xlsx file
+      operationId: getStaffMembersIntoXlsx
+      responses:
+        '200':
+          description: An excel file containing a list of all staff members.
+          content:
+            application/xlsx:
+              schema:
+                type: string
+                format: byte
+                example: XLSX VERSION
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+
   /staff_members/{id}:
     get:
       tags:
@@ -2134,6 +2161,36 @@ paths:
                 type: string
                 format: byte
                 example: PDF VERSION
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /fees/payments/receipts/raw:
+    put:
+      tags:
+        - Paying
+      summary: Send email with a zip of fee receipts in a mandatory date range
+      requestBody:
+        description: fee receipts info to send
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZipReceiptsRequest'
+      operationId: getZipFeeReceipts
+      responses:
+        '200':
+          description: statistic about fee receipts to send
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/ZipReceiptsStatistic'
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -5116,6 +5173,12 @@ components:
     CrupdateMonitor:
       allOf:
         - $ref: '#/components/schemas/CrupdateUser'
+      properties:
+        student_refs:
+          type: array
+          items:
+            type: string
+            example: "STD20001"
     CrupdateTeacher:
       allOf:
         - $ref: '#/components/schemas/CrupdateUser'
@@ -6147,6 +6210,22 @@ components:
           type: string
         degree:
           type: string
+    ZipReceiptsRequest:
+      type: object
+      properties:
+        from:
+          type: string
+          format: date-time
+        to:
+          type: string
+          format: date-time
+        destinationEmail:
+          type: string
+    ZipReceiptsStatistic:
+      type: object
+      properties:
+        fileCountInZip:
+          type: integer
     Exception:
       type: object
       properties:

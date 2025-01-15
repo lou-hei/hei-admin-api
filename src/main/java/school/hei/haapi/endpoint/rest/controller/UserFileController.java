@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,8 @@ import school.hei.haapi.endpoint.rest.model.FileInfo;
 import school.hei.haapi.endpoint.rest.model.FileType;
 import school.hei.haapi.endpoint.rest.model.ProfessionalExperienceFileTypeEnum;
 import school.hei.haapi.endpoint.rest.model.WorkDocumentInfo;
+import school.hei.haapi.endpoint.rest.model.ZipReceiptsRequest;
+import school.hei.haapi.endpoint.rest.model.ZipReceiptsStatistic;
 import school.hei.haapi.endpoint.rest.validator.CreateStudentWorkFileValidator;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
@@ -48,6 +52,12 @@ public class UserFileController {
       @PathVariable(name = "fee_id") String feeId,
       @PathVariable(name = "payment_id") String paymentId) {
     return fileService.generatePaidFeeReceipt(feeId, paymentId, "paidFeeReceipt");
+  }
+
+  @PutMapping(value = "/fees/payments/receipts/raw")
+  public ZipReceiptsStatistic getZipFeeReceipts(
+      @RequestBody ZipReceiptsRequest zipReceiptsRequest) {
+    return fileService.getZipFeeReceipts(zipReceiptsRequest);
   }
 
   @PostMapping(value = "/users/{user_id}/files/raw", consumes = MULTIPART_FORM_DATA_VALUE)
