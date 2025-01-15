@@ -2407,6 +2407,18 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/FeeStatusEnum'
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: List of fees in a xlsx file
