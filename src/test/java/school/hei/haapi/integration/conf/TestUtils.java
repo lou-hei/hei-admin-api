@@ -1611,6 +1611,19 @@ public class TestUtils {
     return new CrupdatePromotion().id("promotion4_id").name("Promotion 24").ref("PROM24");
   }
 
+  public static HttpResponse<byte[]> requestFile(URI request)
+      throws IOException, InterruptedException {
+    HttpClient httpClient = HttpClient.newBuilder().build();
+
+    return httpClient.send(
+        HttpRequest.newBuilder()
+            .uri(request)
+            .GET()
+            .header("Authorization", "Bearer " + MANAGER1_TOKEN)
+            .build(),
+        HttpResponse.BodyHandlers.ofByteArray());
+  }
+
   public static boolean isBefore(String a, String b) {
     return a.compareTo(b) < 0;
   }

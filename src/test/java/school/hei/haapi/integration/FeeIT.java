@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
+import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PENDING;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.HARDWARE;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.REMEDIAL_COSTS;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
@@ -29,11 +30,14 @@ import static school.hei.haapi.integration.conf.TestUtils.fee1;
 import static school.hei.haapi.integration.conf.TestUtils.fee2;
 import static school.hei.haapi.integration.conf.TestUtils.fee3;
 import static school.hei.haapi.integration.conf.TestUtils.fee4;
+import static school.hei.haapi.integration.conf.TestUtils.requestFile;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import java.io.IOException;
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +45,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.HttpStatus;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.event.consumer.EventConsumer;
 import school.hei.haapi.endpoint.rest.api.PayingApi;
@@ -478,5 +483,41 @@ class FeeIT extends FacadeITMockedThirdParties {
     assertEquals(9, stats.getTotalFees());
     assertEquals(2, stats.getPaidFees());
     assertEquals(2, stats.getUnpaidFees());
+  }
+
+  @Test
+  void generate_fees_list_as_xlsx_without_parameters_ok() throws IOException, InterruptedException {
+    var response = requestFile(URI.create("http://localhost:" + localPort + "/fees/raw"));
+
+    assertEquals(HttpStatus.OK.value(), response.statusCode());
+    assertNotNull(response.body());
+    assertNotNull(response);
+  }
+
+  @Test
+  void generate_fees_list_as_xlsx_with_parameters_ok() throws IOException, InterruptedException {
+    var responseWithStatus =
+        requestFile(URI.create("http://localhost:" + localPort + "/fees/raw?status=" + PENDING));
+    assertEquals(HttpStatus.OK.value(), responseWithStatus.statusCode());
+    assertNotNull(responseWithStatus.body());
+    assertNotNull(responseWithStatus);
+
+    var responseWithDateStart =
+        requestFile(
+            URI.create(
+                "http://localhost:" + localPort + "/fees/raw?from=2022-01-01T12:00:00.000Z"));
+    assertEquals(HttpStatus.OK.value(), responseWithDateStart.statusCode());
+    assertNotNull(responseWithDateStart.body());
+    assertNotNull(responseWithDateStart);
+
+    var responseWithDateRange =
+        requestFile(
+            URI.create(
+                "http://localhost:"
+                    + localPort
+                    + "/fees/raw?from=2022-01-01T12:00:00Z&to=2024-01-02T12:00:00Z"));
+    assertEquals(HttpStatus.OK.value(), responseWithDateRange.statusCode());
+    assertNotNull(responseWithDateRange.body());
+    assertNotNull(responseWithDateRange);
   }
 }
