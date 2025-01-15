@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static school.hei.haapi.endpoint.rest.model.WorkStudyStatus.*;
 import static school.hei.haapi.model.User.Role.STUDENT;
+import static school.hei.haapi.model.User.Role.TEACHER;
 import static school.hei.haapi.model.User.Sex.F;
 import static school.hei.haapi.model.User.Sex.M;
 import static school.hei.haapi.model.User.Status.DISABLED;
@@ -259,6 +260,12 @@ public class UserService {
     XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
     List<User> studentsGroup = getByGroupId(groupId);
     return xlsxCellsGenerator.apply(studentsGroup, List.of("ref", "firstName", "lastName"));
+  }
+
+  public byte[] generateTeachersXlsx() {
+    XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
+    List<User> teachers = userRepository.findAllByRoleAndStatus(TEACHER, ENABLED);
+    return xlsxCellsGenerator.apply(teachers, List.of("firstName", "lastName", "email", "sex"));
   }
 
   public List<User> getByGroupIdWithFilter(

@@ -1305,6 +1305,31 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /teachers/raw:
+    get:
+      tags:
+        - Teaching
+      summary: Get all teachers as xlsx file
+      operationId: generateTeachersInXlsx
+      responses:
+        '200':
+          description: List of teacher in a xlsx file
+          content:
+            application/xlsx:
+              schema:
+                type: string
+                format: byte
+                example: XLSX VERSION
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /groups/{id}/students:
     get:
       tags:
