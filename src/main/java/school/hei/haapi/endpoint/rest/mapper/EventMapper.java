@@ -30,6 +30,7 @@ public class EventMapper {
         .beginDatetime(createEvent.getBeginDatetime())
         .endDatetime(createEvent.getEndDatetime())
         .description(createEvent.getDescription())
+        .colorCode(createEvent.getColorCode())
         .course(
             Objects.isNull(createEvent.getCourseId())
                 ? null
@@ -52,6 +53,7 @@ public class EventMapper {
         .endDatetime(domain.getEndDatetime())
         .beginDatetime(domain.getBeginDatetime())
         .description(domain.getDescription())
+        .colorCode(domain.getColorCode())
         .type(domain.getType())
         .course(Objects.isNull(domain.getCourse()) ? null : courseMapper.toRest(domain.getCourse()))
         .title(domain.getTitle())

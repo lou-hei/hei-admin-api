@@ -17,6 +17,7 @@ import school.hei.haapi.endpoint.rest.model.CreateEvent;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.EventType;
+import school.hei.haapi.endpoint.rest.model.Group;
 import school.hei.haapi.endpoint.rest.model.UpdateEventParticipant;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
@@ -45,10 +46,11 @@ public class EventController {
       @RequestParam(name = "page") PageFromOne page,
       @RequestParam(name = "page_size") BoundedPageSize pageSize,
       @RequestParam(name = "event_type", required = false) EventType eventType,
+      @RequestParam(name = "group", required = false) Group group,
       @RequestParam(required = false) String title,
       @RequestParam(required = false) Instant from,
       @RequestParam(required = false) Instant to) {
-    return eventService.getEvents(from, to, title, eventType, page, pageSize).stream()
+    return eventService.getEvents(from, to, title, eventType, group, page, pageSize).stream()
         .map(mapper::toRest)
         .collect(toUnmodifiableList());
   }

@@ -85,12 +85,12 @@ public class EventIT extends FacadeITMockedThirdParties {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
 
-    List<Event> actual = api.getEvents(1, 15, null, null, null, null);
+    List<Event> actual = api.getEvents(1, 15, null, null, null, null, null);
 
     assertTrue(actual.containsAll(List.of(event1(), event2(), event3())));
 
     List<Event> eventsBeginAfterAnInstant =
-        api.getEvents(1, 15, Instant.parse("2022-12-15T10:00:00.00Z"), null, null, null);
+        api.getEvents(1, 15, Instant.parse("2022-12-15T10:00:00.00Z"), null, null, null, null);
 
     assertTrue(eventsBeginAfterAnInstant.contains(event1()));
     assertFalse(eventsBeginAfterAnInstant.contains(event2()));
@@ -102,23 +102,24 @@ public class EventIT extends FacadeITMockedThirdParties {
             Instant.parse("2022-12-07T08:00:00.00Z"),
             Instant.parse("2022-12-10T08:00:00.00Z"),
             null,
+            null,
             null);
 
     assertTrue(eventsBeginBetweenTwoInstant.containsAll(List.of(event2(), event3())));
     assertFalse(eventsBeginBetweenTwoInstant.contains(event1()));
 
     List<Event> eventsBeginBeforeAnInstant =
-        api.getEvents(1, 15, null, Instant.parse("2022-12-08T08:00:00.00Z"), null, null);
+        api.getEvents(1, 15, null, Instant.parse("2022-12-08T08:00:00.00Z"), null, null, null);
 
     assertTrue(eventsBeginBeforeAnInstant.contains(event2()));
     assertFalse(eventsBeginBeforeAnInstant.containsAll(List.of(event1(), event3())));
 
-    List<Event> eventsFilterByType = api.getEvents(1, 15, null, null, COURSE, null);
+    List<Event> eventsFilterByType = api.getEvents(1, 15, null, null, COURSE, null, null);
     assertTrue(eventsFilterByType.contains(event1()));
     assertFalse(eventsFilterByType.contains(event3()));
     assertFalse(eventsFilterByType.contains(event2()));
 
-    List<Event> eventsFilterByTitle = api.getEvents(1, 15, null, null, null, "PROG1");
+    List<Event> eventsFilterByTitle = api.getEvents(1, 15, null, null, null, "PROG1", null);
     assertTrue(eventsFilterByTitle.contains(event1()));
     assertFalse(eventsFilterByTitle.contains(event3()));
     assertFalse(eventsFilterByTitle.contains(event2()));

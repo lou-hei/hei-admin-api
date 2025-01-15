@@ -1280,6 +1280,7 @@ public class TestUtils {
         .beginDatetime(Instant.parse("2022-12-20T08:00:00.00Z"))
         .endDatetime(Instant.parse("2022-12-20T10:00:00.00Z"))
         .description("Prog1 course")
+        .colorCode("#0000")
         .title("PROG1")
         .planner(planner1())
         .count(new EventStats().late(0).missing(1).present(1).total(2))
@@ -1293,6 +1294,7 @@ public class TestUtils {
         .planner(planner1())
         .beginDatetime(Instant.parse("2022-12-08T08:00:00.00Z"))
         .endDatetime(Instant.parse("2022-12-08T12:00:00.00Z"))
+        .colorCode("#0000")
         .course(null)
         .title("Integration Day")
         .count(new EventStats().total(3).missing(1).present(2).late(0))
@@ -1313,6 +1315,7 @@ public class TestUtils {
                 .firstName("Two")
                 .lastName("Manager"))
         .description("Seminar about Python programming language")
+        .colorCode("#0000")
         .beginDatetime(Instant.parse("2022-12-09T08:00:00.00Z"))
         .endDatetime(Instant.parse("2022-12-09T12:00:00.00Z"))
         .title("December Seminar")
@@ -1367,6 +1370,7 @@ public class TestUtils {
         .beginDatetime(Instant.parse("2023-12-08T08:00:00.00Z"))
         .endDatetime(Instant.parse("2023-12-08T10:00:00.00Z"))
         .description("Another Prog1 course")
+        .colorCode("#0000")
         .eventType(COURSE)
         .plannerId(MANAGER_ID)
         .groups(List.of(createGroupIdentifier(group1())));
@@ -1388,6 +1392,7 @@ public class TestUtils {
         .beginDatetime(Instant.parse("2023-11-08T08:00:00.00Z"))
         .endDatetime(Instant.parse("2023-11-08T10:00:00.00Z"))
         .description("Another Prog1 course")
+        .colorCode("#0000")
         .eventType(INTEGRATION)
         .plannerId(MANAGER_ID)
         .groups(List.of(createGroupIdentifier(group1()), createGroupIdentifier(group2())));
@@ -1399,6 +1404,7 @@ public class TestUtils {
         .beginDatetime(createEventCourse1().getBeginDatetime())
         .endDatetime(createEventCourse1().getEndDatetime())
         .planner(planner1())
+        .colorCode("#0000")
         .course(course1())
         .description(createEventCourse1().getDescription())
         .course(null);
@@ -1409,6 +1415,7 @@ public class TestUtils {
         .type(INTEGRATION)
         .planner(planner1())
         .course(null)
+        .colorCode("#0000")
         .description(createIntegrationEvent().getDescription())
         .beginDatetime(createIntegrationEvent().getBeginDatetime())
         .endDatetime(createIntegrationEvent().getEndDatetime());

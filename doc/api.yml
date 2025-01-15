@@ -3861,6 +3861,12 @@ paths:
           description: Filter events by title
           schema:
             type: string
+        - name: group
+          in: query
+          required: false
+          description: Filter events by group
+          schema:
+            type: string
       operationId: getEvents
       responses:
         '200':
@@ -5760,6 +5766,8 @@ components:
           type: string
         description:
           type: string
+        color_code:
+          type: string
         begin_datetime:
           type: string
           format: date-time
@@ -5831,6 +5839,8 @@ components:
         title:
           type: string
         description:
+          type: string
+        color_code:
           type: string
         begin_datetime:
           type: string
