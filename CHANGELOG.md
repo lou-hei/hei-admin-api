@@ -1,3 +1,20 @@
+# [1.89.0](https://github.com/hei-school/hei-admin-api/compare/v1.88.0...v1.89.0) (2025-01-15)
+
+
+### Bug Fixes
+
+* certificate studying year ([516c709](https://github.com/hei-school/hei-admin-api/commit/516c70969878f616dc574e200bd6879b3a2ffc55))
+* crupdateAndLinkMonitor sql exception ([ac8f1a6](https://github.com/hei-school/hei-admin-api/commit/ac8f1a67d64ad72a70b987ab13835d8bb2176501))
+
+
+### Features
+
+* add color code for event attribute  ([0ee30c2](https://github.com/hei-school/hei-admin-api/commit/0ee30c26c637a60943576af2afaf992aae5653f8))
+* attaching monitor to multiple students ([b476b8a](https://github.com/hei-school/hei-admin-api/commit/b476b8a95aa2d403c778fe247b7f32bfe7a3ef90))
+* zip multiple feeReceipts ([3829189](https://github.com/hei-school/hei-admin-api/commit/3829189d41c5b57c7aaf86a29211c051ed741e34))
+
+
+
 # [1.88.0](https://github.com/hei-school/hei-admin-api/compare/v1.87.0...v1.88.0) (2025-01-08)
 
 
@@ -132,15 +149,6 @@
 ### Reverts
 
 * move student file controller to user file controller ([738c681](https://github.com/hei-school/hei-admin-api/commit/738c681cbe253a64dbeed19ae3f5d9fb96e8949d))
-
-
-
-# [1.79.0](https://github.com/hei-school/hei-admin-api/compare/v1.78.0...v1.79.0) (2024-11-15)
-
-
-### Features
-
-* teachers have their own files ([39e5331](https://github.com/hei-school/hei-admin-api/commit/39e533142be417f05b8d353387b23f0cabd5b43a))
 
 
 
