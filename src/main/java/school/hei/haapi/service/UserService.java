@@ -38,6 +38,7 @@ import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.model.validator.UserValidator;
 import school.hei.haapi.repository.GroupRepository;
 import school.hei.haapi.repository.UserRepository;
+import school.hei.haapi.repository.dao.StudentDao;
 import school.hei.haapi.repository.dao.UserManagerDao;
 import school.hei.haapi.service.aws.FileService;
 import school.hei.haapi.service.utils.XlsxCellsGenerator;
@@ -55,6 +56,7 @@ public class UserService {
   private final GroupRepository groupRepository;
   private final MonitoringStudentService monitoringStudentService;
   private final FeeService feeService;
+  private final StudentDao studentDao;
 
   public void uploadUserProfilePicture(MultipartFile profilePictureAsMultipartFile, String userId) {
     User user = findById(userId);
@@ -328,5 +330,11 @@ public class UserService {
 
   public List<User> getStudentsWithUnpaidOrLateFee() {
     return userRepository.getStudentsWithUnpaidOrLateFee();
+  }
+
+  public byte[] generateStudentsInXlsx(String eventId) {
+    XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
+    List<User> students = studentDao.getStudentsByCriteria(eventId);
+    return xlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
   }
 }
