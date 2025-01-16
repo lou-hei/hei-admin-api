@@ -2407,13 +2407,13 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/FeeStatusEnum'
-        - name: from
+        - name: from_due_datetime
           in: query
           required: false
           schema:
             type: string
             format: date-time
-        - name: to
+        - name: to_due_datetime
           in: query
           required: false
           schema:

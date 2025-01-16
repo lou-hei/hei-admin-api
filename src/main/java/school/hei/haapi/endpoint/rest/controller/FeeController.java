@@ -90,8 +90,10 @@ public class FeeController {
   @GetMapping(value = "/fees/raw", produces = "application/vnd.ms-excel")
   public byte[] generateFeesListAsXlsx(
       @RequestParam(name = "status", required = false) FeeStatusEnum status,
-      @RequestParam(name = "from", required = false) @DateTimeFormat(iso = DATE_TIME) Instant from,
-      @RequestParam(name = "to", required = false) @DateTimeFormat(iso = DATE_TIME) Instant to) {
+      @RequestParam(name = "from_due_datetime", required = false) @DateTimeFormat(iso = DATE_TIME)
+          Instant from,
+      @RequestParam(name = "to_due_datetime", required = false) @DateTimeFormat(iso = DATE_TIME)
+          Instant to) {
     return feeService.generateFeesAsXlsx(status, from, to);
   }
 

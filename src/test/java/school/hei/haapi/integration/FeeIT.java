@@ -509,7 +509,9 @@ class FeeIT extends FacadeITMockedThirdParties {
     var responseWithDateStart =
         requestFile(
             URI.create(
-                "http://localhost:" + localPort + "/fees/raw?from=2022-01-01T12:00:00.000Z"));
+                "http://localhost:"
+                    + localPort
+                    + "/fees/raw?from_due_datetime=2022-01-01T12:00:00.000Z"));
     assertEquals(HttpStatus.OK.value(), responseWithDateStart.statusCode());
     assertNotNull(responseWithDateStart.body());
     assertNotNull(responseWithDateStart);
@@ -519,7 +521,7 @@ class FeeIT extends FacadeITMockedThirdParties {
             URI.create(
                 "http://localhost:"
                     + localPort
-                    + "/fees/raw?from=2022-01-01T12:00:00Z&to=2024-01-02T12:00:00Z"));
+                    + "/fees/raw?from_due_datetime=2022-01-01T12:00:00Z&to_due_datetime=2024-01-02T12:00:00Z"));
     assertEquals(HttpStatus.OK.value(), responseWithDateRange.statusCode());
     assertNotNull(responseWithDateRange.body());
     assertNotNull(responseWithDateRange);
