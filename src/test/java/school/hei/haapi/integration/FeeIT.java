@@ -57,6 +57,8 @@ import school.hei.haapi.endpoint.rest.model.FeesStatistics;
 import school.hei.haapi.endpoint.rest.model.FeesWithStats;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
+import school.hei.haapi.repository.FeeRepository;
+import school.hei.haapi.repository.dao.FeeDao;
 
 @Testcontainers
 @AutoConfigureMockMvc
@@ -64,6 +66,8 @@ import school.hei.haapi.integration.conf.TestUtils;
 class FeeIT extends FacadeITMockedThirdParties {
   @Autowired EventConsumer subject;
   @Autowired EntityManager entityManager;
+  @Autowired FeeRepository feeRepository;
+  @Autowired FeeDao feeDao;
 
   /***
    * Get fee by id without jpa, avoiding FILTER isDeleted = true | false
@@ -519,5 +523,24 @@ class FeeIT extends FacadeITMockedThirdParties {
     assertEquals(HttpStatus.OK.value(), responseWithDateRange.statusCode());
     assertNotNull(responseWithDateRange.body());
     assertNotNull(responseWithDateRange);
+  }
+
+  @Test
+  void all_fee_without_status_and_dueDatetime_work() {
+    var real_fees = feeRepository.findAll();
+    var fees = feeDao.findAllByStatusAndDueDatetimeBetween(null, null, null);
+
+    assertEquals(real_fees.size(), fees.size());
+  }
+
+  @Test
+  void all_fee_by_status_and_dueDatetime_in_date_range_must_contain_some_fee() {
+    var fees =
+        feeDao.findAllByStatusAndDueDatetimeBetween(
+            null,
+            Instant.parse("2021-11-08T08:25:24.00Z"),
+            Instant.parse("2022-12-08T08:25:24.00Z"));
+
+    assertFalse(fees.isEmpty());
   }
 }

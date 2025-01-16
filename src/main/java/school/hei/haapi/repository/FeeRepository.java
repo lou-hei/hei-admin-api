@@ -19,9 +19,6 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
 
   List<Fee> findAllByStatus(FeeStatusEnum status);
 
-  List<Fee> findAllByStatusAndDueDatetimeBetween(
-      FeeStatusEnum status, Instant startDate, Instant endDate);
-
   List<Fee> getFeesByStudentIdAndStatus(String studentId, FeeStatusEnum status, Pageable pageable);
 
   List<Fee> getByStudentId(String studentId, Pageable pageable);

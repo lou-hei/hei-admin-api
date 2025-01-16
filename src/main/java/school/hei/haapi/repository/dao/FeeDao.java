@@ -326,4 +326,31 @@ public class FeeDao {
       predicates.add(builder.lessThanOrEqualTo(root.get("dueDatetime"), monthTo));
     }
   }
+
+  public List<Fee> findAllByStatusAndDueDatetimeBetween(
+      FeeStatusEnum status, Instant startDate, Instant endDate) {
+    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Fee> query = builder.createQuery(Fee.class);
+    Root<Fee> root = query.from(Fee.class);
+
+    List<Predicate> predicates = new ArrayList<>();
+
+    if (status != null) {
+      predicates.add(builder.equal(root.get("status"), status));
+    }
+    if (startDate != null) {
+      predicates.add(builder.greaterThanOrEqualTo(root.get("dueDatetime"), startDate));
+    }
+    if (endDate != null) {
+      predicates.add(builder.lessThanOrEqualTo(root.get("dueDatetime"), endDate));
+    }
+
+    if (!predicates.isEmpty()) {
+      query.where(predicates.toArray(new Predicate[0]));
+    }
+
+    query.orderBy(builder.desc(root.get("dueDatetime")));
+
+    return entityManager.createQuery(query).getResultList();
+  }
 }

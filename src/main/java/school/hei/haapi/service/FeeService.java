@@ -53,14 +53,7 @@ public class FeeService {
 
   public byte[] generateFeesAsXlsx(FeeStatusEnum feeStatus, Instant from, Instant to) {
     XlsxCellsGenerator<Fee> xlsxCellsGenerator = new XlsxCellsGenerator<>();
-    List<Fee> feeList;
-    if (from == null) {
-      feeList = feeRepository.findAllByStatus(feeStatus);
-    } else if (to == null) {
-      feeList = feeRepository.findAllByStatusAndDueDatetimeBetween(feeStatus, from, Instant.now());
-    } else {
-      feeList = feeRepository.findAllByStatusAndDueDatetimeBetween(feeStatus, from, to);
-    }
+    List<Fee> feeList = feeDao.findAllByStatusAndDueDatetimeBetween(feeStatus, from, to);
     return xlsxCellsGenerator.apply(
         feeList,
         List.of(
