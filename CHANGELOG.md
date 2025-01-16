@@ -1,3 +1,12 @@
+# [1.90.0](https://github.com/hei-school/hei-admin-api/compare/v1.89.0...v1.90.0) (2025-01-16)
+
+
+### Features
+
+* **not-implemented:** attribute an event with a color ([d740ffa](https://github.com/hei-school/hei-admin-api/commit/d740ffa5d0a9eabdac8f5c6969aaf42d84ba23df))
+
+
+
 # [1.89.0](https://github.com/hei-school/hei-admin-api/compare/v1.88.0...v1.89.0) (2025-01-15)
 
 
@@ -127,28 +136,6 @@
 ### Features
 
 * **not-implemented:** add new attribute to fees statistics  ([cd945d4](https://github.com/hei-school/hei-admin-api/commit/cd945d49277bcc05a632403498a24d3491643e5c))
-
-
-
-# [1.80.0](https://github.com/hei-school/hei-admin-api/compare/v1.79.0...v1.80.0) (2024-11-26)
-
-
-### Bug Fixes
-
-* overpaid fees by mpbs  ([0044dd1](https://github.com/hei-school/hei-admin-api/commit/0044dd1bc8d05d3974d97c71916a0c45f798a966))
-* revert  ([a4e2442](https://github.com/hei-school/hei-admin-api/commit/a4e24424211a888cabd97ce539f116ca90321e30))
-
-
-### Features
-
-* add admin role and update letter access ([17f792f](https://github.com/hei-school/hei-admin-api/commit/17f792f4033517d645659fb4312e43af59fe6400))
-* admin profile ([77c16d7](https://github.com/hei-school/hei-admin-api/commit/77c16d71807d469da531852fb636032c264d27a5))
-* **not-implemented:** staff member resources ([9042dad](https://github.com/hei-school/hei-admin-api/commit/9042dad655d557b214ec041eb1d60718b85c2815))
-
-
-### Reverts
-
-* move student file controller to user file controller ([738c681](https://github.com/hei-school/hei-admin-api/commit/738c681cbe253a64dbeed19ae3f5d9fb96e8949d))
 
 
 
