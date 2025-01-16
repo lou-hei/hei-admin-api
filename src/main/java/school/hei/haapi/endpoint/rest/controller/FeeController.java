@@ -2,7 +2,7 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
-import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
+import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
 import java.time.Instant;
 import java.util.List;
