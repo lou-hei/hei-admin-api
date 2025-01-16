@@ -5280,6 +5280,8 @@ components:
     GroupIdentifier:
       type: object
       properties:
+        attributed_color:
+          type: string
         id:
           type: string
         name:
@@ -5304,6 +5306,8 @@ components:
           format: date-time
         size:
           type: integer
+        attributed_color:
+          type: string
     CreateGroup:
       type: object
       properties:
@@ -5766,8 +5770,6 @@ components:
           type: string
         description:
           type: string
-        color_code:
-          type: string
         begin_datetime:
           type: string
           format: date-time
@@ -5839,8 +5841,6 @@ components:
         title:
           type: string
         description:
-          type: string
-        color_code:
           type: string
         begin_datetime:
           type: string
