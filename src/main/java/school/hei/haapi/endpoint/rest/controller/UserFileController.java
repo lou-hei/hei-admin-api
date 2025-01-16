@@ -41,7 +41,7 @@ public class UserFileController {
       value = "/students/{id}/scholarship_certificate/raw",
       produces = APPLICATION_PDF_VALUE)
   public byte[] getStudentScholarshipCertificate(@PathVariable(name = "id") String studentId) {
-    return fileService.generatePdf(studentId, "scolarity");
+    return fileService.generateScholarshipCertificate(studentId, "scolarity");
   }
 
   @GetMapping(
