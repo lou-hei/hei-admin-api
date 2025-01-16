@@ -35,7 +35,7 @@ import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.Payment;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.WorkDocument;
-import school.hei.haapi.model.exception.ForbiddenException;
+import school.hei.haapi.model.validator.AgeValidator;
 import school.hei.haapi.repository.FileInfoRepository;
 import school.hei.haapi.repository.dao.FileInfoDao;
 import school.hei.haapi.service.utils.Base64Converter;
@@ -64,6 +64,7 @@ public class StudentFileService {
   private final FileInfoDao fileInfoDao;
   private final ListGrouper<File> dataFileGrouper;
   private final EventProducer eventProducer;
+  private final AgeValidator ageValidator;
 
   public WorkDocument uploadStudentWorkFile(
       String studentId,
@@ -115,13 +116,7 @@ public class StudentFileService {
 
   public byte[] generateScholarshipCertificate(String studentId, String template) {
     Context context = loadContext(studentId);
-    User student = userService.findById(studentId);
-    int studentAge = now().getYear() - student.getBirthDate().getYear();
-    if (studentAge >= 18 && student.getNic() == null) {
-      throw new ForbiddenException(
-          "Please complete your information at the Administration to be able to get your"
-              + " certificate.");
-    }
+    ageValidator.accept(18);
     String html = htmlParser.apply(template, context);
     return pdfRenderer.apply(html);
   }
