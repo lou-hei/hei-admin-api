@@ -2,6 +2,7 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
 
 import java.time.Instant;
 import java.util.List;
@@ -89,12 +90,8 @@ public class FeeController {
   @GetMapping(value = "/fees/raw", produces = "application/vnd.ms-excel")
   public byte[] generateFeesListAsXlsx(
       @RequestParam(name = "status", required = false) FeeStatusEnum status,
-      @RequestParam(name = "from", required = false)
-          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-          Instant from,
-      @RequestParam(name = "to", required = false)
-          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-          Instant to) {
+      @RequestParam(name = "from", required = false) @DateTimeFormat(iso = DATE_TIME) Instant from,
+      @RequestParam(name = "to", required = false) @DateTimeFormat(iso = DATE_TIME) Instant to) {
     return feeService.generateFeesAsXlsx(status, from, to);
   }
 
