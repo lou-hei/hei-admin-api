@@ -345,9 +345,7 @@ public class FeeDao {
       predicates.add(builder.lessThanOrEqualTo(root.get("dueDatetime"), endDate));
     }
 
-    if (!predicates.isEmpty()) {
-      query.where(predicates.toArray(new Predicate[0]));
-    }
+    query.where(predicates.toArray(new Predicate[0]));
 
     query.orderBy(builder.desc(root.get("dueDatetime")));
 
