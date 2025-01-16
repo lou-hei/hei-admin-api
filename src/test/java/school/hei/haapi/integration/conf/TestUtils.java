@@ -119,6 +119,7 @@ public class TestUtils {
   public static final String STUDENT1_ID = "student1_id";
   public static final String STUDENT2_ID = "student2_id";
   public static final String STUDENT3_ID = "student3_id";
+  public static final String STUDENT11_ID = "student11_id";
   public static final String TEACHER1_ID = "teacher1_id";
   public static final String TEACHER2_ID = "teacher2_id";
   public static final String TEACHER3_ID = "teacher3_id";
@@ -161,6 +162,9 @@ public class TestUtils {
   public static final String BAD_TOKEN = "bad_token";
   public static final String STUDENT1_TOKEN = "student1_token";
   public static final String STUDENT2_TOKEN = "student2_token";
+  public static final String STUDENT11_TOKEN = "student11_token";
+  public static final String STUDENT12_TOKEN = "student12_token";
+  public static final String STUDENT13_TOKEN = "student13_token";
   public static final String TEACHER1_TOKEN = "teacher1_token";
   public static final String MONITOR1_TOKEN = "monitor1_token";
   public static final String MONITOR2_TOKEN = "monitor2_token";
@@ -224,6 +228,12 @@ public class TestUtils {
     when(cognitoComponent.getEmailByIdToken(BAD_TOKEN)).thenReturn(null);
     when(cognitoComponent.getEmailByIdToken(STUDENT1_TOKEN)).thenReturn("test+ryan@hei.school");
     when(cognitoComponent.getEmailByIdToken(STUDENT2_TOKEN)).thenReturn("test+student2@hei.school");
+    when(cognitoComponent.getEmailByIdToken(STUDENT11_TOKEN))
+        .thenReturn("test+student11@hei.school");
+    when(cognitoComponent.getEmailByIdToken(STUDENT12_TOKEN))
+        .thenReturn("test+student12@hei.school");
+    when(cognitoComponent.getEmailByIdToken(STUDENT13_TOKEN))
+        .thenReturn("test+student13@hei.school");
     when(cognitoComponent.getEmailByIdToken(MONITOR1_TOKEN)).thenReturn("test+monitor@hei.school");
     when(cognitoComponent.getEmailByIdToken(MONITOR2_TOKEN)).thenReturn("test+monitor2@hei.school");
     when(cognitoComponent.getEmailByIdToken(STUDENT8_TOKEN))
