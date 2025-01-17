@@ -1,5 +1,6 @@
 package school.hei.haapi.service;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.LATE;
 import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.MISSING;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import school.hei.haapi.endpoint.event.EventProducer;
+import school.hei.haapi.endpoint.event.model.MissedEventEmail;
 import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.Event;
@@ -29,6 +32,7 @@ public class EventParticipantService {
 
   private final EventParticipantRepository eventParticipantRepository;
   private final UserService userService;
+  private final EventProducer<MissedEventEmail> eventProducer;
   private final GroupService groupService;
 
   public List<EventParticipant> getEventParticipants(
@@ -43,11 +47,20 @@ public class EventParticipantService {
   }
 
   public List<EventParticipant> updateEventParticipants(List<EventParticipant> eventParticipants) {
+    List<EventParticipant> missingParticipants =
+        eventParticipants.stream()
+            .filter(
+                participant -> {
+                  return participant.getStatus().equals(MISSING);
+                })
+            .collect(toUnmodifiableList());
 
-    eventParticipants.forEach(
-        (eventParticipant -> {
-          eventParticipant.setStatus(eventParticipant.getStatus());
-        }));
+    List<MissedEventEmail> missedEventEmails =
+        missingParticipants.stream()
+            .map(MissedEventEmail::fromEventParticipant)
+            .collect(toUnmodifiableList());
+
+    eventProducer.accept(missedEventEmails);
     return eventParticipantRepository.saveAll(eventParticipants);
   }
 
@@ -65,7 +78,7 @@ public class EventParticipantService {
                   .group(actualGroup)
                   .build());
         });
-    updateEventParticipants(eventParticipants);
+    eventParticipantRepository.saveAll(eventParticipants);
   }
 
   public EventParticipant findById(String id) {

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Payement failure</title>
+    <link
+            type="text/css"
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        h1,
+        section,
+        footer {
+            margin: 20px 20px;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+
+        section,
+        footer {
+            font-size: 1.1em;
+            line-height: 1.5em;
+        }
+
+        a {
+            color: rgb(195, 128, 3);
+            text-decoration: none;
+            margin: 0 2px;
+        }
+
+        .contacts {
+            width: 1000px;
+            height: 500px;
+        }
+
+        .footer {
+            width: 100%;
+            background-color: white;
+            color: #002147;
+            font-size: 1.1em;
+            line-height: 1.5em;
+        }
+
+        .footer__content {
+            display: table;
+            table-layout: fixed;
+        }
+
+        .footer__logo {
+            background-color: #002147;
+            color: #ffd700;
+            font-family: Garamond, serif;
+            font-size: 3em;
+            padding: 20px;
+            text-align: center;
+            vertical-align: middle;
+            display: table-cell;
+            width: 150px;
+            height: 150px;
+        }
+
+        .footer__separator {
+            width: 2px;
+            height: auto;
+            background-color: #002147;
+            display: table-cell;
+        }
+
+        .footer__info {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 20px;
+        }
+
+        .footer__info-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0 0 10px;
+        }
+
+        .footer__info p {
+            margin: 5px 0;
+        }
+
+        .footer__info a {
+            color: rgb(195, 128, 3);
+            text-decoration: none;
+            margin: 0 2px;
+        }
+
+        .footer__social-icons {
+            margin-top: 10px;
+        }
+
+        .footer__social-icons a {
+            color: #002147;
+            margin-right: 10px;
+            font-size: 1.5em;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <section>
+        <p>Bonjour <span th:text="${student_fullname}"></span>,</p>
+        <p>
+            Nous vous informons de votre absence au cours
+            <strong><span th:text="${course_name}"></span></strong> du
+            <strong>
+                <span th:text="${course_date}"></span> de <span th:text="${course_start}"></span> à
+                <span th:text="${course_end}"></span>
+            </strong>
+            Vous êtes tenu de fournir <strong>un justificatif dans un délai de deux jours</strong>
+            . À défaut, vous serez sujet à des sanctions
+            pouvant aller jusqu'à une Convocation, Observation ou Renvoi (COR).
+
+        </p>
+    </section>
+    <section>
+        Pour toute question ou besoin d’assistance, n’hésitez pas à contacter
+        l’administration à l’adresse
+        <strong>contact@hei.school</strong> ou au numéro
+        <strong>+261 34 94 041 16</strong>.
+    </section>
+    <section>Cordialement,</section>
+</main>
+<footer class="footer">
+    <div class="footer__content">
+        <div class="footer__logo">HEI</div>
+        <div class="footer__separator"></div>
+        <div class="footer__info">
+            <h1 class="footer__info-title">HEI MADAGASCAR</h1>
+            <p>II J 161 R Ivandry, Antananarivo</p>
+            <p>+261 (0) 34 94 041 16</p>
+            <p>
+                <a href="mailto:contact@mail.hei.school">contact@mail.hei.school</a>
+            </p>
+            <p><a href="https://www.hei.school">www.hei.school</a></p>
+            <div class="footer__social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
