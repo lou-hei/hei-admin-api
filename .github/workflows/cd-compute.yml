@@ -106,7 +106,7 @@ jobs:
           TAG_NAME="null"
           TAG_MESSAGE="null"
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "$env_depl_conf_id" ]]; then
-            TAG_NAME="${app_env_deployment_id}"
+            TAG_NAME="jc-depl-${app_env_deployment_id}"
             TAG_MESSAGE="jcloudify: deployment ID: ${app_env_deployment_id}"            
           fi
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
