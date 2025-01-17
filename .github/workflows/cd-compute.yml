@@ -127,8 +127,8 @@ jobs:
               --arg commit_sha "${{ github.sha }}" \
               --arg app_env_deployment_id "${{ env.app_env_deployment_id }}" \
               --arg environment_type "$(echo "${{ github.ref_name }}" | tr '[:lower:]' '[:upper:]')" \
-              --arg tag_name "${{ env.TAG_NAME }}" \
-              --arg tag_message "${{ env.TAG_MESSAGE }}" \
+              --arg tag_name "$TAG_NAME" \
+              --arg tag_message "$TAG_MESSAGE" \
               '{
                 env_depl_conf_id: ($env_depl_conf_id | if . == "null" then null else . end),
                 formatted_bucket_key: $formatted_bucket_key,
