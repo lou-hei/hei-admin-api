@@ -1,3 +1,12 @@
+# [1.93.0](https://github.com/hei-school/hei-admin-api/compare/v1.92.0...v1.93.0) (2025-01-17)
+
+
+### Features
+
+* group has color and mapp group color from event creation  ([55c3634](https://github.com/hei-school/hei-admin-api/commit/55c3634540e78f964760b018847b05db596bc72e))
+
+
+
 # [1.92.0](https://github.com/hei-school/hei-admin-api/compare/v1.91.0...v1.92.0) (2025-01-17)
 
 
@@ -123,21 +132,6 @@
 * return admin model in admin resources ([838193c](https://github.com/hei-school/hei-admin-api/commit/838193c289d8c73e3045441c1346d2826f4b3ce3))
 * set mpbs creation datetime not null  ([b02447b](https://github.com/hei-school/hei-admin-api/commit/b02447b2e960458df98220dfb52c6c2ccc3c2bd9))
 * upload staff member profile picture ([40e730b](https://github.com/hei-school/hei-admin-api/commit/40e730b17fde513cd8c3d660df1ad02276629867))
-
-
-
-# [1.83.0](https://github.com/hei-school/hei-admin-api/compare/v1.82.0...v1.83.0) (2024-11-28)
-
-
-### Bug Fixes
-
-* handle role param null case in letter endpoint ([62d78a3](https://github.com/hei-school/hei-admin-api/commit/62d78a33aa71b03bf6e98438e16314252b53e6c4))
-
-
-### Features
-
-* letter stats for admin ([6bccb5e](https://github.com/hei-school/hei-admin-api/commit/6bccb5e83617d1ba3f6e897306ad479522c6b866))
-* update staff members access ([2cce4b1](https://github.com/hei-school/hei-admin-api/commit/2cce4b1b48261ab853b00fbb869e091d1af23f40))
 
 
 
