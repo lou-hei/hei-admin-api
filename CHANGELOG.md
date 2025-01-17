@@ -1,3 +1,14 @@
+# [1.91.0](https://github.com/hei-school/hei-admin-api/compare/v1.90.0...v1.91.0) (2025-01-17)
+
+
+### Features
+
+* deny scholarship certificate on missing nic number  ([43b498b](https://github.com/hei-school/hei-admin-api/commit/43b498b74178e072a90891e45c17f9e90428e256))
+* filter fees by date range ([cc02eaa](https://github.com/hei-school/hei-admin-api/commit/cc02eaabdb3b9b724f8e0c99dab7b24db66f6eb8))
+* **not-implemented:** event has color from event type  ([c46aa49](https://github.com/hei-school/hei-admin-api/commit/c46aa497259d153502bbf7904f31ee77d323d4d5))
+
+
+
 # [1.90.0](https://github.com/hei-school/hei-admin-api/compare/v1.89.0...v1.90.0) (2025-01-16)
 
 
@@ -127,15 +138,6 @@
 ### Features
 
 * implement staff members resources ([58f8580](https://github.com/hei-school/hei-admin-api/commit/58f85805776877f672bac1c59d888dc0f416381e))
-
-
-
-# [1.81.0](https://github.com/hei-school/hei-admin-api/compare/v1.80.0...v1.81.0) (2024-11-27)
-
-
-### Features
-
-* **not-implemented:** add new attribute to fees statistics  ([cd945d4](https://github.com/hei-school/hei-admin-api/commit/cd945d49277bcc05a632403498a24d3491643e5c))
 
 
 
