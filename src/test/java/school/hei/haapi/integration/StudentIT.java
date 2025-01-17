@@ -10,6 +10,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static school.hei.haapi.endpoint.rest.model.EnableStatus.DISABLED;
 import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
 import static school.hei.haapi.endpoint.rest.model.EnableStatus.SUSPENDED;
 import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.MONTHLY;
@@ -79,7 +80,6 @@ import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.Coordinates;
 import school.hei.haapi.endpoint.rest.model.CrupdateStudent;
-import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Fee;
 import school.hei.haapi.endpoint.rest.model.Group;
 import school.hei.haapi.endpoint.rest.model.Statistics;
@@ -271,7 +271,7 @@ public class StudentIT extends FacadeITMockedThirdParties {
         .lastName("One")
         .email("test+disable1@hei.school")
         .ref("STD29001")
-        .status(EnableStatus.DISABLED)
+        .status(DISABLED)
         .sex(M)
         .birthDate(LocalDate.parse("2000-12-01"))
         .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
@@ -498,8 +498,7 @@ public class StudentIT extends FacadeITMockedThirdParties {
     UsersApi api = new UsersApi(manager1Client);
 
     List<Student> actualStudents =
-        api.getStudents(
-            1, 10, null, null, null, null, EnableStatus.DISABLED, null, null, null, null);
+        api.getStudents(1, 10, null, null, null, null, List.of(DISABLED), null, null, null, null);
     assertEquals(2, actualStudents.size());
     assertTrue(actualStudents.contains(disabledStudent1()));
   }
@@ -511,7 +510,7 @@ public class StudentIT extends FacadeITMockedThirdParties {
     UsersApi api = new UsersApi(manager1Client);
 
     List<Student> actualStudents =
-        api.getStudents(1, 10, null, null, null, null, SUSPENDED, null, null, null, null);
+        api.getStudents(1, 10, null, null, null, null, List.of(SUSPENDED), null, null, null, null);
     assertEquals(1, actualStudents.size());
     assertTrue(actualStudents.contains(suspendedStudent1()));
   }
@@ -535,7 +534,7 @@ public class StudentIT extends FacadeITMockedThirdParties {
     UsersApi api = new UsersApi(manager1Client);
 
     List<Student> actualStudents =
-        api.getStudents(1, 10, null, null, null, null, EnableStatus.DISABLED, F, null, null, null);
+        api.getStudents(1, 10, null, null, null, null, List.of(DISABLED), F, null, null, null);
     assertEquals(1, actualStudents.size());
   }
 
@@ -988,7 +987,8 @@ public class StudentIT extends FacadeITMockedThirdParties {
     List<Student> actual = api.createOrUpdateStudents(List.of(creatableSuspendedStudent()), null);
     Student created = actual.get(0);
     List<Student> suspended =
-        api.getStudents(1, 10, null, "Suspended", null, null, SUSPENDED, null, null, null, null);
+        api.getStudents(
+            1, 10, null, "Suspended", null, null, List.of(SUSPENDED), null, null, null, null);
 
     assertTrue(suspended.contains(created));
     assertEquals(1, actual.size());
@@ -1004,7 +1004,7 @@ public class StudentIT extends FacadeITMockedThirdParties {
         api.createOrUpdateStudents(List.of(createStudent2().status(SUSPENDED)), null);
     Student updated = actual.getFirst();
     List<Student> suspended =
-        api.getStudents(1, 10, null, null, null, null, SUSPENDED, null, null, null, null);
+        api.getStudents(1, 10, null, null, null, null, List.of(SUSPENDED), null, null, null, null);
 
     assertTrue(suspended.contains(updated));
     assertEquals(1, actual.size());
@@ -1016,11 +1016,50 @@ public class StudentIT extends FacadeITMockedThirdParties {
     UsersApi usersApi = new UsersApi(manager1Client);
 
     Integer women =
-        usersApi.getStudents(1, 200, null, null, null, null, null, F, null, null, null).size();
+        usersApi
+            .getStudents(
+                1,
+                200,
+                null,
+                null,
+                null,
+                null,
+                List.of(SUSPENDED, ENABLED, DISABLED),
+                F,
+                null,
+                null,
+                null)
+            .size();
     Integer men =
-        usersApi.getStudents(1, 200, null, null, null, null, null, M, null, null, null).size();
+        usersApi
+            .getStudents(
+                1,
+                200,
+                null,
+                null,
+                null,
+                null,
+                List.of(SUSPENDED, ENABLED, DISABLED),
+                M,
+                null,
+                null,
+                null)
+            .size();
     Integer totalStudents =
-        usersApi.getStudents(1, 200, null, null, null, null, null, null, null, null, null).size();
+        usersApi
+            .getStudents(
+                1,
+                200,
+                null,
+                null,
+                null,
+                null,
+                List.of(SUSPENDED, ENABLED, DISABLED),
+                null,
+                null,
+                null,
+                null)
+            .size();
 
     Statistics statistics = usersApi.getStats();
     assertEquals(statistics.getWomen().getTotal(), women);
