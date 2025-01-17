@@ -1,0 +1,1 @@
+alter table "group" add column if not exists attributed_color varchar;

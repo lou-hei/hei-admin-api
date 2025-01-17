@@ -1286,6 +1286,7 @@ public class TestUtils {
     return new Event()
         .id(EVENT1_ID)
         .type(COURSE)
+        .color("#0000")
         .course(course1())
         .beginDatetime(Instant.parse("2022-12-20T08:00:00.00Z"))
         .endDatetime(Instant.parse("2022-12-20T10:00:00.00Z"))
@@ -1300,6 +1301,7 @@ public class TestUtils {
     return new Event()
         .id(EVENT2_ID)
         .type(INTEGRATION)
+        .color("#0000")
         .planner(planner1())
         .beginDatetime(Instant.parse("2022-12-08T08:00:00.00Z"))
         .endDatetime(Instant.parse("2022-12-08T12:00:00.00Z"))
@@ -1327,6 +1329,7 @@ public class TestUtils {
         .endDatetime(Instant.parse("2022-12-09T12:00:00.00Z"))
         .title("December Seminar")
         .course(null)
+        .color("#0000")
         .count(new EventStats().late(0).present(0).missing(0).total(0))
         .groups(List.of());
   }
