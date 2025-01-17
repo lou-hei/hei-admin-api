@@ -5852,6 +5852,8 @@ components:
           $ref: '#/components/schemas/EventType'
         title:
           type: string
+        color:
+          type: string
         description:
           type: string
         begin_datetime:
