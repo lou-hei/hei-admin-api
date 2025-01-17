@@ -1,3 +1,12 @@
+# [1.92.0](https://github.com/hei-school/hei-admin-api/compare/v1.91.0...v1.92.0) (2025-01-17)
+
+
+### Features
+
+* **not-implemented:** add event frequency number  ([41fc946](https://github.com/hei-school/hei-admin-api/commit/41fc94674cb01cfe847048e8ee51d096a3b4d5b9))
+
+
+
 # [1.91.0](https://github.com/hei-school/hei-admin-api/compare/v1.90.0...v1.91.0) (2025-01-17)
 
 
@@ -129,15 +138,6 @@
 
 * letter stats for admin ([6bccb5e](https://github.com/hei-school/hei-admin-api/commit/6bccb5e83617d1ba3f6e897306ad479522c6b866))
 * update staff members access ([2cce4b1](https://github.com/hei-school/hei-admin-api/commit/2cce4b1b48261ab853b00fbb869e091d1af23f40))
-
-
-
-# [1.82.0](https://github.com/hei-school/hei-admin-api/compare/v1.81.0...v1.82.0) (2024-11-27)
-
-
-### Features
-
-* implement staff members resources ([58f8580](https://github.com/hei-school/hei-admin-api/commit/58f85805776877f672bac1c59d888dc0f416381e))
 
 
 
