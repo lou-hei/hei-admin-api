@@ -28,6 +28,7 @@ import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.GROUP1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.PROMOTION1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT2_ID;
@@ -408,6 +409,19 @@ public class StudentIT extends FacadeITMockedThirdParties {
     var response =
         requestFile(
             URI.create(basePath + "/students/event/" + EVENT1_ID + "/raw/xlsx"), MANAGER1_TOKEN);
+
+    assertEquals(HttpStatus.OK.value(), response.statusCode());
+    assertNotNull(response.body());
+    assertNotNull(response);
+  }
+
+  @Test
+  void manager_generate_student_in_promotion_ok() throws IOException, InterruptedException {
+    String basePath = "http://localhost:" + localPort;
+    var response =
+        requestFile(
+            URI.create(basePath + "/students/promotion/" + PROMOTION1_ID + "/raw/xlsx"),
+            MANAGER1_TOKEN);
 
     assertEquals(HttpStatus.OK.value(), response.statusCode());
     assertNotNull(response.body());

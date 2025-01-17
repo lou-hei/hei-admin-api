@@ -138,6 +138,14 @@ public class StudentController {
   @GetMapping(value = "/students/event/{event_id}/raw/xlsx", produces = "application/vnd.ms-excel")
   public byte[] generateEventStudentsParticipantInXlsx(
       @PathVariable(name = "event_id") String eventId) {
-    return userService.generateStudentsInXlsx(eventId);
+    return userService.generateStudentsInEventXlsx(eventId);
+  }
+
+  @GetMapping(
+      value = "/students/promotion/{promotion_id}/raw/xlsx",
+      produces = "application/vnd.ms-excel")
+  public byte[] generateStudentsPromotionInXlsx(
+      @PathVariable(name = "promotion_id") String promotionId) {
+    return userService.generateStudentsInPromotionXlsx(promotionId);
   }
 }

@@ -34,11 +34,13 @@ import school.hei.haapi.endpoint.rest.model.*;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.EventParticipant;
 import school.hei.haapi.model.PageFromOne;
+import school.hei.haapi.model.Promotion;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.model.validator.UserValidator;
 import school.hei.haapi.repository.EventParticipantRepository;
 import school.hei.haapi.repository.GroupRepository;
+import school.hei.haapi.repository.PromotionRepository;
 import school.hei.haapi.repository.UserRepository;
 import school.hei.haapi.repository.dao.UserManagerDao;
 import school.hei.haapi.service.aws.FileService;
@@ -55,6 +57,7 @@ public class UserService {
   private final FileService fileService;
   private final MultipartFileConverter fileConverter;
   private final GroupRepository groupRepository;
+  private final PromotionRepository promotionRepository;
   private final MonitoringStudentService monitoringStudentService;
   private final FeeService feeService;
   private final EventParticipantRepository eventParticipantRepository;
@@ -333,7 +336,7 @@ public class UserService {
     return userRepository.getStudentsWithUnpaidOrLateFee();
   }
 
-  public byte[] generateStudentsInXlsx(String eventId) {
+  public byte[] generateStudentsInEventXlsx(String eventId) {
     XlsxCellsGenerator<EventParticipant> xlsxCellsGenerator = new XlsxCellsGenerator<>();
     List<EventParticipant> students =
         eventParticipantRepository
@@ -348,5 +351,23 @@ public class UserService {
             "status",
             "participant.email",
             "participant.sex"));
+  }
+
+  public byte[] generateStudentsInPromotionXlsx(String promotionId) {
+    XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
+    Promotion promotion =
+        promotionRepository
+            .findById(promotionId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException("Promotion with id #" + promotionId + " does not exist"));
+    List<User> students = new ArrayList<>();
+    promotion
+        .getGroups()
+        .forEach(
+            group -> {
+              students.addAll(getByGroupId(group.getId()));
+            });
+    return xlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
   }
 }
