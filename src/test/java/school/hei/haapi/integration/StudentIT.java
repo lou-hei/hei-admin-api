@@ -429,6 +429,16 @@ public class StudentIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  void manager_generate_all_student_ok() throws IOException, InterruptedException {
+    String basePath = "http://localhost:" + localPort;
+    var response = requestFile(URI.create(basePath + "/students/raw/xlsx"), MANAGER1_TOKEN);
+
+    assertEquals(HttpStatus.OK.value(), response.statusCode());
+    assertNotNull(response.body());
+    assertNotNull(response);
+  }
+
+  @Test
   void student_read_itself_repeating_this_year_ok() throws ApiException {
     ApiClient student8Client = anApiClient(STUDENT8_TOKEN);
 

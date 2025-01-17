@@ -370,4 +370,28 @@ public class UserService {
             });
     return xlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
   }
+
+  public byte[] generateAllStudentsAsXlsx(
+      String courseId,
+      User.Status status,
+      User.Sex sex,
+      WorkStudyStatus workStatus,
+      List<String> excludeGroupIds) {
+    XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
+    List<User> students =
+        userManagerDao.findByCriteria(
+            STUDENT,
+            null,
+            null,
+            null,
+            null,
+            status,
+            sex,
+            workStatus,
+            null,
+            courseId,
+            Instant.now(),
+            excludeGroupIds);
+    return xlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
+  }
 }

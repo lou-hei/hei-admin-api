@@ -148,4 +148,17 @@ public class StudentController {
       @PathVariable(name = "promotion_id") String promotionId) {
     return userService.generateStudentsInPromotionXlsx(promotionId);
   }
+
+  @GetMapping(value = "/students/raw/xlsx", produces = "application/vnd.ms-excel")
+  public byte[] generateStudentsInXlsx(
+      @RequestParam(value = "course_id", required = false, defaultValue = "") String courseId,
+      @RequestParam(name = "status", required = false) EnableStatus status,
+      @RequestParam(name = "sex", required = false) Sex sex,
+      @RequestParam(name = "work_study_status", required = false) WorkStudyStatus workStatus,
+      @RequestParam(name = "exclude_groups", required = false) List<String> excludeGroupIds) {
+    User.Sex domainSex = sexEnumMapper.toDomainSexEnum(sex);
+    User.Status domainStatus = statusEnumMapper.toDomainStatus(status);
+    return userService.generateAllStudentsAsXlsx(
+        courseId, domainStatus, domainSex, workStatus, excludeGroupIds);
+  }
 }
