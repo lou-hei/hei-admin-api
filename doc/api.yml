@@ -3903,6 +3903,31 @@ paths:
       summary: Create or update events
       description: Update if id is provided, create otherwise.
       operationId: crupdateEvents
+      parameters:
+        - name: frequency_day
+          required: false
+          in: query
+          description: define the day frequency
+          schema:
+            $ref: '#/components/schemas/FrequencyScopeDay'
+        - name: frequency_number
+          required: false
+          in: query
+          description: define the number of frequency
+          schema:
+            type: integer
+        - name: frequency_beginning_hour
+          required: false
+          in: query
+          description: what time does the frequency start
+          schema:
+            type: integer
+        - name: frequency_ending_hour
+          required: false
+          in: query
+          description: what time does the frequency end
+          schema:
+            type: integer
       requestBody:
         required: true
         description: Event to create or update
@@ -5782,6 +5807,8 @@ components:
           type: string
         description:
           type: string
+        color:
+          type: string
         begin_datetime:
           type: string
           format: date-time
@@ -6197,6 +6224,15 @@ components:
           type: boolean
         count:
           type: integer
+    FrequencyScopeDay:
+      type: string
+      enum:
+        - MONDAY
+        - TUESDAY
+        - WEDNESDAY
+        - THURSDAY
+        - FRIDAY
+        - SATURDAY
     PaymentFrequency:
       type: string
       enum:
