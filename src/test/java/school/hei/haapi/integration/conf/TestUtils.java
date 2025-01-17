@@ -1624,7 +1624,7 @@ public class TestUtils {
     return new CrupdatePromotion().id("promotion4_id").name("Promotion 24").ref("PROM24");
   }
 
-  public static HttpResponse<byte[]> requestFile(URI request)
+  public static HttpResponse<byte[]> requestFile(URI request, String token)
       throws IOException, InterruptedException {
     HttpClient httpClient = HttpClient.newBuilder().build();
 
@@ -1632,7 +1632,7 @@ public class TestUtils {
         HttpRequest.newBuilder()
             .uri(request)
             .GET()
-            .header("Authorization", "Bearer " + MANAGER1_TOKEN)
+            .header("Authorization", "Bearer " + token)
             .build(),
         HttpResponse.BodyHandlers.ofByteArray());
   }
