@@ -1334,8 +1334,8 @@ paths:
     get:
       tags:
         - Users
-      summary: Get all students with criteria as xlsx file
-      operationId: generateStudentsInXlsx
+      summary: Get all students in event as xlsx file
+      operationId: generateEventStudentsParticipantInXlsx
       parameters:
         - name: event_id
           in: path
