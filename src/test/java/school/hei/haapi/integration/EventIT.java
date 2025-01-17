@@ -62,7 +62,8 @@ public class EventIT extends FacadeITMockedThirdParties {
     EventsApi api = new EventsApi(apiClient);
 
     List<Event> actual =
-        api.crupdateEvents(List.of(createEventCourse1(), createIntegrationEvent()));
+        api.crupdateEvents(
+            List.of(createEventCourse1(), createIntegrationEvent()), null, null, null, null);
 
     Event event = actual.getFirst();
     assertEquals(expectedCourseEventCreated().getType(), event.getType());
@@ -164,7 +165,8 @@ public class EventIT extends FacadeITMockedThirdParties {
     ApiClient apiClient = anApiClient(STUDENT1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
 
-    assertThrowsForbiddenException(() -> api.crupdateEvents(List.of(createEventCourse1())));
+    assertThrowsForbiddenException(
+        () -> api.crupdateEvents(List.of(createEventCourse1()), null, null, null, null));
     assertThrowsForbiddenException(
         () -> api.updateEventParticipantsStatus(EVENT1_ID, List.of(new UpdateEventParticipant())));
   }

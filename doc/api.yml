@@ -3916,6 +3916,18 @@ paths:
           description: define the number of frequency
           schema:
             type: integer
+        - name: frequency_beginning_hour
+          required: false
+          in: query
+          description: what time does the frequency start
+          schema:
+            type: integer
+        - name: frequency_ending_hour
+          required: false
+          in: query
+          description: what time does the frequency end
+          schema:
+            type: integer
       requestBody:
         required: true
         description: Event to create or update
@@ -5794,6 +5806,8 @@ components:
         title:
           type: string
         description:
+          type: string
+        color:
           type: string
         begin_datetime:
           type: string
