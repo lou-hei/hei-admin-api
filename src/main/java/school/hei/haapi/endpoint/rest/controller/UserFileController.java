@@ -27,7 +27,10 @@ import school.hei.haapi.endpoint.rest.model.ZipReceiptsStatistic;
 import school.hei.haapi.endpoint.rest.validator.CreateStudentWorkFileValidator;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
+import school.hei.haapi.model.User;
+import school.hei.haapi.model.validator.ScholarshipDataValidator;
 import school.hei.haapi.service.StudentFileService;
+import school.hei.haapi.service.UserService;
 
 @RestController
 @AllArgsConstructor
@@ -36,12 +39,16 @@ public class UserFileController {
   private final FileInfoMapper fileInfoMapper;
   private final WorkDocumentMapper workDocumentMapper;
   private final CreateStudentWorkFileValidator createStudentWorkFileValidator;
+  private final ScholarshipDataValidator scholarshipDataValidator;
+  private final UserService userService;
 
   @GetMapping(
       value = "/students/{id}/scholarship_certificate/raw",
       produces = APPLICATION_PDF_VALUE)
   public byte[] getStudentScholarshipCertificate(@PathVariable(name = "id") String studentId) {
-    return fileService.generatePdf(studentId, "scolarity");
+    User student = userService.findById(studentId);
+    scholarshipDataValidator.accept(student);
+    return fileService.generateScholarshipCertificate(studentId, "scolarity");
   }
 
   @GetMapping(
