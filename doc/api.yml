@@ -3919,15 +3919,15 @@ paths:
         - name: frequency_beginning_hour
           required: false
           in: query
-          description: what time does the frequency start
+          description: what time does the frequency start, format HH:MM
           schema:
-            type: integer
+            type: string
         - name: frequency_ending_hour
           required: false
           in: query
-          description: what time does the frequency end
+          description: what time does the frequency end, format HH:MM
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         description: Event to create or update
@@ -5167,6 +5167,7 @@ components:
     EventType:
       type: string
       enum:
+        - EXAM
         - COURSE
         - INTEGRATION
         - SEMINAR

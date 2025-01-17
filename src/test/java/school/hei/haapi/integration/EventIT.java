@@ -88,6 +88,7 @@ public class EventIT extends FacadeITMockedThirdParties {
 
     List<Event> actual = api.getEvents(1, 15, null, null, null, null, null);
 
+    System.out.println(actual);
     assertTrue(actual.containsAll(List.of(event1(), event2(), event3())));
 
     List<Event> eventsBeginAfterAnInstant =
