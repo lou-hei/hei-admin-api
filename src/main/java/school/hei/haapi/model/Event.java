@@ -71,6 +71,4 @@ public class Event {
       joinColumns = @JoinColumn(name = "event_id"),
       inverseJoinColumns = @JoinColumn(name = "group_id"))
   private List<Group> groups;
-
-
 }

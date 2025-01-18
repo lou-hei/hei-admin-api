@@ -92,6 +92,18 @@ public class EventIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  void manager_create_event_and_event_participant_by_frequence_ok() throws ApiException {
+    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
+    EventsApi api = new EventsApi(apiClient);
+
+    List<Event> actual =
+        api.crupdateEvents(List.of(createEventCourse1()), MONDAY, 3, "08:30", "12:00");
+
+    System.out.println(actual);
+    assertEquals(4, actual.size());
+  }
+
+  @Test
   void manager_create_event_and_event_participant_ok() throws ApiException {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
