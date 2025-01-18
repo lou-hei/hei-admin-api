@@ -55,7 +55,7 @@ public class EventController {
             .build();
     eventFrequencyValidator.accept(evenFrequency);
     return eventService
-        .createOrUpdateEvent(eventsToSave.stream().map(mapper::toDomain).toList())
+        .createOrUpdateEvent(eventsToSave.stream().map(mapper::toDomain).toList(), evenFrequency)
         .stream()
         .map(mapper::toRest)
         .collect(toUnmodifiableList());
