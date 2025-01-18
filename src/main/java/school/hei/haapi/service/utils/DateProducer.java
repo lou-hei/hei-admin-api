@@ -12,30 +12,18 @@ public class DateProducer {
 
   public List<LocalDate> apply(FrequencyScopeDay dayOfWeek, int goalDays) {
     List<LocalDate> days = new ArrayList<>();
-    DayOfWeek day = DayOfWeek.valueOf(dayOfWeek.getValue());
-    LocalDate now = LocalDate.now();
-    int year = now.getYear();
-    int month = now.getMonthValue();
-    LocalDate date = LocalDate.of(year, month, 1);
+    DayOfWeek targetDay = DayOfWeek.valueOf(dayOfWeek.getValue());
+    LocalDate date = LocalDate.now();
 
-    while (date.getDayOfWeek() != day) {
+    while (date.getDayOfWeek() != targetDay) {
       date = date.plusDays(1);
     }
 
-    while (days.size() < goalDays) {
+    for (int i = 0; i < goalDays; i++) {
       days.add(date);
       date = date.plusWeeks(1);
-
-      if (date.getMonthValue() != month) {
-        month = date.getMonthValue();
-        year = date.getYear();
-        date = LocalDate.of(year, month, 1);
-
-        while (date.getDayOfWeek() != day) {
-          date = date.plusDays(1);
-        }
-      }
     }
+
     return days;
   }
 }

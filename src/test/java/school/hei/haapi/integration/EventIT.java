@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.EventType.COURSE;
 import static school.hei.haapi.endpoint.rest.model.FrequencyScopeDay.MONDAY;
+import static school.hei.haapi.endpoint.rest.model.FrequencyScopeDay.WEDNESDAY;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT2_ID;
@@ -97,9 +98,8 @@ public class EventIT extends FacadeITMockedThirdParties {
     EventsApi api = new EventsApi(apiClient);
 
     List<Event> actual =
-        api.crupdateEvents(List.of(createEventCourse1()), MONDAY, 3, "08:30", "12:00");
+        api.crupdateEvents(List.of(createEventCourse1()), WEDNESDAY, 3, "08:30", "12:00");
 
-    System.out.println(actual);
     assertEquals(4, actual.size());
   }
 

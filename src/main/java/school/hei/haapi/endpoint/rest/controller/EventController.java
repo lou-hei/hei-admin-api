@@ -41,7 +41,7 @@ public class EventController {
   public List<Event> crupdateEvents(
       @RequestBody List<CreateEvent> eventsToSave,
       @RequestParam(name = "frequency_day", required = false) FrequencyScopeDay frequencyScopeDay,
-      @RequestParam(name = "eventFrequencyNumber", required = false)
+      @RequestParam(name = "frequency_number", required = false)
           EventFrequencyNumber eventFrequencyNumber,
       @RequestParam(name = "frequency_beginning_hour", required = false)
           String frequencyBeginningHour,

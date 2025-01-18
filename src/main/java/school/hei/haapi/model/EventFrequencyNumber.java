@@ -8,7 +8,7 @@ public class EventFrequencyNumber {
 
   public EventFrequencyNumber(int value) {
     if (value < 1) {
-      throw new BadRequestException("page value must be >= 1");
+      throw new BadRequestException("frequence value must be >= 1");
     }
     this.value = value;
   }

@@ -96,8 +96,9 @@ public class EventService {
             List<Event> duplicatedEvents = duplicateEventWithDifferentHour(e, eventSchedule);
             eventsToSave.addAll(duplicatedEvents);
           });
+    } else {
+      eventsToSave.addAll(eventToCrupdate);
     }
-    eventsToSave.addAll(eventToCrupdate);
     return eventsToSave;
   }
 
@@ -107,12 +108,21 @@ public class EventService {
     duplicated.add(event);
     eventScheduled.forEach(
         (b, e) -> {
-          Event newEvent = event;
-          event.setBeginDatetime(b);
-          event.setEndDatetime(e);
+          Event newEvent =
+              Event.builder()
+                  .title(event.getTitle())
+                  .colorCode(event.getColorCode())
+                  .beginDatetime(b)
+                  .endDatetime(e)
+                  .type(event.getType())
+                  .course(event.getCourse())
+                  .description(event.getDescription())
+                  .groups(event.getGroups())
+                  .id(event.getId())
+                  .planner(event.getPlanner())
+                  .build();
           duplicated.add(newEvent);
         });
-
     return duplicated;
   }
 
