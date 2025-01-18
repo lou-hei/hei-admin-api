@@ -270,7 +270,7 @@ public class MpbsVerificationService {
   private MpbsStatus defineMpbsStatusWithoutOrangeTransactionDetails(Mpbs mpbs, Instant toCompare) {
     long dayValidity = mpbs.getCreationDatetime().until(toCompare, ChronoUnit.DAYS);
     if (dayValidity > 2) {
-      // notifyStudentForFailedPayment(mpbs);
+      notifyStudentForFailedPayment(mpbs);
       log.info("failed transaction");
       return FAILED;
     }
