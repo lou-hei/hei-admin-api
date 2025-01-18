@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.EventType.COURSE;
+import static school.hei.haapi.endpoint.rest.model.FrequencyScopeDay.MONDAY;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT2_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.assertThrowsApiException;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
 import static school.hei.haapi.integration.conf.TestUtils.createEventCourse1;
 import static school.hei.haapi.integration.conf.TestUtils.createIntegrationEvent;
@@ -54,6 +56,39 @@ public class EventIT extends FacadeITMockedThirdParties {
   void setUp() {
     setUpCognito(cognitoComponentMock);
     setUpS3Service(fileService, student1());
+  }
+
+  @Test
+  void attempt_to_create_a_frequency_with_missing_data_ko() throws Exception {
+    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
+    EventsApi api = new EventsApi(apiClient);
+
+    assertThrowsApiException(
+        "{\"type\":\"400 BAD_REQUEST\",\"message\":\"Frequency cannot be created without number"
+            + " of\"}",
+        () ->
+            api.crupdateEvents(
+                List.of(createEventCourse1(), createIntegrationEvent()),
+                MONDAY,
+                null,
+                "09:00",
+                "12:00"));
+  }
+
+  @Test
+  void attempt_to_create_a_frequency_with_invalid_hour_ko() throws Exception {
+    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
+    EventsApi api = new EventsApi(apiClient);
+
+    assertThrowsApiException(
+        "{\"type\":\"400 BAD_REQUEST\",\"message\":\"Hour must be of format HH:MM\"}",
+        () ->
+            api.crupdateEvents(
+                List.of(createEventCourse1(), createIntegrationEvent()),
+                MONDAY,
+                2,
+                "9:00",
+                "12:00"));
   }
 
   @Test

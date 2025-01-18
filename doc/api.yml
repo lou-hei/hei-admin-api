@@ -3910,7 +3910,7 @@ paths:
           description: define the day frequency
           schema:
             $ref: '#/components/schemas/FrequencyScopeDay'
-        - name: frequency_number
+        - name: eventFrequencyNumber
           required: false
           in: query
           description: define the number of frequency

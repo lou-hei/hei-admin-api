@@ -30,7 +30,9 @@ public class EventMapper {
     List<GroupIdentifier> groupIdentifiers = Objects.requireNonNull(createEvent.getGroups());
     List<Group> groups =
         groupService.getAllById(groupIdentifiers.stream().map(GroupIdentifier::getId).toList());
-    groups.stream().map(group -> mapGroupFromGroupIdentifiers(group, groupIdentifiers)).toList();
+    groups.stream()
+        .map(group -> mapGroupColorFromGroupIdentifiers(group, groupIdentifiers))
+        .toList();
     List<Group> mappedGroup = groupService.saveDomainGroup(groups);
 
     return Event.builder()
@@ -69,7 +71,8 @@ public class EventMapper {
                 : groups.stream().map(groupMapper::toRestGroupIdentifier).toList());
   }
 
-  public Group mapGroupFromGroupIdentifiers(Group group, List<GroupIdentifier> groupIdentifiers) {
+  public Group mapGroupColorFromGroupIdentifiers(
+      Group group, List<GroupIdentifier> groupIdentifiers) {
     String groupId = group.getId();
     Optional<GroupIdentifier> optionalGi =
         groupIdentifiers.stream().filter(gi -> groupId.equals(gi.getId())).findFirst();
