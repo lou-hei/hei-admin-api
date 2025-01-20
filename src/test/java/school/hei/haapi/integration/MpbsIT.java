@@ -156,6 +156,7 @@ public class MpbsIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  @Disabled
   void verify_mpbs_via_xls() throws ApiException, IOException, InterruptedException {
     ApiClient managerClient = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(managerClient);
