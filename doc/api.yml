@@ -1333,7 +1333,7 @@ paths:
   /students/event/{event_id}/raw/xlsx:
     get:
       tags:
-        - Users
+        - Events
       summary: Get all students in event as xlsx file
       operationId: generateEventStudentsParticipantInXlsx
       parameters:
