@@ -1308,7 +1308,7 @@ paths:
   /teachers/raw:
     get:
       tags:
-        - Teaching
+        - Users
       summary: Get all teachers as xlsx file
       operationId: generateTeachersInXlsx
       responses:
