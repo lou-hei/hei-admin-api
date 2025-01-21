@@ -280,8 +280,7 @@ public class TestUtils {
   public static File getMockedFile(String fileName, String extension) {
     try {
       Resource resource = new ClassPathResource("mock/" + fileName + extension);
-      File file = resource.getFile();
-      return file;
+      return resource.getFile();
     } catch (IOException e) {
       throw new school.hei.haapi.model.exception.ApiException(SERVER_EXCEPTION, e.getMessage());
     }
