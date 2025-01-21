@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -18,10 +18,10 @@ public class DatetimeProducer implements BiFunction<List<LocalDate>, String, Lis
   public List<Instant> apply(List<LocalDate> localDates, String time) {
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     LocalTime localTime = LocalTime.parse(time, timeFormatter);
-    ZoneOffset zoneOffset = ZoneOffset.UTC;
+    ZoneId zoneId = ZoneId.of("UTC+3");
 
     return localDates.stream()
-        .map(date -> date.atTime(localTime).toInstant(zoneOffset))
+        .map(date -> date.atTime(localTime).atZone(zoneId).toInstant())
         .collect(toList());
   }
 }
