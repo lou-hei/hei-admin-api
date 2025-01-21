@@ -1361,10 +1361,10 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /students/promotion/{promotion_id}/raw/xlsx:
+  /promotion/{promotion_id}/students/raw/xlsx:
     get:
       tags:
-        - Users
+        - Promotions
       summary: Get all students in promotion as xlsx file
       operationId: generateStudentsPromotionInXlsx
       parameters:

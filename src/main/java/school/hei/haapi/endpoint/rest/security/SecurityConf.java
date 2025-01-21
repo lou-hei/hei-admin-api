@@ -211,7 +211,7 @@ public class SecurityConf {
                     antMatcher(PUT, "/promotions/*/groups"),
                     antMatcher(GET, "/attendance"),
                     antMatcher(GET, "/event/*/students/raw/xlsx"),
-                    antMatcher(GET, "/students/promotion/*/raw/xlsx"),
+                    antMatcher(GET, "/promotion/*/students/raw/xlsx"),
                     antMatcher(GET, "/students/raw/xlsx"),
                     antMatcher(POST, "/attendance/movement"),
                     antMatcher(GET, "/letters"),
@@ -767,7 +767,7 @@ public class SecurityConf {
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
                     .requestMatchers(GET, "/event/*/students/raw/xlsx")
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
-                    .requestMatchers(GET, "/students/promotion/*/raw/xlsx")
+                    .requestMatchers(GET, "/promotion/*/students/raw/xlsx")
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
                     .requestMatchers(GET, "/students/raw/xlsx")
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())

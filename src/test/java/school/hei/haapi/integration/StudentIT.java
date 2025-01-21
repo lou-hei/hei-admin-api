@@ -420,7 +420,7 @@ public class StudentIT extends FacadeITMockedThirdParties {
     String basePath = "http://localhost:" + localPort;
     var response =
         requestFile(
-            URI.create(basePath + "/students/promotion/" + PROMOTION1_ID + "/raw/xlsx"),
+            URI.create(basePath + "/promotion/" + PROMOTION1_ID + "/students/raw/xlsx"),
             MANAGER1_TOKEN);
 
     assertEquals(HttpStatus.OK.value(), response.statusCode());

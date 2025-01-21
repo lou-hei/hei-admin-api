@@ -135,14 +135,6 @@ public class StudentController {
         userService.getAllStudentNotDisabled().stream().map(userMapper::toRestStudent).toList());
   }
 
-  @GetMapping(
-      value = "/students/promotion/{promotion_id}/raw/xlsx",
-      produces = "application/vnd.ms-excel")
-  public byte[] generateStudentsPromotionInXlsx(
-      @PathVariable(name = "promotion_id") String promotionId) {
-    return userService.generateStudentsInPromotionXlsx(promotionId);
-  }
-
   @GetMapping(value = "/students/raw/xlsx", produces = "application/vnd.ms-excel")
   public byte[] generateStudentsInXlsx(
       @RequestParam(value = "course_id", required = false, defaultValue = "") String courseId,
