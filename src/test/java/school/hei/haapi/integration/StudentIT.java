@@ -408,7 +408,7 @@ public class StudentIT extends FacadeITMockedThirdParties {
     String basePath = "http://localhost:" + localPort;
     var response =
         requestFile(
-            URI.create(basePath + "/students/event/" + EVENT1_ID + "/raw/xlsx"), MANAGER1_TOKEN);
+            URI.create(basePath + "/event/" + EVENT1_ID + "/students/raw/xlsx"), MANAGER1_TOKEN);
 
     assertEquals(HttpStatus.OK.value(), response.statusCode());
     assertNotNull(response.body());

@@ -27,6 +27,7 @@ import school.hei.haapi.model.EventFrequencyNumber;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.service.EventParticipantService;
 import school.hei.haapi.service.EventService;
+import school.hei.haapi.service.UserService;
 
 @AllArgsConstructor
 @RestController
@@ -35,6 +36,7 @@ public class EventController {
   private final EventParticipantMapper eventParticipantMapper;
   private final EventService eventService;
   private final EventParticipantService eventParticipantService;
+  private final UserService userService;
   private final CreateEventFrequencyValidator eventFrequencyValidator;
 
   @PutMapping("/events")
@@ -103,5 +105,11 @@ public class EventController {
         .stream()
         .map(eventParticipantMapper::toRest)
         .collect(toUnmodifiableList());
+  }
+
+  @GetMapping(value = "/event/{event_id}/students/raw/xlsx", produces = "application/vnd.ms-excel")
+  public byte[] generateEventStudentsParticipantInXlsx(
+          @PathVariable(name = "event_id") String eventId) {
+    return userService.generateStudentsInEventXlsx(eventId);
   }
 }

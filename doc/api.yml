@@ -1330,7 +1330,7 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  /students/event/{event_id}/raw/xlsx:
+  /event/{event_id}/students/raw/xlsx:
     get:
       tags:
         - Events
