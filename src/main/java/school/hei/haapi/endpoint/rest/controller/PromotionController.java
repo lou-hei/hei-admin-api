@@ -61,10 +61,10 @@ public class PromotionController {
   }
 
   @GetMapping(
-          value = "/promotion/{promotion_id}/students/raw/xlsx",
-          produces = "application/vnd.ms-excel")
+      value = "/promotion/{promotion_id}/students/raw/xlsx",
+      produces = "application/vnd.ms-excel")
   public byte[] generateStudentsPromotionInXlsx(
-          @PathVariable(name = "promotion_id") String promotionId) {
+      @PathVariable(name = "promotion_id") String promotionId) {
     return userService.generateStudentsInPromotionXlsx(promotionId);
   }
 }
