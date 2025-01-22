@@ -61,6 +61,10 @@ public class EventDao {
       query.where(predicates.toArray(new Predicate[0])).distinct(true);
     }
 
+    if (pageable == null) {
+      return entityManager.createQuery(query).getResultList();
+    }
+
     query.orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));
 
     return entityManager

@@ -1,6 +1,5 @@
 package school.hei.haapi.service;
 
-import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.LATE;
 import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.MISSING;
@@ -25,6 +24,7 @@ import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.repository.EventParticipantRepository;
+import school.hei.haapi.repository.dao.EventDao;
 
 @Service
 @AllArgsConstructor
@@ -34,6 +34,7 @@ public class EventParticipantService {
   private final UserService userService;
   private final EventProducer<MissedEventEmail> eventProducer;
   private final GroupService groupService;
+  private final EventDao eventDao;
 
   public List<EventParticipant> getEventParticipants(
       String eventId, PageFromOne page, BoundedPageSize pageSize, String groupRef) {
@@ -47,20 +48,6 @@ public class EventParticipantService {
   }
 
   public List<EventParticipant> updateEventParticipants(List<EventParticipant> eventParticipants) {
-    List<EventParticipant> missingParticipants =
-        eventParticipants.stream()
-            .filter(
-                participant -> {
-                  return participant.getStatus().equals(MISSING);
-                })
-            .collect(toUnmodifiableList());
-
-    List<MissedEventEmail> missedEventEmails =
-        missingParticipants.stream()
-            .map(MissedEventEmail::fromEventParticipant)
-            .collect(toUnmodifiableList());
-
-    eventProducer.accept(missedEventEmails);
     return eventParticipantRepository.saveAll(eventParticipants);
   }
 
