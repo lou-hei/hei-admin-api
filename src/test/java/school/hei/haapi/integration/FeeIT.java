@@ -491,7 +491,8 @@ class FeeIT extends FacadeITMockedThirdParties {
 
   @Test
   void generate_fees_list_as_xlsx_without_parameters_ok() throws IOException, InterruptedException {
-    var response = requestFile(URI.create("http://localhost:" + localPort + "/fees/raw"));
+    var response =
+        requestFile(URI.create("http://localhost:" + localPort + "/fees/raw"), MANAGER1_TOKEN);
 
     assertEquals(HttpStatus.OK.value(), response.statusCode());
     assertNotNull(response.body());
@@ -501,7 +502,9 @@ class FeeIT extends FacadeITMockedThirdParties {
   @Test
   void generate_fees_list_as_xlsx_with_parameters_ok() throws IOException, InterruptedException {
     var responseWithStatus =
-        requestFile(URI.create("http://localhost:" + localPort + "/fees/raw?status=" + PENDING));
+        requestFile(
+            URI.create("http://localhost:" + localPort + "/fees/raw?status=" + PENDING),
+            MANAGER1_TOKEN);
     assertEquals(HttpStatus.OK.value(), responseWithStatus.statusCode());
     assertNotNull(responseWithStatus.body());
     assertNotNull(responseWithStatus);
@@ -511,7 +514,8 @@ class FeeIT extends FacadeITMockedThirdParties {
             URI.create(
                 "http://localhost:"
                     + localPort
-                    + "/fees/raw?from_due_datetime=2022-01-01T12:00:00.000Z"));
+                    + "/fees/raw?from_due_datetime=2022-01-01T12:00:00.000Z"),
+            MANAGER1_TOKEN);
     assertEquals(HttpStatus.OK.value(), responseWithDateStart.statusCode());
     assertNotNull(responseWithDateStart.body());
     assertNotNull(responseWithDateStart);
@@ -521,7 +525,8 @@ class FeeIT extends FacadeITMockedThirdParties {
             URI.create(
                 "http://localhost:"
                     + localPort
-                    + "/fees/raw?from_due_datetime=2022-01-01T12:00:00Z&to_due_datetime=2024-01-02T12:00:00Z"));
+                    + "/fees/raw?from_due_datetime=2022-01-01T12:00:00Z&to_due_datetime=2024-01-02T12:00:00Z"),
+            MANAGER1_TOKEN);
     assertEquals(HttpStatus.OK.value(), responseWithDateRange.statusCode());
     assertNotNull(responseWithDateRange.body());
     assertNotNull(responseWithDateRange);
