@@ -24,7 +24,7 @@ import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.repository.EventRepository;
 import school.hei.haapi.repository.dao.EventDao;
-import school.hei.haapi.service.utils.DateProducer;
+import school.hei.haapi.service.utils.DateProducerFrom;
 import school.hei.haapi.service.utils.DatetimeProducer;
 
 @Service
@@ -33,7 +33,7 @@ public class EventService {
   private final EventRepository eventRepository;
   private final EventDao eventDao;
   private final EventParticipantService eventParticipantService;
-  private final DateProducer dateProducer;
+  private final DateProducerFrom dateProducerFrom;
   private final DatetimeProducer datetimeProducer;
 
   public List<Event> createOrUpdateEvent(
@@ -80,7 +80,7 @@ public class EventService {
     if (optionalFrequence.isPresent()) {
       int goalsDay = eventFrequencyToCreate.getEventFrequencyNumber().getValue();
       List<LocalDate> eachDateOfEventFrequency =
-          dateProducer.apply(eventFrequencyToCreate.getFrequencyScopeDay(), goalsDay);
+          dateProducerFrom.apply(eventFrequencyToCreate.getFrequencyScopeDay(), goalsDay);
       List<Instant> eachDatetimeBeginningOfEventFrequency =
           datetimeProducer.apply(
               eachDateOfEventFrequency, eventFrequencyToCreate.getFrequencyBeginningHour());
