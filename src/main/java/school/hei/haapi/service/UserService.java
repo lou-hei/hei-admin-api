@@ -61,6 +61,8 @@ public class UserService {
   private final MonitoringStudentService monitoringStudentService;
   private final FeeService feeService;
   private final EventParticipantRepository eventParticipantRepository;
+  private final XlsxCellsGenerator<User> userXlsxCellsGenerator;
+  private final XlsxCellsGenerator<EventParticipant> eventParticipantXlsxCellsGenerator;
 
   public void uploadUserProfilePicture(MultipartFile profilePictureAsMultipartFile, String userId) {
     User user = findById(userId);
@@ -263,15 +265,13 @@ public class UserService {
   }
 
   public byte[] generateStudentsGroup(String groupId) {
-    XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
     List<User> studentsGroup = getByGroupId(groupId);
-    return xlsxCellsGenerator.apply(studentsGroup, List.of("ref", "firstName", "lastName"));
+    return userXlsxCellsGenerator.apply(studentsGroup, List.of("ref", "firstName", "lastName"));
   }
 
   public byte[] generateTeachersXlsx() {
-    XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
     List<User> teachers = userRepository.findAllByRoleAndStatus(TEACHER, ENABLED);
-    return xlsxCellsGenerator.apply(teachers, List.of("firstName", "lastName", "email", "sex"));
+    return userXlsxCellsGenerator.apply(teachers, List.of("firstName", "lastName", "email", "sex"));
   }
 
   public List<User> getByGroupIdWithFilter(
@@ -337,13 +337,12 @@ public class UserService {
   }
 
   public byte[] generateStudentsInEventXlsx(String eventId) {
-    XlsxCellsGenerator<EventParticipant> xlsxCellsGenerator = new XlsxCellsGenerator<>();
     List<EventParticipant> students =
         eventParticipantRepository
             .findAllByEventId(eventId, null)
             .orElseThrow(
                 () -> new NotFoundException("Event with id #" + eventId + " does not exist"));
-    return xlsxCellsGenerator.apply(
+    return eventParticipantXlsxCellsGenerator.apply(
         students,
         List.of(
             "participant.firstName",
@@ -354,7 +353,6 @@ public class UserService {
   }
 
   public byte[] generateStudentsInPromotionXlsx(String promotionId) {
-    XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
     Promotion promotion =
         promotionRepository
             .findById(promotionId)
@@ -368,7 +366,7 @@ public class UserService {
             group -> {
               students.addAll(getByGroupId(group.getId()));
             });
-    return xlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
+    return userXlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
   }
 
   public byte[] generateAllStudentsAsXlsx(
@@ -377,7 +375,6 @@ public class UserService {
       User.Sex sex,
       WorkStudyStatus workStatus,
       List<String> excludeGroupIds) {
-    XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
     List<User> students =
         userManagerDao.findByCriteria(
             STUDENT,
@@ -392,6 +389,6 @@ public class UserService {
             courseId,
             Instant.now(),
             excludeGroupIds);
-    return xlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
+    return userXlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
   }
 }
