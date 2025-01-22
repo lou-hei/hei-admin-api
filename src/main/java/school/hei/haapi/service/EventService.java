@@ -74,13 +74,17 @@ public class EventService {
 
   private List<Event> generateEventFromFrequency(
       List<Event> eventToCrupdate, CreateEventFrequency eventFrequencyToCreate) {
+    // TIPS: by default when we create event, the front send always only one event to be created
+    // then:
+    Instant originOfTheFrequencies = eventToCrupdate.getFirst().getBeginDatetime();
     Optional<CreateEventFrequency> optionalFrequence = generateFrequency(eventFrequencyToCreate);
     List<Event> eventsToSave = new ArrayList<>();
 
     if (optionalFrequence.isPresent()) {
       int goalsDay = eventFrequencyToCreate.getEventFrequencyNumber().getValue();
       List<LocalDate> eachDateOfEventFrequency =
-          dateProducerFrom.apply(eventFrequencyToCreate.getFrequencyScopeDay(), goalsDay);
+          dateProducerFrom.apply(
+              eventFrequencyToCreate.getFrequencyScopeDay(), goalsDay, originOfTheFrequencies);
       List<Instant> eachDatetimeBeginningOfEventFrequency =
           datetimeProducer.apply(
               eachDateOfEventFrequency, eventFrequencyToCreate.getFrequencyBeginningHour());
