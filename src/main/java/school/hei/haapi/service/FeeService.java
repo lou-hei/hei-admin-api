@@ -60,7 +60,7 @@ public class FeeService {
             "student.ref",
             "student.firstName",
             "student.lastName",
-            "type",
+            "student.email",
             "totalAmount",
             "remainingAmount",
             "comment",
