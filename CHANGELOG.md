@@ -1,3 +1,18 @@
+# [1.94.0](https://github.com/hei-school/hei-admin-api/compare/v1.93.0...v1.94.0) (2025-01-22)
+
+
+### Bug Fixes
+
+* utc when generating datetime  ([8d14d3d](https://github.com/hei-school/hei-admin-api/commit/8d14d3df5f0b18683e8e197caa153708822c0630))
+
+
+### Features
+
+* create event with some days frequence  ([cfdc043](https://github.com/hei-school/hei-admin-api/commit/cfdc043f619cfad7f11a00e76285f7005afa8b16))
+* export students and teachers as xlsx  ([a61ddc5](https://github.com/hei-school/hei-admin-api/commit/a61ddc57d0f8d5060412f5084c4c51571fa3d598))
+
+
+
 # [1.93.0](https://github.com/hei-school/hei-admin-api/compare/v1.92.0...v1.93.0) (2025-01-17)
 
 
@@ -119,19 +134,6 @@
 ### Reverts
 
 * Revert "chore: lower min code coverage(line)" ([8c13767](https://github.com/hei-school/hei-admin-api/commit/8c1376736009c117d09fb558d2ae427348e3b878))
-
-
-
-## [1.83.1](https://github.com/hei-school/hei-admin-api/compare/v1.83.0...v1.83.1) (2024-12-04)
-
-
-### Bug Fixes
-
-* handle null case in role param ([22a9b89](https://github.com/hei-school/hei-admin-api/commit/22a9b89f63b27d4e44fdc918a5b846617f747633))
-* letter stats required param ([05ddfe5](https://github.com/hei-school/hei-admin-api/commit/05ddfe53e701fcd608dd5beb838cc05c44405748))
-* return admin model in admin resources ([838193c](https://github.com/hei-school/hei-admin-api/commit/838193c289d8c73e3045441c1346d2826f4b3ce3))
-* set mpbs creation datetime not null  ([b02447b](https://github.com/hei-school/hei-admin-api/commit/b02447b2e960458df98220dfb52c6c2ccc3c2bd9))
-* upload staff member profile picture ([40e730b](https://github.com/hei-school/hei-admin-api/commit/40e730b17fde513cd8c3d660df1ad02276629867))
 
 
 
