@@ -11,8 +11,8 @@ public class CorsConfigurer implements WebMvcConfigurer {
   private final String casdoorUrl;
 
   public CorsConfigurer(
-          @Value("${casdoor.redirect-url}") String redirectUrl,
-          @Value("${casdoor.endpoint}") String casdoorUrl) {
+      @Value("${casdoor.redirect-url}") String redirectUrl,
+      @Value("${casdoor.endpoint}") String casdoorUrl) {
     this.frontendUrl = parseOrigin(redirectUrl);
     this.casdoorUrl = parseOrigin(casdoorUrl);
   }
@@ -26,9 +26,9 @@ public class CorsConfigurer implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry
-            .addMapping("/**")
-            .allowedMethods("*")
-            .allowedOrigins(frontendUrl, casdoorUrl)
-            .allowCredentials(true);
+        .addMapping("/**")
+        .allowedMethods("*")
+        .allowedOrigins(frontendUrl, casdoorUrl)
+        .allowCredentials(true);
   }
 }

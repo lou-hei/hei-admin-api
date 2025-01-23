@@ -14,12 +14,11 @@
 
 package school.hei.haapi.endpoint.rest.security.casdoorAuthentication.model;
 
+import java.util.Collection;
 import org.casbin.casdoor.entity.CasdoorUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 

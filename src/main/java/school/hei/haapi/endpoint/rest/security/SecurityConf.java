@@ -39,13 +39,13 @@ public class SecurityConf {
   private final AwardedCourseService awardedCourseService;
   private final UserService userService;
 
-  //private final AuthProvider authProvider;
+  // private final AuthProvider authProvider;
   private final AbstractUserDetailsAuthenticationProvider authProvider;
   private final HandlerExceptionResolver exceptionResolver;
 
   public SecurityConf(
-          CasdoorAuthProvider authProvider,
-          //AuthProvider authProvider,
+      CasdoorAuthProvider authProvider,
+      // AuthProvider authProvider,
       // InternalToExternalErrorHandler behind
       @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver,
       AwardedCourseService awardedCourseService,

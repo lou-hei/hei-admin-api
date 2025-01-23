@@ -1,5 +1,6 @@
 package school.hei.haapi.endpoint.rest.security;
 
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.casbin.casdoor.entity.CasdoorUser;
 import org.casbin.casdoor.exception.CasdoorAuthException;
@@ -17,8 +18,6 @@ import school.hei.haapi.endpoint.rest.security.casdoorAuthentication.model.Custo
 import school.hei.haapi.endpoint.rest.security.model.Principal;
 import school.hei.haapi.model.User;
 import school.hei.haapi.service.UserService;
-
-import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor

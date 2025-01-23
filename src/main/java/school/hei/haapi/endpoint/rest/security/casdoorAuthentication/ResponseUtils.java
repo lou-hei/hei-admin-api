@@ -16,12 +16,11 @@ package school.hei.haapi.endpoint.rest.security.casdoorAuthentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import school.hei.haapi.endpoint.rest.security.casdoorAuthentication.model.Result;
-
-import java.io.PrintWriter;
 
 public class ResponseUtils {
 

@@ -21,6 +21,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.casbin.casdoor.entity.CasdoorUser;
 import org.casbin.casdoor.exception.CasdoorAuthException;
@@ -34,8 +35,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import school.hei.haapi.endpoint.rest.security.casdoorAuthentication.model.CustomUserDetails;
-
-import java.io.IOException;
 
 // @Component
 @RequiredArgsConstructor
