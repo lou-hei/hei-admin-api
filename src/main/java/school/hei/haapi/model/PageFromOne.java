@@ -4,7 +4,7 @@ import lombok.Getter;
 import school.hei.haapi.model.exception.BadRequestException;
 
 public class PageFromOne {
-  // TODO: move into a better place with BoundedPageSize and FrequencyNumber
+
   @Getter private final int value;
 
   public PageFromOne(int value) {

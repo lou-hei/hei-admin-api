@@ -1,73 +1,3 @@
-# [1.94.0](https://github.com/hei-school/hei-admin-api/compare/v1.93.0...v1.94.0) (2025-01-22)
-
-
-### Bug Fixes
-
-* utc when generating datetime  ([8d14d3d](https://github.com/hei-school/hei-admin-api/commit/8d14d3df5f0b18683e8e197caa153708822c0630))
-
-
-### Features
-
-* create event with some days frequence  ([cfdc043](https://github.com/hei-school/hei-admin-api/commit/cfdc043f619cfad7f11a00e76285f7005afa8b16))
-* export students and teachers as xlsx  ([a61ddc5](https://github.com/hei-school/hei-admin-api/commit/a61ddc57d0f8d5060412f5084c4c51571fa3d598))
-
-
-
-# [1.93.0](https://github.com/hei-school/hei-admin-api/compare/v1.92.0...v1.93.0) (2025-01-17)
-
-
-### Features
-
-* group has color and mapp group color from event creation  ([55c3634](https://github.com/hei-school/hei-admin-api/commit/55c3634540e78f964760b018847b05db596bc72e))
-
-
-
-# [1.92.0](https://github.com/hei-school/hei-admin-api/compare/v1.91.0...v1.92.0) (2025-01-17)
-
-
-### Features
-
-* **not-implemented:** add event frequency number  ([41fc946](https://github.com/hei-school/hei-admin-api/commit/41fc94674cb01cfe847048e8ee51d096a3b4d5b9))
-
-
-
-# [1.91.0](https://github.com/hei-school/hei-admin-api/compare/v1.90.0...v1.91.0) (2025-01-17)
-
-
-### Features
-
-* deny scholarship certificate on missing nic number  ([43b498b](https://github.com/hei-school/hei-admin-api/commit/43b498b74178e072a90891e45c17f9e90428e256))
-* filter fees by date range ([cc02eaa](https://github.com/hei-school/hei-admin-api/commit/cc02eaabdb3b9b724f8e0c99dab7b24db66f6eb8))
-* **not-implemented:** event has color from event type  ([c46aa49](https://github.com/hei-school/hei-admin-api/commit/c46aa497259d153502bbf7904f31ee77d323d4d5))
-
-
-
-# [1.90.0](https://github.com/hei-school/hei-admin-api/compare/v1.89.0...v1.90.0) (2025-01-16)
-
-
-### Features
-
-* **not-implemented:** attribute an event with a color ([d740ffa](https://github.com/hei-school/hei-admin-api/commit/d740ffa5d0a9eabdac8f5c6969aaf42d84ba23df))
-
-
-
-# [1.89.0](https://github.com/hei-school/hei-admin-api/compare/v1.88.0...v1.89.0) (2025-01-15)
-
-
-### Bug Fixes
-
-* certificate studying year ([516c709](https://github.com/hei-school/hei-admin-api/commit/516c70969878f616dc574e200bd6879b3a2ffc55))
-* crupdateAndLinkMonitor sql exception ([ac8f1a6](https://github.com/hei-school/hei-admin-api/commit/ac8f1a67d64ad72a70b987ab13835d8bb2176501))
-
-
-### Features
-
-* add color code for event attribute  ([0ee30c2](https://github.com/hei-school/hei-admin-api/commit/0ee30c26c637a60943576af2afaf992aae5653f8))
-* attaching monitor to multiple students ([b476b8a](https://github.com/hei-school/hei-admin-api/commit/b476b8a95aa2d403c778fe247b7f32bfe7a3ef90))
-* zip multiple feeReceipts ([3829189](https://github.com/hei-school/hei-admin-api/commit/3829189d41c5b57c7aaf86a29211c051ed741e34))
-
-
-
 # [1.88.0](https://github.com/hei-school/hei-admin-api/compare/v1.87.0...v1.88.0) (2025-01-08)
 
 
@@ -134,6 +64,83 @@
 ### Reverts
 
 * Revert "chore: lower min code coverage(line)" ([8c13767](https://github.com/hei-school/hei-admin-api/commit/8c1376736009c117d09fb558d2ae427348e3b878))
+
+
+
+## [1.83.1](https://github.com/hei-school/hei-admin-api/compare/v1.83.0...v1.83.1) (2024-12-04)
+
+
+### Bug Fixes
+
+* handle null case in role param ([22a9b89](https://github.com/hei-school/hei-admin-api/commit/22a9b89f63b27d4e44fdc918a5b846617f747633))
+* letter stats required param ([05ddfe5](https://github.com/hei-school/hei-admin-api/commit/05ddfe53e701fcd608dd5beb838cc05c44405748))
+* return admin model in admin resources ([838193c](https://github.com/hei-school/hei-admin-api/commit/838193c289d8c73e3045441c1346d2826f4b3ce3))
+* set mpbs creation datetime not null  ([b02447b](https://github.com/hei-school/hei-admin-api/commit/b02447b2e960458df98220dfb52c6c2ccc3c2bd9))
+* upload staff member profile picture ([40e730b](https://github.com/hei-school/hei-admin-api/commit/40e730b17fde513cd8c3d660df1ad02276629867))
+
+
+
+# [1.83.0](https://github.com/hei-school/hei-admin-api/compare/v1.82.0...v1.83.0) (2024-11-28)
+
+
+### Bug Fixes
+
+* handle role param null case in letter endpoint ([62d78a3](https://github.com/hei-school/hei-admin-api/commit/62d78a33aa71b03bf6e98438e16314252b53e6c4))
+
+
+### Features
+
+* letter stats for admin ([6bccb5e](https://github.com/hei-school/hei-admin-api/commit/6bccb5e83617d1ba3f6e897306ad479522c6b866))
+* update staff members access ([2cce4b1](https://github.com/hei-school/hei-admin-api/commit/2cce4b1b48261ab853b00fbb869e091d1af23f40))
+
+
+
+# [1.82.0](https://github.com/hei-school/hei-admin-api/compare/v1.81.0...v1.82.0) (2024-11-27)
+
+
+### Features
+
+* implement staff members resources ([58f8580](https://github.com/hei-school/hei-admin-api/commit/58f85805776877f672bac1c59d888dc0f416381e))
+
+
+
+# [1.81.0](https://github.com/hei-school/hei-admin-api/compare/v1.80.0...v1.81.0) (2024-11-27)
+
+
+### Features
+
+* **not-implemented:** add new attribute to fees statistics  ([cd945d4](https://github.com/hei-school/hei-admin-api/commit/cd945d49277bcc05a632403498a24d3491643e5c))
+
+
+
+# [1.80.0](https://github.com/hei-school/hei-admin-api/compare/v1.79.0...v1.80.0) (2024-11-26)
+
+
+### Bug Fixes
+
+* overpaid fees by mpbs  ([0044dd1](https://github.com/hei-school/hei-admin-api/commit/0044dd1bc8d05d3974d97c71916a0c45f798a966))
+* revert  ([a4e2442](https://github.com/hei-school/hei-admin-api/commit/a4e24424211a888cabd97ce539f116ca90321e30))
+
+
+### Features
+
+* add admin role and update letter access ([17f792f](https://github.com/hei-school/hei-admin-api/commit/17f792f4033517d645659fb4312e43af59fe6400))
+* admin profile ([77c16d7](https://github.com/hei-school/hei-admin-api/commit/77c16d71807d469da531852fb636032c264d27a5))
+* **not-implemented:** staff member resources ([9042dad](https://github.com/hei-school/hei-admin-api/commit/9042dad655d557b214ec041eb1d60718b85c2815))
+
+
+### Reverts
+
+* move student file controller to user file controller ([738c681](https://github.com/hei-school/hei-admin-api/commit/738c681cbe253a64dbeed19ae3f5d9fb96e8949d))
+
+
+
+# [1.79.0](https://github.com/hei-school/hei-admin-api/compare/v1.78.0...v1.79.0) (2024-11-15)
+
+
+### Features
+
+* teachers have their own files ([39e5331](https://github.com/hei-school/hei-admin-api/commit/39e533142be417f05b8d353387b23f0cabd5b43a))
 
 
 

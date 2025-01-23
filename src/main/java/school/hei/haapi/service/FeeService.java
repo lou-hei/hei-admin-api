@@ -51,16 +51,16 @@ public class FeeService {
   private static final String MONTHLY_FEE_TEMPLATE_NAME = "Frais mensuel L1";
   private static final String YEARLY_FEE_TEMPLATE_NAME = "Frais annuel L1";
 
-  public byte[] generateFeesAsXlsx(FeeStatusEnum feeStatus, Instant from, Instant to) {
+  public byte[] generateFeesAsXlsx(FeeStatusEnum feeStatus) {
     XlsxCellsGenerator<Fee> xlsxCellsGenerator = new XlsxCellsGenerator<>();
-    List<Fee> feeList = feeDao.findAllByStatusAndDueDatetimeBetween(feeStatus, from, to);
+    List<Fee> feeList = feeRepository.findAllByStatus(feeStatus);
     return xlsxCellsGenerator.apply(
         feeList,
         List.of(
             "student.ref",
             "student.firstName",
             "student.lastName",
-            "student.email",
+            "type",
             "totalAmount",
             "remainingAmount",
             "comment",

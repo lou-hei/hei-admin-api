@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import school.hei.haapi.endpoint.event.EventProducer;
 import school.hei.haapi.endpoint.event.model.PaidFeeByMpbsFailedNotificationBody;
 import school.hei.haapi.endpoint.event.model.PojaEvent;
@@ -87,31 +90,43 @@ public class MpbsVerificationService {
   }
 
   @Transactional
-  public List<Mpbs> computeFromXls(File file) throws IOException {
+  public List<Mpbs> computeFromXls(MultipartFile file) throws IOException {
     List<String> pspToCheck = generateMobileTransactionDetailsFromXlsFile(file);
 
     List<Mpbs> mpbsToCheck = mpbsRepository.findByPspIdIn(pspToCheck);
 
-    List<Mpbs> mpbsToSave = new ArrayList<>();
+    List<Mpbs> mpbsToReturn = new ArrayList<>();
 
     for (Mpbs mpbs : mpbsToCheck) {
       log.info("mpbs to update = {}", mpbs);
       verifyMobilePaymentAndSaveResult(mpbs, Instant.now());
-      mpbsToSave.add(mpbs);
+      mpbsToReturn.add(mpbs);
     }
-
-    return mpbsToSave;
+    return mpbsToReturn;
   }
 
-  public Workbook generateWorkBook(File file) throws IOException {
+  public Workbook generateWorkBook(MultipartFile multipartFile) throws IOException {
     try {
-      return new HSSFWorkbook(new FileInputStream(file));
+      String fileExtension = fileService.getFileExtension(multipartFile);
+      File file = multipartFileConverter.apply(multipartFile);
+      return switch (fileExtension) {
+        case ".vnd.ms-excel" -> new HSSFWorkbook(new FileInputStream(file));
+        case ".xlsx" -> new XSSFWorkbook(new FileInputStream(file));
+        default -> throw new IllegalStateException("Unexpected value: " + fileExtension);
+      };
     } catch (Exception e) {
       throw new IOException(e);
     }
   }
 
-  public List<String> generateMobileTransactionDetailsFromXlsFile(File file) throws IOException {
+  public static List<String> findCommonStrings(List<String> list1, List<String> list2) {
+    Set<String> set2 = Set.copyOf(list2);
+
+    return list1.stream().filter(set2::contains).distinct().collect(Collectors.toList());
+  }
+
+  public List<String> generateMobileTransactionDetailsFromXlsFile(MultipartFile file)
+      throws IOException {
 
     List<String> pendingMpbsPspIds =
         mpbsRepository.findAllByStatus(PENDING).stream()

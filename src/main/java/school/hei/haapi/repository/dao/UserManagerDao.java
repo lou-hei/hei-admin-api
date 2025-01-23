@@ -144,11 +144,6 @@ public class UserManagerDao {
 
     predicate = builder.and(predicate, hasUserRole, hasUserRef, hasUserLastName);
 
-    if (pageable == null) {
-      query.where(predicate);
-      return entityManager.createQuery(query).getResultList();
-    }
-
     query.where(predicate).orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));
 
     return entityManager

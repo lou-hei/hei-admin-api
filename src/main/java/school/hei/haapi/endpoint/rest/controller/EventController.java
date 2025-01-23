@@ -17,17 +17,11 @@ import school.hei.haapi.endpoint.rest.model.CreateEvent;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.EventType;
-import school.hei.haapi.endpoint.rest.model.FrequencyScopeDay;
-import school.hei.haapi.endpoint.rest.model.Group;
 import school.hei.haapi.endpoint.rest.model.UpdateEventParticipant;
-import school.hei.haapi.endpoint.rest.validator.CreateEventFrequencyValidator;
-import school.hei.haapi.http.model.CreateEventFrequency;
 import school.hei.haapi.model.BoundedPageSize;
-import school.hei.haapi.model.EventFrequencyNumber;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.service.EventParticipantService;
 import school.hei.haapi.service.EventService;
-import school.hei.haapi.service.UserService;
 
 @AllArgsConstructor
 @RestController
@@ -36,28 +30,11 @@ public class EventController {
   private final EventParticipantMapper eventParticipantMapper;
   private final EventService eventService;
   private final EventParticipantService eventParticipantService;
-  private final UserService userService;
-  private final CreateEventFrequencyValidator eventFrequencyValidator;
 
   @PutMapping("/events")
-  public List<Event> crupdateEvents(
-      @RequestBody List<CreateEvent> eventsToSave,
-      @RequestParam(name = "frequency_day", required = false) FrequencyScopeDay frequencyScopeDay,
-      @RequestParam(name = "frequency_number", required = false)
-          EventFrequencyNumber eventFrequencyNumber,
-      @RequestParam(name = "frequency_beginning_hour", required = false)
-          String frequencyBeginningHour,
-      @RequestParam(name = "frequency_ending_hour", required = false) String frequencyEndingHour) {
-    CreateEventFrequency evenFrequency =
-        CreateEventFrequency.builder()
-            .frequencyScopeDay(frequencyScopeDay)
-            .eventFrequencyNumber(eventFrequencyNumber)
-            .frequencyBeginningHour(frequencyBeginningHour)
-            .frequencyEndingHour(frequencyEndingHour)
-            .build();
-    eventFrequencyValidator.accept(evenFrequency);
+  public List<Event> crupdateEvents(@RequestBody List<CreateEvent> eventsToSave) {
     return eventService
-        .createOrUpdateEvent(eventsToSave.stream().map(mapper::toDomain).toList(), evenFrequency)
+        .createOrUpdateEvent(eventsToSave.stream().map(mapper::toDomain).toList())
         .stream()
         .map(mapper::toRest)
         .collect(toUnmodifiableList());
@@ -68,11 +45,10 @@ public class EventController {
       @RequestParam(name = "page") PageFromOne page,
       @RequestParam(name = "page_size") BoundedPageSize pageSize,
       @RequestParam(name = "event_type", required = false) EventType eventType,
-      @RequestParam(name = "group", required = false) Group group,
       @RequestParam(required = false) String title,
       @RequestParam(required = false) Instant from,
       @RequestParam(required = false) Instant to) {
-    return eventService.getEvents(from, to, title, eventType, group, page, pageSize).stream()
+    return eventService.getEvents(from, to, title, eventType, page, pageSize).stream()
         .map(mapper::toRest)
         .collect(toUnmodifiableList());
   }
@@ -105,11 +81,5 @@ public class EventController {
         .stream()
         .map(eventParticipantMapper::toRest)
         .collect(toUnmodifiableList());
-  }
-
-  @GetMapping(value = "/event/{event_id}/students/raw/xlsx", produces = "application/vnd.ms-excel")
-  public byte[] generateEventStudentsParticipantInXlsx(
-      @PathVariable(name = "event_id") String eventId) {
-    return userService.generateStudentsInEventXlsx(eventId);
   }
 }
