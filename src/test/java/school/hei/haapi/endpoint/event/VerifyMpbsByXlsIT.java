@@ -27,8 +27,7 @@ import school.hei.haapi.service.event.VerifyMpbsByXlsEventService;
 @AutoConfigureMockMvc
 public class VerifyMpbsByXlsIT extends FacadeITMockedThirdParties {
 
-  @Autowired
-  VerifyMpbsByXlsEventService verifyMpbsByXlsEventService;
+  @Autowired VerifyMpbsByXlsEventService verifyMpbsByXlsEventService;
   @Autowired MpbsController mpbsController;
 
   @MockBean Mailer mailerMock;
