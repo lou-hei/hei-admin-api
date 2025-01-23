@@ -55,6 +55,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import org.apache.commons.io.FileUtils;
+import org.casbin.casdoor.entity.CasdoorRole;
+import org.casbin.casdoor.entity.CasdoorUser;
+import org.casbin.casdoor.service.CasdoorAuthService;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -210,6 +213,54 @@ public class TestUtils {
   public static final String ORGANIZER2_ID = "organizer2_id";
   public static final String ORGANIZER1_TOKEN = "organizer1_token";
   public static final String ORGANIZER2_TOKEN = "organizer2_token";
+
+  public static CasdoorUser getCasdoorUserStudent1() {
+    CasdoorUser user = new CasdoorUser();
+    user.setEmail("test+ryan@hei.school");
+
+    CasdoorRole casdoorRole = new CasdoorRole();
+    casdoorRole.setOwner("dummy");
+    casdoorRole.setName("student");
+    String[] roleUsers = List.of("dummy/user").toArray(new String[0]);
+    casdoorRole.setUsers(roleUsers);
+    user.setRoles(List.of(casdoorRole));
+
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserTeacher1() {
+    CasdoorUser user = new CasdoorUser();
+    user.setEmail("test+teacher1@hei.school");
+
+    CasdoorRole casdoorRole = new CasdoorRole();
+    casdoorRole.setOwner("dummy");
+    casdoorRole.setName("teacher");
+    String[] roleUsers = List.of("dummy/user").toArray(new String[0]);
+    casdoorRole.setUsers(roleUsers);
+    user.setRoles(List.of(casdoorRole));
+
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserManager1() {
+    CasdoorUser user = new CasdoorUser();
+    user.setEmail("test+manager1@hei.school");
+
+    CasdoorRole casdoorRole = new CasdoorRole();
+    casdoorRole.setOwner("dummy");
+    casdoorRole.setName("manager");
+    String[] roleUsers = List.of("dummy/user").toArray(new String[0]);
+    casdoorRole.setUsers(roleUsers);
+    user.setRoles(List.of(casdoorRole));
+
+    return user;
+  }
+
+  public static void setUpCasdoor(CasdoorAuthService casdoorAuthService) {
+    when(casdoorAuthService.parseJwtToken(STUDENT1_TOKEN)).thenReturn(getCasdoorUserStudent1());
+    when(casdoorAuthService.parseJwtToken(TEACHER1_TOKEN)).thenReturn(getCasdoorUserTeacher1());
+    when(casdoorAuthService.parseJwtToken(MANAGER1_TOKEN)).thenReturn(getCasdoorUserManager1());
+  }
 
   public static ApiClient anApiClient(String token, int serverPort) {
     ApiClient client = new ApiClient();

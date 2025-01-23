@@ -1,5 +1,6 @@
 package school.hei.haapi.integration.conf;
 
+import org.casbin.casdoor.service.CasdoorAuthService;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -16,4 +17,5 @@ public class FacadeITMockedThirdParties extends FacadeIT {
   @MockBean protected SentryConf sentryConf;
   @MockBean protected CognitoComponent cognitoComponentMock;
   @MockBean protected FileService fileService;
+  @MockBean protected CasdoorAuthService casdoorAuthServiceMock;
 }
