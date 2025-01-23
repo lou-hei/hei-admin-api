@@ -2,12 +2,11 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
-import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,13 +87,9 @@ public class FeeController {
   }
 
   @GetMapping(value = "/fees/raw", produces = "application/vnd.ms-excel")
-  public byte[] generateFeesListAsXlsx(
-      @RequestParam(name = "status", required = false) FeeStatusEnum status,
-      @RequestParam(name = "from_due_datetime", required = false) @DateTimeFormat(iso = DATE_TIME)
-          Instant from,
-      @RequestParam(name = "to_due_datetime", required = false) @DateTimeFormat(iso = DATE_TIME)
-          Instant to) {
-    return feeService.generateFeesAsXlsx(status, from, to);
+  public byte[] generateFeesListAsXlsx(@RequestParam(name = "status") FeeStatusEnum status)
+      throws IOException {
+    return feeService.generateFeesAsXlsx(status);
   }
 
   @GetMapping("/fees")

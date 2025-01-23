@@ -1,1 +1,0 @@
-alter type "event_type" add value 'EXAM';

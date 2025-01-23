@@ -2,7 +2,7 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
-import java.time.Instant;
+import java.io.IOException;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,14 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import school.hei.haapi.endpoint.event.EventProducer;
-import school.hei.haapi.endpoint.event.model.VerifyMpbsByXlsEvent;
 import school.hei.haapi.endpoint.rest.mapper.MpbsMapper;
 import school.hei.haapi.endpoint.rest.model.CrupdateMpbs;
 import school.hei.haapi.endpoint.rest.model.Mpbs;
 import school.hei.haapi.endpoint.rest.validator.CreateMpbsValidator;
 import school.hei.haapi.service.MpbsService;
-import school.hei.haapi.service.MultipartFileConverter;
+import school.hei.haapi.service.MpbsVerificationService;
 
 @RestController
 @AllArgsConstructor
@@ -28,8 +26,7 @@ public class MpbsController {
   private final CreateMpbsValidator validator;
   private final MpbsService mpbsService;
   private final MpbsMapper mapper;
-  private final MultipartFileConverter multipartFileConverter;
-  private final EventProducer eventProducer;
+  private final MpbsVerificationService mpbsVerificationService;
 
   @PutMapping(value = "/students/{student_id}/fees/{fee_id}/mpbs")
   public Mpbs crupdateMpbs(
@@ -49,13 +46,8 @@ public class MpbsController {
   }
 
   @PostMapping(value = "/mpbs/verify", consumes = MULTIPART_FORM_DATA_VALUE)
-  public List<Mpbs> verifyMpbs(@RequestPart(name = "file_to_upload") MultipartFile file) {
-    eventProducer.accept(
-        List.of(
-            VerifyMpbsByXlsEvent.builder()
-                .file(multipartFileConverter.apply(file))
-                .verificationInstant(Instant.now())
-                .build()));
-    return List.of();
+  public List<Mpbs> verifyMpbs(@RequestPart(name = "file_to_upload") MultipartFile file)
+      throws IOException {
+    return mpbsVerificationService.computeFromXls(file).stream().map(mapper::toRest).toList();
   }
 }

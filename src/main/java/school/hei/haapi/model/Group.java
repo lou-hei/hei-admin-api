@@ -37,7 +37,6 @@ public class Group implements Serializable {
 
   private String name;
   private String ref;
-  private String attributedColor;
 
   @CreationTimestamp private Instant creationDatetime;
 

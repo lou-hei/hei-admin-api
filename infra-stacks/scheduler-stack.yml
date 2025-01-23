@@ -134,22 +134,6 @@ Resources:
         EventBridgeParameters:
           DetailType: 'school.hei.haapi.endpoint.event.model.SuspendStudentsWithOverdueFees'
           Source: 'school.hei.haapi.event1'
-  CheckMissingEventParticipantsScheduler:
-    Type: AWS::Scheduler::Schedule
-    Properties:
-      Description: Scheduler that trigger CheckMissedEventService for mailing missing EventParticipants to an event
-      FlexibleTimeWindow:
-        Mode: "OFF"
-      Name: !Join [ '', [ !Ref Env, -CheckMissingEventParticipantsScheduler ] ]
-      ScheduleExpression: "cron(0 21 * * ? *)"
-      Target:
-        Arn: !Sub '{{resolve:ssm:/haapi/${Env}/eventbridge/bus-arn}}'
-        RoleArn: !GetAtt ScheduledEventExecutionRole.Arn
-        DeadLetterConfig:
-          Arn: !Sub '{{resolve:ssm:/haapi/${Env}/1/sqs/dead-letter-queue-arn}}'
-        EventBridgeParameters:
-          DetailType: 'school.hei.haapi.endpoint.event.model.CheckParticipantMissedEventServiceTriggered'
-          Source: 'school.hei.haapi.event1'
   ScheduledEventExecutionRole:
     Type: AWS::IAM::Role
     Properties:

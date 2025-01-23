@@ -17,7 +17,6 @@ public class GroupMapper {
         .name(group.getName())
         .ref(group.getRef())
         .size(groupService.getGroupSize(group.getId()))
-        .attributedColor(group.getAttributedColor())
         .creationDatetime(group.getCreationDatetime());
   }
 
@@ -26,7 +25,6 @@ public class GroupMapper {
         .id(restGroup.getId())
         .name(restGroup.getName())
         .ref(restGroup.getRef())
-        .attributedColor(restGroup.getAttributedColor())
         .creationDatetime(restGroup.getCreationDatetime())
         .build();
   }
@@ -37,7 +35,6 @@ public class GroupMapper {
             .id(restGroup.getId())
             .name(restGroup.getName())
             .ref(restGroup.getRef())
-            .attributedColor(restGroup.getAttributedColor())
             .creationDatetime(restGroup.getCreationDatetime())
             .build();
     return school
@@ -53,10 +50,6 @@ public class GroupMapper {
   }
 
   public GroupIdentifier toRestGroupIdentifier(school.hei.haapi.model.Group domain) {
-    return new GroupIdentifier()
-        .id(domain.getId())
-        .name(domain.getName())
-        .ref(domain.getRef())
-        .attributedColor(domain.getAttributedColor());
+    return new GroupIdentifier().id(domain.getId()).name(domain.getName()).ref(domain.getRef());
   }
 }

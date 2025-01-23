@@ -13,8 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import school.hei.haapi.endpoint.event.EventProducer;
-import school.hei.haapi.endpoint.event.model.MissedEventEmail;
 import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.Event;
@@ -24,7 +22,6 @@ import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.repository.EventParticipantRepository;
-import school.hei.haapi.repository.dao.EventDao;
 
 @Service
 @AllArgsConstructor
@@ -32,9 +29,7 @@ public class EventParticipantService {
 
   private final EventParticipantRepository eventParticipantRepository;
   private final UserService userService;
-  private final EventProducer<MissedEventEmail> eventProducer;
   private final GroupService groupService;
-  private final EventDao eventDao;
 
   public List<EventParticipant> getEventParticipants(
       String eventId, PageFromOne page, BoundedPageSize pageSize, String groupRef) {
@@ -48,6 +43,11 @@ public class EventParticipantService {
   }
 
   public List<EventParticipant> updateEventParticipants(List<EventParticipant> eventParticipants) {
+
+    eventParticipants.forEach(
+        (eventParticipant -> {
+          eventParticipant.setStatus(eventParticipant.getStatus());
+        }));
     return eventParticipantRepository.saveAll(eventParticipants);
   }
 
@@ -65,7 +65,7 @@ public class EventParticipantService {
                   .group(actualGroup)
                   .build());
         });
-    eventParticipantRepository.saveAll(eventParticipants);
+    updateEventParticipants(eventParticipants);
   }
 
   public EventParticipant findById(String id) {

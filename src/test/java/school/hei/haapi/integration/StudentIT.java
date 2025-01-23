@@ -24,11 +24,9 @@ import static school.hei.haapi.endpoint.rest.model.WorkStudyStatus.NOT_WORKING;
 import static school.hei.haapi.endpoint.rest.model.WorkStudyStatus.WORKING;
 import static school.hei.haapi.integration.GroupIT.updatedGroup3;
 import static school.hei.haapi.integration.GroupIT.updatedGroup5;
-import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.GROUP1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_TOKEN;
-import static school.hei.haapi.integration.conf.TestUtils.PROMOTION1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT2_ID;
@@ -44,7 +42,6 @@ import static school.hei.haapi.integration.conf.TestUtils.getMockedFile;
 import static school.hei.haapi.integration.conf.TestUtils.group1;
 import static school.hei.haapi.integration.conf.TestUtils.group2;
 import static school.hei.haapi.integration.conf.TestUtils.group3;
-import static school.hei.haapi.integration.conf.TestUtils.requestFile;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
@@ -397,41 +394,6 @@ public class StudentIT extends FacadeITMockedThirdParties {
                 .header("Authorization", "Bearer " + MANAGER1_TOKEN)
                 .build(),
             HttpResponse.BodyHandlers.ofByteArray());
-
-    assertEquals(HttpStatus.OK.value(), response.statusCode());
-    assertNotNull(response.body());
-    assertNotNull(response);
-  }
-
-  @Test
-  void manager_generate_event_participants_ok() throws IOException, InterruptedException {
-    String basePath = "http://localhost:" + localPort;
-    var response =
-        requestFile(
-            URI.create(basePath + "/event/" + EVENT1_ID + "/students/raw/xlsx"), MANAGER1_TOKEN);
-
-    assertEquals(HttpStatus.OK.value(), response.statusCode());
-    assertNotNull(response.body());
-    assertNotNull(response);
-  }
-
-  @Test
-  void manager_generate_student_in_promotion_ok() throws IOException, InterruptedException {
-    String basePath = "http://localhost:" + localPort;
-    var response =
-        requestFile(
-            URI.create(basePath + "/promotion/" + PROMOTION1_ID + "/students/raw/xlsx"),
-            MANAGER1_TOKEN);
-
-    assertEquals(HttpStatus.OK.value(), response.statusCode());
-    assertNotNull(response.body());
-    assertNotNull(response);
-  }
-
-  @Test
-  void manager_generate_all_student_ok() throws IOException, InterruptedException {
-    String basePath = "http://localhost:" + localPort;
-    var response = requestFile(URI.create(basePath + "/students/raw/xlsx"), MANAGER1_TOKEN);
 
     assertEquals(HttpStatus.OK.value(), response.statusCode());
     assertNotNull(response.body());

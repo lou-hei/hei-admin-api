@@ -16,12 +16,11 @@ import school.hei.haapi.endpoint.rest.model.UpdatePromotionSGroup;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.service.PromotionService;
-import school.hei.haapi.service.UserService;
 
 @AllArgsConstructor
 @RestController
 public class PromotionController {
-  private final UserService userService;
+
   private final PromotionService promotionService;
   private final PromotionMapper promotionMapper;
 
@@ -58,13 +57,5 @@ public class PromotionController {
   public Promotion updatePromotionSGroup(
       @PathVariable String id, @RequestBody UpdatePromotionSGroup updatePromotionSGroup) {
     return promotionMapper.toRest(promotionService.updateGroups(id, updatePromotionSGroup));
-  }
-
-  @GetMapping(
-      value = "/promotion/{promotion_id}/students/raw/xlsx",
-      produces = "application/vnd.ms-excel")
-  public byte[] generateStudentsPromotionInXlsx(
-      @PathVariable(name = "promotion_id") String promotionId) {
-    return userService.generateStudentsInPromotionXlsx(promotionId);
   }
 }

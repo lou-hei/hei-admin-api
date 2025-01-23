@@ -87,9 +87,4 @@ public class TeacherController {
     userService.uploadUserProfilePicture(profilePictureAsMultipartFile, id);
     return userMapper.toRestTeacher(userService.findById(id));
   }
-
-  @GetMapping(value = "/teachers/raw", produces = "application/vnd.ms-excel")
-  public byte[] generateTeachersInXlsx() {
-    return userService.generateTeachersXlsx();
-  }
 }

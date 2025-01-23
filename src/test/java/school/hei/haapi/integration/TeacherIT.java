@@ -1,7 +1,6 @@
 package school.hei.haapi.integration;
 
 import static java.util.UUID.randomUUID;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,9 +30,6 @@ import static school.hei.haapi.integration.conf.TestUtils.uploadProfilePicture;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -45,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.UsersApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
@@ -276,43 +271,6 @@ class TeacherIT extends FacadeITMockedThirdParties {
     List<Teacher> actualTeachers =
         api.getTeachers(1, 10, null, null, null, EnableStatus.DISABLED, Sex.F);
     assertEquals(1, actualTeachers.size());
-  }
-
-  @Test
-  void generate_all_teacher_as_xlsx() throws IOException, InterruptedException {
-    HttpClient httpClient = HttpClient.newBuilder().build();
-    String basePath = "http://localhost:" + localPort;
-
-    HttpResponse<byte[]> response =
-        httpClient.send(
-            HttpRequest.newBuilder()
-                .uri(URI.create(basePath + "/teachers/raw"))
-                .GET()
-                .header("Authorization", "Bearer " + MANAGER1_TOKEN)
-                .build(),
-            HttpResponse.BodyHandlers.ofByteArray());
-
-    assertEquals(HttpStatus.OK.value(), response.statusCode());
-    assertNotNull(response.body());
-    assertNotNull(response);
-  }
-
-  @Test
-  void student_not_authorized_to_generate_all_teacher_as_xlsx()
-      throws IOException, InterruptedException {
-    HttpClient httpClient = HttpClient.newBuilder().build();
-    String basePath = "http://localhost:" + localPort;
-
-    HttpResponse<byte[]> response =
-        httpClient.send(
-            HttpRequest.newBuilder()
-                .uri(URI.create(basePath + "/teachers/raw"))
-                .GET()
-                .header("Authorization", "Bearer " + STUDENT1_TOKEN)
-                .build(),
-            HttpResponse.BodyHandlers.ofByteArray());
-
-    assertEquals(HttpStatus.FORBIDDEN.value(), response.statusCode());
   }
 
   private static Teacher expectedCreatedTeacher() {
