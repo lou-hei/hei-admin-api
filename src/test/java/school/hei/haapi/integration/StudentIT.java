@@ -45,6 +45,7 @@ import static school.hei.haapi.integration.conf.TestUtils.group1;
 import static school.hei.haapi.integration.conf.TestUtils.group2;
 import static school.hei.haapi.integration.conf.TestUtils.group3;
 import static school.hei.haapi.integration.conf.TestUtils.requestFile;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCasdoor;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
@@ -378,6 +379,7 @@ public class StudentIT extends FacadeITMockedThirdParties {
 
   @BeforeEach
   public void setUp() {
+    setUpCasdoor(casdoorAuthServiceMock);
     setUpCognito(cognitoComponentMock);
     setUpEventBridge(eventBridgeClientMock);
     setUpS3Service(fileService, student1());

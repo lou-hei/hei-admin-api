@@ -20,6 +20,7 @@ import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenE
 import static school.hei.haapi.integration.conf.TestUtils.coordinatesWithNullValues;
 import static school.hei.haapi.integration.conf.TestUtils.coordinatesWithValues;
 import static school.hei.haapi.integration.conf.TestUtils.isValidUUID;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCasdoor;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
@@ -72,6 +73,7 @@ class TeacherIT extends FacadeITMockedThirdParties {
 
   @BeforeEach
   public void setUp() {
+    setUpCasdoor(casdoorAuthServiceMock);
     setUpCognito(cognitoComponentMock);
     setUpEventBridge(eventBridgeClientMock);
     setUpS3Service(fileService, teacher1());
