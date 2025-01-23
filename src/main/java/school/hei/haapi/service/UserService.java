@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static school.hei.haapi.endpoint.rest.model.WorkStudyStatus.*;
 import static school.hei.haapi.model.User.Role.STUDENT;
+import static school.hei.haapi.model.User.Role.TEACHER;
 import static school.hei.haapi.model.User.Sex.F;
 import static school.hei.haapi.model.User.Sex.M;
 import static school.hei.haapi.model.User.Status.DISABLED;
@@ -31,11 +32,15 @@ import school.hei.haapi.endpoint.event.EventProducer;
 import school.hei.haapi.endpoint.event.model.UserUpserted;
 import school.hei.haapi.endpoint.rest.model.*;
 import school.hei.haapi.model.BoundedPageSize;
+import school.hei.haapi.model.EventParticipant;
 import school.hei.haapi.model.PageFromOne;
+import school.hei.haapi.model.Promotion;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.model.validator.UserValidator;
+import school.hei.haapi.repository.EventParticipantRepository;
 import school.hei.haapi.repository.GroupRepository;
+import school.hei.haapi.repository.PromotionRepository;
 import school.hei.haapi.repository.UserRepository;
 import school.hei.haapi.repository.dao.UserManagerDao;
 import school.hei.haapi.service.aws.FileService;
@@ -52,8 +57,12 @@ public class UserService {
   private final FileService fileService;
   private final MultipartFileConverter fileConverter;
   private final GroupRepository groupRepository;
+  private final PromotionRepository promotionRepository;
   private final MonitoringStudentService monitoringStudentService;
   private final FeeService feeService;
+  private final EventParticipantRepository eventParticipantRepository;
+  private final XlsxCellsGenerator<User> userXlsxCellsGenerator;
+  private final XlsxCellsGenerator<EventParticipant> eventParticipantXlsxCellsGenerator;
 
   public void uploadUserProfilePicture(MultipartFile profilePictureAsMultipartFile, String userId) {
     User user = findById(userId);
@@ -256,9 +265,13 @@ public class UserService {
   }
 
   public byte[] generateStudentsGroup(String groupId) {
-    XlsxCellsGenerator<User> xlsxCellsGenerator = new XlsxCellsGenerator<>();
     List<User> studentsGroup = getByGroupId(groupId);
-    return xlsxCellsGenerator.apply(studentsGroup, List.of("ref", "firstName", "lastName"));
+    return userXlsxCellsGenerator.apply(studentsGroup, List.of("ref", "firstName", "lastName"));
+  }
+
+  public byte[] generateTeachersXlsx() {
+    List<User> teachers = userRepository.findAllByRoleAndStatus(TEACHER, ENABLED);
+    return userXlsxCellsGenerator.apply(teachers, List.of("firstName", "lastName", "email", "sex"));
   }
 
   public List<User> getByGroupIdWithFilter(
@@ -321,5 +334,61 @@ public class UserService {
 
   public List<User> getStudentsWithUnpaidOrLateFee() {
     return userRepository.getStudentsWithUnpaidOrLateFee();
+  }
+
+  public byte[] generateStudentsInEventXlsx(String eventId) {
+    List<EventParticipant> students =
+        eventParticipantRepository
+            .findAllByEventId(eventId, null)
+            .orElseThrow(
+                () -> new NotFoundException("Event with id #" + eventId + " does not exist"));
+    return eventParticipantXlsxCellsGenerator.apply(
+        students,
+        List.of(
+            "participant.firstName",
+            "participant.lastName",
+            "status",
+            "participant.email",
+            "participant.sex"));
+  }
+
+  public byte[] generateStudentsInPromotionXlsx(String promotionId) {
+    Promotion promotion =
+        promotionRepository
+            .findById(promotionId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException("Promotion with id #" + promotionId + " does not exist"));
+    List<User> students = new ArrayList<>();
+    promotion
+        .getGroups()
+        .forEach(
+            group -> {
+              students.addAll(getByGroupId(group.getId()));
+            });
+    return userXlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
+  }
+
+  public byte[] generateAllStudentsAsXlsx(
+      String courseId,
+      User.Status status,
+      User.Sex sex,
+      WorkStudyStatus workStatus,
+      List<String> excludeGroupIds) {
+    List<User> students =
+        userManagerDao.findByCriteria(
+            STUDENT,
+            null,
+            null,
+            null,
+            null,
+            status,
+            sex,
+            workStatus,
+            null,
+            courseId,
+            Instant.now(),
+            excludeGroupIds);
+    return userXlsxCellsGenerator.apply(students, List.of("firstName", "lastName", "email", "sex"));
   }
 }
