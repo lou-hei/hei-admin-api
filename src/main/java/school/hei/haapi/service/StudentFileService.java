@@ -112,7 +112,7 @@ public class StudentFileService {
     return fileInfoRepository.getByUserIdAndId(userId, id);
   }
 
-  public byte[] generatePdf(String studentId, String template) {
+  public byte[] generateScholarshipCertificate(String studentId, String template) {
     Context context = loadContext(studentId);
     String html = htmlParser.apply(template, context);
     return pdfRenderer.apply(html);

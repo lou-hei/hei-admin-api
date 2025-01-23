@@ -4,11 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.EventType.COURSE;
+import static school.hei.haapi.endpoint.rest.model.FrequencyScopeDay.MONDAY;
+import static school.hei.haapi.endpoint.rest.model.FrequencyScopeDay.WEDNESDAY;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT2_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.assertThrowsApiException;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
 import static school.hei.haapi.integration.conf.TestUtils.createEventCourse1;
 import static school.hei.haapi.integration.conf.TestUtils.createIntegrationEvent;
@@ -57,12 +60,57 @@ public class EventIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  void attempt_to_create_a_frequency_with_missing_data_ko() throws Exception {
+    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
+    EventsApi api = new EventsApi(apiClient);
+
+    assertThrowsApiException(
+        "{\"type\":\"400 BAD_REQUEST\",\"message\":\"Frequency cannot be created without number"
+            + " of\"}",
+        () ->
+            api.crupdateEvents(
+                List.of(createEventCourse1(), createIntegrationEvent()),
+                MONDAY,
+                null,
+                "09:00",
+                "12:00"));
+  }
+
+  @Test
+  void attempt_to_create_a_frequency_with_invalid_hour_ko() throws Exception {
+    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
+    EventsApi api = new EventsApi(apiClient);
+
+    assertThrowsApiException(
+        "{\"type\":\"400 BAD_REQUEST\",\"message\":\"Hour must be of format HH:MM\"}",
+        () ->
+            api.crupdateEvents(
+                List.of(createEventCourse1(), createIntegrationEvent()),
+                MONDAY,
+                2,
+                "9:00",
+                "12:00"));
+  }
+
+  @Test
+  void manager_create_event_and_event_participant_by_frequence_ok() throws ApiException {
+    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
+    EventsApi api = new EventsApi(apiClient);
+
+    List<Event> actual =
+        api.crupdateEvents(List.of(createEventCourse1()), WEDNESDAY, 3, "08:30", "12:00");
+
+    assertEquals(4, actual.size());
+  }
+
+  @Test
   void manager_create_event_and_event_participant_ok() throws ApiException {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
 
     List<Event> actual =
-        api.crupdateEvents(List.of(createEventCourse1(), createIntegrationEvent()));
+        api.crupdateEvents(
+            List.of(createEventCourse1(), createIntegrationEvent()), null, null, null, null);
 
     Event event = actual.getFirst();
     assertEquals(expectedCourseEventCreated().getType(), event.getType());
@@ -85,12 +133,13 @@ public class EventIT extends FacadeITMockedThirdParties {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
 
-    List<Event> actual = api.getEvents(1, 15, null, null, null, null);
+    List<Event> actual = api.getEvents(1, 15, null, null, null, null, null);
 
+    System.out.println(actual);
     assertTrue(actual.containsAll(List.of(event1(), event2(), event3())));
 
     List<Event> eventsBeginAfterAnInstant =
-        api.getEvents(1, 15, Instant.parse("2022-12-15T10:00:00.00Z"), null, null, null);
+        api.getEvents(1, 15, Instant.parse("2022-12-15T10:00:00.00Z"), null, null, null, null);
 
     assertTrue(eventsBeginAfterAnInstant.contains(event1()));
     assertFalse(eventsBeginAfterAnInstant.contains(event2()));
@@ -102,23 +151,24 @@ public class EventIT extends FacadeITMockedThirdParties {
             Instant.parse("2022-12-07T08:00:00.00Z"),
             Instant.parse("2022-12-10T08:00:00.00Z"),
             null,
+            null,
             null);
 
     assertTrue(eventsBeginBetweenTwoInstant.containsAll(List.of(event2(), event3())));
     assertFalse(eventsBeginBetweenTwoInstant.contains(event1()));
 
     List<Event> eventsBeginBeforeAnInstant =
-        api.getEvents(1, 15, null, Instant.parse("2022-12-08T08:00:00.00Z"), null, null);
+        api.getEvents(1, 15, null, Instant.parse("2022-12-08T08:00:00.00Z"), null, null, null);
 
     assertTrue(eventsBeginBeforeAnInstant.contains(event2()));
     assertFalse(eventsBeginBeforeAnInstant.containsAll(List.of(event1(), event3())));
 
-    List<Event> eventsFilterByType = api.getEvents(1, 15, null, null, COURSE, null);
+    List<Event> eventsFilterByType = api.getEvents(1, 15, null, null, COURSE, null, null);
     assertTrue(eventsFilterByType.contains(event1()));
     assertFalse(eventsFilterByType.contains(event3()));
     assertFalse(eventsFilterByType.contains(event2()));
 
-    List<Event> eventsFilterByTitle = api.getEvents(1, 15, null, null, null, "PROG1");
+    List<Event> eventsFilterByTitle = api.getEvents(1, 15, null, null, null, "PROG1", null);
     assertTrue(eventsFilterByTitle.contains(event1()));
     assertFalse(eventsFilterByTitle.contains(event3()));
     assertFalse(eventsFilterByTitle.contains(event2()));
@@ -163,7 +213,8 @@ public class EventIT extends FacadeITMockedThirdParties {
     ApiClient apiClient = anApiClient(STUDENT1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
 
-    assertThrowsForbiddenException(() -> api.crupdateEvents(List.of(createEventCourse1())));
+    assertThrowsForbiddenException(
+        () -> api.crupdateEvents(List.of(createEventCourse1()), null, null, null, null));
     assertThrowsForbiddenException(
         () -> api.updateEventParticipantsStatus(EVENT1_ID, List.of(new UpdateEventParticipant())));
   }
