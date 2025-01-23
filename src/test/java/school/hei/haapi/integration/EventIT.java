@@ -218,4 +218,21 @@ public class EventIT extends FacadeITMockedThirdParties {
     assertThrowsForbiddenException(
         () -> api.updateEventParticipantsStatus(EVENT1_ID, List.of(new UpdateEventParticipant())));
   }
+
+  @Test
+  void delete_event_student_ko_and_manager_ko() throws ApiException {
+    EventsApi studentApi = new EventsApi(anApiClient(STUDENT1_TOKEN));
+    EventsApi managerApi = new EventsApi(anApiClient(MANAGER1_TOKEN));
+    /*
+    List<Event> events = managerApi.crupdateEvents(List.of(someCreatableEventByManager1(INTEGRATION)),
+            MONDAY,
+            1,
+            "09:00",
+            "12:00");
+
+    assertThrowsForbiddenException(()-> studentApi.deleteEventById(events.getFirst().getId()));*/
+
+    Event deletedEvent = managerApi.deleteEventById(EVENT1_ID);
+    assertEquals(EVENT1_ID, deletedEvent.getId());
+  }
 }
