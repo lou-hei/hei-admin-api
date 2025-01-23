@@ -21,7 +21,7 @@ import school.hei.haapi.service.MpbsVerificationService;
 @AllArgsConstructor
 @Service
 @Slf4j
-public class VerifyMpbsViaXlsService implements Consumer<VerifyMpbsByXlsEvent> {
+public class VerifyMpbsByXlsEventService implements Consumer<VerifyMpbsByXlsEvent> {
   private final Mailer mailer;
   private final MpbsVerificationService mpbsVerificationService;
 

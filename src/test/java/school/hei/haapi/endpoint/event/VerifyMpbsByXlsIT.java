@@ -21,13 +21,14 @@ import school.hei.haapi.endpoint.event.model.VerifyMpbsByXlsEvent;
 import school.hei.haapi.endpoint.rest.controller.MpbsController;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.mail.Mailer;
-import school.hei.haapi.service.event.VerifyMpbsViaXlsService;
+import school.hei.haapi.service.event.VerifyMpbsByXlsEventService;
 
 @Testcontainers
 @AutoConfigureMockMvc
 public class VerifyMpbsByXlsIT extends FacadeITMockedThirdParties {
 
-  @Autowired VerifyMpbsViaXlsService verifyMpbsViaXlsService;
+  @Autowired
+  VerifyMpbsByXlsEventService verifyMpbsByXlsEventService;
   @Autowired MpbsController mpbsController;
 
   @MockBean Mailer mailerMock;
@@ -57,7 +58,7 @@ public class VerifyMpbsByXlsIT extends FacadeITMockedThirdParties {
   @Test
   @Disabled
   void should_invoke_mailer() {
-    verifyMpbsViaXlsService.accept(verifyMpbsByXlsEvent());
+    verifyMpbsByXlsEventService.accept(verifyMpbsByXlsEvent());
 
     verify(mailerMock, times(1)).accept(any());
   }
