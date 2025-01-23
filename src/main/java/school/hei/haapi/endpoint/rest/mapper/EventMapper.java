@@ -79,7 +79,8 @@ public class EventMapper {
     GroupIdentifier gi =
         optionalGi.orElseThrow(
             () -> new NotFoundException("group with id " + groupId + " not found"));
-    group.setAttributedColor(gi.getAttributedColor());
+    // TODO: reuse it when the front finalize to implement this part
+    // group.setAttributedColor(gi.getAttributedColor());
     return group;
   }
 }
