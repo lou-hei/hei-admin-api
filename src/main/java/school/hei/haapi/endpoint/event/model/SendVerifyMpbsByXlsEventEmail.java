@@ -14,20 +14,20 @@ import lombok.ToString;
 @Builder
 @Getter
 @ToString
-public class VerifyMpbsByXlsEvent extends PojaEvent {
+public class SendVerifyMpbsByXlsEventEmail extends PojaEvent {
   @Override
   public Duration maxConsumerDuration() {
-    return Duration.ofMinutes(10);
+    return Duration.ofSeconds(60);
   }
 
   @Override
   public Duration maxConsumerBackoffBetweenRetries() {
-    return Duration.ofSeconds(100);
+    return Duration.ofSeconds(60);
   }
-
-  @JsonProperty("fileKey")
-  private String fileKey;
 
   @JsonProperty("verificationInstant")
   private Instant verificationInstant;
+
+  @JsonProperty("count")
+  private int count;
 }
