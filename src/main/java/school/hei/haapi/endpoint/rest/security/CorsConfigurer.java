@@ -28,7 +28,8 @@ public class CorsConfigurer implements WebMvcConfigurer {
     registry
         .addMapping("/**")
         .allowedMethods("*")
-        .allowedOrigins(frontendUrl, casdoorUrl)
-        .allowCredentials(true);
+        //.allowedOrigins(frontendUrl, casdoorUrl,"http://localhost:3000")
+        //.allowCredentials(true)
+        .allowedOrigins("*");
   }
 }
