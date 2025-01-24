@@ -228,6 +228,36 @@ public class TestUtils {
     return user;
   }
 
+  public static CasdoorUser getCasdoorUserStudent2() {
+    CasdoorUser user = getCasdoorUserStudent1();
+    user.setEmail("test+student2@hei.school");
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserStudent8() {
+    CasdoorUser user = getCasdoorUserStudent1();
+    user.setEmail("test+repeating2@hei.school");
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserStudent11() {
+    CasdoorUser user = getCasdoorUserStudent1();
+    user.setEmail("test+student11@hei.school");
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserStudent12() {
+    CasdoorUser user = getCasdoorUserStudent1();
+    user.setEmail("test+student12@hei.school");
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserStudent13() {
+    CasdoorUser user = getCasdoorUserStudent1();
+    user.setEmail("test+student13@hei.school");
+    return user;
+  }
+
   public static CasdoorUser getCasdoorUserTeacher1() {
     CasdoorUser user = new CasdoorUser();
     user.setEmail("test+teacher1@hei.school");
@@ -256,10 +286,62 @@ public class TestUtils {
     return user;
   }
 
+  public static CasdoorUser getCasdoorUserMonitor1() {
+    CasdoorUser user = new CasdoorUser();
+    user.setEmail("test+monitor@hei.school");
+
+    CasdoorRole casdoorRole = new CasdoorRole();
+    casdoorRole.setOwner("dummy");
+    // todo : to check if ok monitor role is ok
+    casdoorRole.setName("manager");
+    String[] roleUsers = List.of("dummy/user").toArray(new String[0]);
+    casdoorRole.setUsers(roleUsers);
+    user.setRoles(List.of(casdoorRole));
+
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserMonitor2() {
+    CasdoorUser user = getCasdoorUserMonitor1();
+    user.setEmail("test+monitor2@hei.school");
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserStaffMember1() {
+    CasdoorUser user = getCasdoorUserMonitor1();
+    user.setEmail("test+staff@hei.school");
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserAdmin1() {
+    CasdoorUser user = getCasdoorUserMonitor1();
+    user.setEmail("test+admin@hei.school");
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserSuspended() {
+    CasdoorUser user = getCasdoorUserMonitor1();
+    user.setEmail("test+suspended@hei.school");
+    return user;
+  }
+
   public static void setUpCasdoor(CasdoorAuthService casdoorAuthService) {
-    when(casdoorAuthService.parseJwtToken(STUDENT1_TOKEN)).thenReturn(getCasdoorUserStudent1());
     when(casdoorAuthService.parseJwtToken(TEACHER1_TOKEN)).thenReturn(getCasdoorUserTeacher1());
     when(casdoorAuthService.parseJwtToken(MANAGER1_TOKEN)).thenReturn(getCasdoorUserManager1());
+
+    when(casdoorAuthService.parseJwtToken(STUDENT1_TOKEN)).thenReturn(getCasdoorUserStudent1());
+    when(casdoorAuthService.parseJwtToken(STUDENT2_TOKEN)).thenReturn(getCasdoorUserStudent2());
+    when(casdoorAuthService.parseJwtToken(STUDENT8_TOKEN)).thenReturn(getCasdoorUserStudent8());
+    when(casdoorAuthService.parseJwtToken(STUDENT11_TOKEN)).thenReturn(getCasdoorUserStudent11());
+    when(casdoorAuthService.parseJwtToken(STUDENT12_TOKEN)).thenReturn(getCasdoorUserStudent12());
+    when(casdoorAuthService.parseJwtToken(STUDENT13_TOKEN)).thenReturn(getCasdoorUserStudent13());
+    when(casdoorAuthService.parseJwtToken(MONITOR1_TOKEN)).thenReturn(getCasdoorUserMonitor1());
+    when(casdoorAuthService.parseJwtToken(MONITOR2_TOKEN)).thenReturn(getCasdoorUserMonitor2());
+    when(casdoorAuthService.parseJwtToken(STAFF_MEMBER1_TOKEN))
+        .thenReturn(getCasdoorUserStaffMember1());
+    when(casdoorAuthService.parseJwtToken(ADMIN1_TOKEN)).thenReturn(getCasdoorUserAdmin1());
+    // todo : setup suspended account
+    when(casdoorAuthService.parseJwtToken(SUSPENDED_TOKEN)).thenReturn(getCasdoorUserSuspended());
   }
 
   public static ApiClient anApiClient(String token, int serverPort) {
