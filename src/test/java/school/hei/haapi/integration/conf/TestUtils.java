@@ -119,6 +119,7 @@ public class TestUtils {
   public static final String STUDENT1_ID = "student1_id";
   public static final String STUDENT2_ID = "student2_id";
   public static final String STUDENT3_ID = "student3_id";
+  public static final String STUDENT11_ID = "student11_id";
   public static final String TEACHER1_ID = "teacher1_id";
   public static final String TEACHER2_ID = "teacher2_id";
   public static final String TEACHER3_ID = "teacher3_id";
@@ -161,6 +162,9 @@ public class TestUtils {
   public static final String BAD_TOKEN = "bad_token";
   public static final String STUDENT1_TOKEN = "student1_token";
   public static final String STUDENT2_TOKEN = "student2_token";
+  public static final String STUDENT11_TOKEN = "student11_token";
+  public static final String STUDENT12_TOKEN = "student12_token";
+  public static final String STUDENT13_TOKEN = "student13_token";
   public static final String TEACHER1_TOKEN = "teacher1_token";
   public static final String MONITOR1_TOKEN = "monitor1_token";
   public static final String MONITOR2_TOKEN = "monitor2_token";
@@ -224,6 +228,12 @@ public class TestUtils {
     when(cognitoComponent.getEmailByIdToken(BAD_TOKEN)).thenReturn(null);
     when(cognitoComponent.getEmailByIdToken(STUDENT1_TOKEN)).thenReturn("test+ryan@hei.school");
     when(cognitoComponent.getEmailByIdToken(STUDENT2_TOKEN)).thenReturn("test+student2@hei.school");
+    when(cognitoComponent.getEmailByIdToken(STUDENT11_TOKEN))
+        .thenReturn("test+student11@hei.school");
+    when(cognitoComponent.getEmailByIdToken(STUDENT12_TOKEN))
+        .thenReturn("test+student12@hei.school");
+    when(cognitoComponent.getEmailByIdToken(STUDENT13_TOKEN))
+        .thenReturn("test+student13@hei.school");
     when(cognitoComponent.getEmailByIdToken(MONITOR1_TOKEN)).thenReturn("test+monitor@hei.school");
     when(cognitoComponent.getEmailByIdToken(MONITOR2_TOKEN)).thenReturn("test+monitor2@hei.school");
     when(cognitoComponent.getEmailByIdToken(STUDENT8_TOKEN))
@@ -270,8 +280,7 @@ public class TestUtils {
   public static File getMockedFile(String fileName, String extension) {
     try {
       Resource resource = new ClassPathResource("mock/" + fileName + extension);
-      File file = resource.getFile();
-      return file;
+      return resource.getFile();
     } catch (IOException e) {
       throw new school.hei.haapi.model.exception.ApiException(SERVER_EXCEPTION, e.getMessage());
     }
@@ -1276,6 +1285,7 @@ public class TestUtils {
     return new Event()
         .id(EVENT1_ID)
         .type(COURSE)
+        .color("#0000")
         .course(course1())
         .beginDatetime(Instant.parse("2022-12-20T08:00:00.00Z"))
         .endDatetime(Instant.parse("2022-12-20T10:00:00.00Z"))
@@ -1290,6 +1300,7 @@ public class TestUtils {
     return new Event()
         .id(EVENT2_ID)
         .type(INTEGRATION)
+        .color("#0000")
         .planner(planner1())
         .beginDatetime(Instant.parse("2022-12-08T08:00:00.00Z"))
         .endDatetime(Instant.parse("2022-12-08T12:00:00.00Z"))
@@ -1317,6 +1328,7 @@ public class TestUtils {
         .endDatetime(Instant.parse("2022-12-09T12:00:00.00Z"))
         .title("December Seminar")
         .course(null)
+        .color("#0000")
         .count(new EventStats().late(0).present(0).missing(0).total(0))
         .groups(List.of());
   }
@@ -1609,6 +1621,19 @@ public class TestUtils {
 
   public static CrupdatePromotion createPromotion4() {
     return new CrupdatePromotion().id("promotion4_id").name("Promotion 24").ref("PROM24");
+  }
+
+  public static HttpResponse<byte[]> requestFile(URI request, String token)
+      throws IOException, InterruptedException {
+    HttpClient httpClient = HttpClient.newBuilder().build();
+
+    return httpClient.send(
+        HttpRequest.newBuilder()
+            .uri(request)
+            .GET()
+            .header("Authorization", "Bearer " + token)
+            .build(),
+        HttpResponse.BodyHandlers.ofByteArray());
   }
 
   public static boolean isBefore(String a, String b) {

@@ -85,6 +85,10 @@ public class GroupService {
     return groupRepository.findByStudentId(studentId);
   }
 
+  public List<Group> saveDomainGroup(List<Group> domainsGroup) {
+    return repository.saveAll(domainsGroup);
+  }
+
   public void updateGroups(Promotion promotion, String groupId) {
     Group group = findById(groupId);
     group.setPromotion(promotion);

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 import school.hei.haapi.endpoint.rest.model.EventType;
+import school.hei.haapi.endpoint.rest.model.Group;
 import school.hei.haapi.model.Event;
 
 @Repository
@@ -21,7 +22,12 @@ public class EventDao {
   private final EntityManager entityManager;
 
   public List<Event> findByCriteria(
-      String title, Instant from, Instant to, EventType eventType, Pageable pageable) {
+      String title,
+      Instant from,
+      Instant to,
+      EventType eventType,
+      Group groupName,
+      Pageable pageable) {
 
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Event> query = builder.createQuery(Event.class);
@@ -47,8 +53,16 @@ public class EventDao {
       predicates.add(builder.equal(root.get("type"), eventType));
     }
 
+    if (groupName != null) {
+      predicates.add(builder.equal(root.join("groups").get("name"), groupName));
+    }
+
     if (!predicates.isEmpty()) {
       query.where(predicates.toArray(new Predicate[0])).distinct(true);
+    }
+
+    if (pageable == null) {
+      return entityManager.createQuery(query).getResultList();
     }
 
     query.orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));

@@ -1,0 +1,1 @@
+alter table "event" add column if not exists color_code varchar;

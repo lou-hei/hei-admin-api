@@ -1305,6 +1305,150 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /teachers/raw:
+    get:
+      tags:
+        - Users
+      summary: Get all teachers as xlsx file
+      operationId: generateTeachersInXlsx
+      responses:
+        '200':
+          description: List of teacher in a xlsx file
+          content:
+            application/xlsx:
+              schema:
+                type: string
+                format: byte
+                example: XLSX VERSION
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /event/{event_id}/students/raw/xlsx:
+    get:
+      tags:
+        - Events
+      summary: Get all students in event as xlsx file
+      operationId: generateEventStudentsParticipantInXlsx
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of students in a xlsx file
+          content:
+            application/xlsx:
+              schema:
+                type: string
+                format: byte
+                example: XLSX VERSION
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /promotion/{promotion_id}/students/raw/xlsx:
+    get:
+      tags:
+        - Promotions
+      summary: Get all students in promotion as xlsx file
+      operationId: generateStudentsPromotionInXlsx
+      parameters:
+        - name: promotion_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of students in a xlsx file
+          content:
+            application/xlsx:
+              schema:
+                type: string
+                format: byte
+                example: XLSX VERSION
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /students/raw/xlsx:
+    get:
+      tags:
+        - Users
+      summary: Get all students with filter as xlsx file
+      operationId: generateStudentsInXlsx
+      parameters:
+        - name: course_id
+          in: query
+          description: "Filter students by course they are linked to"
+          schema:
+            type: string
+        - name: status
+          required: false
+          in: query
+          description: Filter students by status value return all by default
+          schema:
+            $ref: '#/components/schemas/EnableStatus'
+        - name: sex
+          required: false
+          in: query
+          description: Filter students by sex value return all by default
+          schema:
+            $ref: '#/components/schemas/Sex'
+        - name: work_study_status
+          required: false
+          in: query
+          description: Filter students by work study status
+          schema:
+            $ref: '#/components/schemas/WorkStudyStatus'
+        - name: exclude_groups
+          required: false
+          in: query
+          description: List of group ids to exclude students from
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: List of students in a xlsx file
+          content:
+            application/xlsx:
+              schema:
+                type: string
+                format: byte
+                example: XLSX VERSION
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /groups/{id}/students:
     get:
       tags:
@@ -2407,6 +2551,18 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/FeeStatusEnum'
+        - name: from_due_datetime
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: to_due_datetime
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: List of fees in a xlsx file
@@ -3861,6 +4017,12 @@ paths:
           description: Filter events by title
           schema:
             type: string
+        - name: group
+          in: query
+          required: false
+          description: Filter events by group
+          schema:
+            type: string
       operationId: getEvents
       responses:
         '200':
@@ -3885,6 +4047,31 @@ paths:
       summary: Create or update events
       description: Update if id is provided, create otherwise.
       operationId: crupdateEvents
+      parameters:
+        - name: frequency_day
+          required: false
+          in: query
+          description: define the day frequency
+          schema:
+            $ref: '#/components/schemas/FrequencyScopeDay'
+        - name: frequency_number
+          required: false
+          in: query
+          description: define the number of frequency
+          schema:
+            type: integer
+        - name: frequency_beginning_hour
+          required: false
+          in: query
+          description: what time does the frequency start, format HH:MM
+          schema:
+            type: string
+        - name: frequency_ending_hour
+          required: false
+          in: query
+          description: what time does the frequency end, format HH:MM
+          schema:
+            type: string
       requestBody:
         required: true
         description: Event to create or update
@@ -5124,6 +5311,7 @@ components:
     EventType:
       type: string
       enum:
+        - EXAM
         - COURSE
         - INTEGRATION
         - SEMINAR
@@ -5274,6 +5462,8 @@ components:
     GroupIdentifier:
       type: object
       properties:
+        attributed_color:
+          type: string
         id:
           type: string
         name:
@@ -5298,6 +5488,8 @@ components:
           format: date-time
         size:
           type: integer
+        attributed_color:
+          type: string
     CreateGroup:
       type: object
       properties:
@@ -5760,6 +5952,8 @@ components:
           type: string
         description:
           type: string
+        color:
+          type: string
         begin_datetime:
           type: string
           format: date-time
@@ -5829,6 +6023,8 @@ components:
         type:
           $ref: '#/components/schemas/EventType'
         title:
+          type: string
+        color:
           type: string
         description:
           type: string
@@ -6173,6 +6369,15 @@ components:
           type: boolean
         count:
           type: integer
+    FrequencyScopeDay:
+      type: string
+      enum:
+        - MONDAY
+        - TUESDAY
+        - WEDNESDAY
+        - THURSDAY
+        - FRIDAY
+        - SATURDAY
     PaymentFrequency:
       type: string
       enum:
