@@ -86,6 +86,7 @@ import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.EventStats;
+import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.endpoint.rest.model.ExamInfo;
 import school.hei.haapi.endpoint.rest.model.Fee;
 import school.hei.haapi.endpoint.rest.model.FeeTemplate;
@@ -1380,6 +1381,18 @@ public class TestUtils {
         .endDatetime(Instant.parse("2023-12-08T10:00:00.00Z"))
         .description("Another Prog1 course")
         .eventType(COURSE)
+        .plannerId(MANAGER_ID)
+        .groups(List.of(createGroupIdentifier(group1())));
+  }
+
+  public static CreateEvent someCreatableEventByManager1(EventType eventType) {
+    return new CreateEvent()
+        .id("event" + randomUUID() + "_id")
+        .courseId(COURSE1_ID)
+        .beginDatetime(Instant.parse("2023-12-08T08:00:00.00Z"))
+        .endDatetime(Instant.parse("2023-12-08T10:00:00.00Z"))
+        .description("Another event")
+        .eventType(eventType)
         .plannerId(MANAGER_ID)
         .groups(List.of(createGroupIdentifier(group1())));
   }

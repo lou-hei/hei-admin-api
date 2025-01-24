@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.EventType.COURSE;
+import static school.hei.haapi.endpoint.rest.model.EventType.INTEGRATION;
 import static school.hei.haapi.endpoint.rest.model.FrequencyScopeDay.MONDAY;
 import static school.hei.haapi.endpoint.rest.model.FrequencyScopeDay.WEDNESDAY;
 import static school.hei.haapi.integration.StudentIT.student1;
@@ -22,6 +23,7 @@ import static school.hei.haapi.integration.conf.TestUtils.expectedCourseEventCre
 import static school.hei.haapi.integration.conf.TestUtils.expectedIntegrationEventCreated;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
+import static school.hei.haapi.integration.conf.TestUtils.someCreatableEventByManager1;
 import static school.hei.haapi.integration.conf.TestUtils.student1AttendEvent2;
 import static school.hei.haapi.integration.conf.TestUtils.student1MissEvent1;
 import static school.hei.haapi.integration.conf.TestUtils.student2AttendEvent2;
@@ -217,5 +219,19 @@ public class EventIT extends FacadeITMockedThirdParties {
         () -> api.crupdateEvents(List.of(createEventCourse1()), null, null, null, null));
     assertThrowsForbiddenException(
         () -> api.updateEventParticipantsStatus(EVENT1_ID, List.of(new UpdateEventParticipant())));
+  }
+
+  @Test
+  void delete_event_student_ko_and_manager_ko() throws ApiException {
+    EventsApi studentApi = new EventsApi(anApiClient(STUDENT1_TOKEN));
+    EventsApi managerApi = new EventsApi(anApiClient(MANAGER1_TOKEN));
+    List<Event> events =
+        managerApi.crupdateEvents(
+            List.of(someCreatableEventByManager1(INTEGRATION)), MONDAY, 1, "09:00", "12:00");
+
+    assertThrowsForbiddenException(() -> studentApi.deleteEventById(events.getFirst().getId()));
+
+    Event deletedEvent = managerApi.deleteEventById(events.getFirst().getId());
+    assertEquals(events.getFirst().getId(), deletedEvent.getId());
   }
 }

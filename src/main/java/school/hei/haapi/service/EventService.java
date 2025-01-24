@@ -148,4 +148,15 @@ public class EventService {
     }
     return Optional.empty();
   }
+
+  public Event deleteEvent(String eventId) {
+    Event deleted = findEventById(eventId);
+
+    if (deleted.isDeleted()) {
+      throw new NotFoundException("Event with id #" + eventId + " not found");
+    }
+
+    eventRepository.deleteById(eventId);
+    return deleted;
+  }
 }

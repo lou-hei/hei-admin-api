@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -111,5 +112,10 @@ public class EventController {
   public byte[] generateEventStudentsParticipantInXlsx(
       @PathVariable(name = "event_id") String eventId) {
     return userService.generateStudentsInEventXlsx(eventId);
+  }
+
+  @DeleteMapping("/events/{id}")
+  public Event deleteEventById(@PathVariable(name = "id") String id) {
+    return mapper.toRest(eventService.deleteEvent(id));
   }
 }
