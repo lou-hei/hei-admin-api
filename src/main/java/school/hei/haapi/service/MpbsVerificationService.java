@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import school.hei.haapi.endpoint.event.EventProducer;
 import school.hei.haapi.endpoint.event.model.PaidFeeByMpbsFailedNotificationBody;
 import school.hei.haapi.endpoint.event.model.PojaEvent;
@@ -103,6 +104,13 @@ public class MpbsVerificationService {
     return mpbsToSave;
   }
 
+  public String uploadXlsToS3(MultipartFile multipartFile) {
+    String fileKey = "/XLS/" + multipartFile.getOriginalFilename();
+    File file = multipartFileConverter.apply(multipartFile);
+    fileService.uploadObjectToS3Bucket(fileKey, file);
+    return fileKey;
+  }
+
   public Workbook generateWorkBook(File file) throws IOException {
     try {
       return new HSSFWorkbook(new FileInputStream(file));
@@ -112,7 +120,7 @@ public class MpbsVerificationService {
   }
 
   public List<String> generateMobileTransactionDetailsFromXlsFile(File file) throws IOException {
-
+    log.info("Reading XLS file...");
     List<String> pendingMpbsPspIds =
         mpbsRepository.findAllByStatus(PENDING).stream()
             .map(TypedMobileMoneyTransaction::getPspId)
@@ -166,6 +174,7 @@ public class MpbsVerificationService {
       ;
     }
     mobilePaymentService.saveAll(transactions);
+    log.info("Verification done...");
     return transactions.stream()
         .map(MobileTransactionDetails::getPspTransactionRef)
         .collect(Collectors.toList());

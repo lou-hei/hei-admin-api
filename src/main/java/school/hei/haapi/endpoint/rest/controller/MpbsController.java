@@ -2,6 +2,7 @@ package school.hei.haapi.endpoint.rest.controller;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import school.hei.haapi.endpoint.rest.model.CrupdateMpbs;
 import school.hei.haapi.endpoint.rest.model.Mpbs;
 import school.hei.haapi.endpoint.rest.validator.CreateMpbsValidator;
 import school.hei.haapi.service.MpbsService;
+import school.hei.haapi.service.MpbsVerificationService;
 import school.hei.haapi.service.MultipartFileConverter;
 
 @RestController
@@ -30,6 +32,7 @@ public class MpbsController {
   private final MpbsMapper mapper;
   private final MultipartFileConverter multipartFileConverter;
   private final EventProducer eventProducer;
+  private final MpbsVerificationService mpbsVerificationService;
 
   @PutMapping(value = "/students/{student_id}/fees/{fee_id}/mpbs")
   public Mpbs crupdateMpbs(
@@ -49,11 +52,12 @@ public class MpbsController {
   }
 
   @PostMapping(value = "/mpbs/verify", consumes = MULTIPART_FORM_DATA_VALUE)
-  public List<Mpbs> verifyMpbs(@RequestPart(name = "file_to_upload") MultipartFile file) {
+  public List<Mpbs> verifyMpbs(@RequestPart(name = "file_to_upload") MultipartFile file)
+      throws IOException {
     eventProducer.accept(
         List.of(
             VerifyMpbsByXlsEvent.builder()
-                .file(multipartFileConverter.apply(file))
+                .fileKey(mpbsVerificationService.uploadXlsToS3(file))
                 .verificationInstant(Instant.now())
                 .build()));
     return List.of();

@@ -1,12 +1,21 @@
 package school.hei.haapi.service.aws;
 
+import static jxl.biff.FormatRecord.logger;
 import static school.hei.haapi.model.User.Role.ADMIN;
 import static school.hei.haapi.model.User.Role.MANAGER;
 import static school.hei.haapi.model.User.Role.STAFF_MEMBER;
 import static school.hei.haapi.model.User.Role.STUDENT;
 import static school.hei.haapi.model.User.Role.TEACHER;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
@@ -20,6 +29,7 @@ import school.hei.haapi.file.hash.FileHash;
 import school.hei.haapi.file.zip.FileTyper;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.exception.BadRequestException;
+import software.amazon.awssdk.utils.IoUtils;
 
 @Component
 @Service
@@ -77,5 +87,28 @@ public class FileService {
       case ADMIN -> String.format("%s/%s/%s/%s", ADMIN, user.getRef(), fileType, fileName);
       default -> throw new BadRequestException("Unexpected type " + user.getRole());
     };
+  }
+
+  /* Use the JDK HttpClient (since v11) class to do the download. */
+  public byte[] useHttpClientToGet(String presignedUrlString) {
+    ByteArrayOutputStream byteArrayOutputStream =
+        new ByteArrayOutputStream(); // Capture the response body to a byte array.
+
+    HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
+    HttpClient httpClient = HttpClient.newHttpClient();
+    try {
+      URL presignedUrl = new URL(presignedUrlString);
+      HttpResponse<InputStream> response =
+          httpClient.send(
+              requestBuilder.uri(presignedUrl.toURI()).GET().build(),
+              HttpResponse.BodyHandlers.ofInputStream());
+
+      IoUtils.copy(response.body(), byteArrayOutputStream);
+
+      logger.info("HTTP response code is " + response.statusCode());
+    } catch (URISyntaxException | InterruptedException | IOException e) {
+      logger.error(e.getMessage(), e);
+    }
+    return byteArrayOutputStream.toByteArray();
   }
 }
