@@ -60,14 +60,14 @@ public class EventParticipantService {
     Group actualGroup = groupService.findById(groupId);
     users.forEach(
         user -> {
-          Optional<EventParticipant> oEventParticipant =
+          Optional<List<EventParticipant>> oEventParticipant =
               eventParticipantRepository.findByEventIdAndGroupIdAndParticipantId(
                   eventId, groupId, user.getId());
-          if (!oEventParticipant.isPresent()) {
+          if (oEventParticipant.get().isEmpty()) {
             EventParticipant newEventParticipant =
                 EventParticipant.builder()
                     .participant(user)
-                    .group(group)
+                    .group(actualGroup)
                     .event(event)
                     .status(MISSING)
                     .build();
