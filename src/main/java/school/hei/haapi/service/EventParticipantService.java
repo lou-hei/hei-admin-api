@@ -8,6 +8,8 @@ import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.PRESENT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +31,6 @@ import school.hei.haapi.repository.dao.EventDao;
 @Service
 @AllArgsConstructor
 public class EventParticipantService {
-
   private final EventParticipantRepository eventParticipantRepository;
   private final UserService userService;
   private final EventProducer<MissedEventEmail> eventProducer;
@@ -52,18 +53,27 @@ public class EventParticipantService {
   }
 
   public void createEventParticipantsForAGroup(Group group, Event event) {
-    List<User> users = userService.getByGroupId(group.getId());
+    String groupId = group.getId();
+    String eventId = event.getId();
+    List<User> users = userService.getByGroupId(groupId);
     List<EventParticipant> eventParticipants = new ArrayList<>();
-    Group actualGroup = groupService.findById(group.getId());
+    Group actualGroup = groupService.findById(groupId);
     users.forEach(
         user -> {
-          eventParticipants.add(
-              EventParticipant.builder()
-                  .event(event)
-                  .participant(user)
-                  .status(MISSING)
-                  .group(actualGroup)
-                  .build());
+          Optional<EventParticipant> oEventParticipant = eventParticipantRepository.findByEventIdAndGroupId(eventId, groupId);
+          if (oEventParticipant.isPresent()) {
+            EventParticipant ep = oEventParticipant.get();
+            eventParticipants.add(ep);
+          }
+          else {
+            EventParticipant newEventParticipant = EventParticipant.builder()
+                    .participant(user)
+                    .group(group)
+                    .event(event)
+                    .status(MISSING)
+                    .build();
+            eventParticipants.add(newEventParticipant);
+          }
         });
     eventParticipantRepository.saveAll(eventParticipants);
   }
