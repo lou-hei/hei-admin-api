@@ -60,20 +60,20 @@ public class EventParticipantService {
     Group actualGroup = groupService.findById(groupId);
     users.forEach(
         user -> {
-          Optional<EventParticipant> oEventParticipant =
-              eventParticipantRepository.findByEventIdAndGroupId(eventId, groupId);
-          if (oEventParticipant.isPresent()) {
-            EventParticipant ep = oEventParticipant.get();
-            eventParticipants.add(ep);
-          } else {
+          Optional<List<EventParticipant>> oEventParticipant =
+              eventParticipantRepository.findByEventIdAndGroupIdAndParticipantId(
+                  eventId, groupId, user.getId());
+          if (oEventParticipant.get().isEmpty()) {
             EventParticipant newEventParticipant =
                 EventParticipant.builder()
                     .participant(user)
-                    .group(group)
+                    .group(actualGroup)
                     .event(event)
                     .status(MISSING)
                     .build();
             eventParticipants.add(newEventParticipant);
+          } else {
+            // nothing
           }
         });
     eventParticipantRepository.saveAll(eventParticipants);
