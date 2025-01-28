@@ -10,8 +10,7 @@ import school.hei.haapi.model.EventParticipant;
 
 @Repository
 public interface EventParticipantRepository extends JpaRepository<EventParticipant, String> {
-  boolean existsByEventIdAndGroupIdAndParticipantId(
-      String eventId, String groupId, String participantId);
+  Optional<EventParticipant> findByEventIdAndGroupId(String eventId, String groupId);
 
   Optional<List<EventParticipant>> findAllByEventId(String eventId, Pageable pageable);
 
@@ -19,13 +18,4 @@ public interface EventParticipantRepository extends JpaRepository<EventParticipa
       String eventId, String groupRef, Pageable pageable);
 
   Integer countByEventIdAndStatus(String eventId, AttendanceStatus status);
-
-  int countByStatus(AttendanceStatus status);
-
-  int countAllByParticipantIdAndStatus(String participantId, AttendanceStatus status);
-
-  int countByEventIdInAndStatus(List<String> eventIds, AttendanceStatus status);
-
-  int countAllByParticipantIdAndStatusAndEventIdIn(
-      String participantId, AttendanceStatus status, List<String> eventIds);
 }
