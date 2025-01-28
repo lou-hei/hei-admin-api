@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,22 +59,23 @@ public class EventParticipantService {
     List<EventParticipant> eventParticipants = new ArrayList<>();
     Group actualGroup = groupService.findById(groupId);
     users.forEach(
-            user -> {
-              Optional<EventParticipant> oEventParticipant = eventParticipantRepository.findByEventIdAndGroupId(eventId, groupId);
-              if (oEventParticipant.isPresent()) {
-                EventParticipant ep = oEventParticipant.get();
-                eventParticipants.add(ep);
-              }
-              else {
-                EventParticipant newEventParticipant = EventParticipant.builder()
-                        .participant(user)
-                        .group(group)
-                        .event(event)
-                        .status(MISSING)
-                        .build();
-                eventParticipants.add(newEventParticipant);
-              }
-            });
+        user -> {
+          Optional<EventParticipant> oEventParticipant =
+              eventParticipantRepository.findByEventIdAndGroupId(eventId, groupId);
+          if (oEventParticipant.isPresent()) {
+            EventParticipant ep = oEventParticipant.get();
+            eventParticipants.add(ep);
+          } else {
+            EventParticipant newEventParticipant =
+                EventParticipant.builder()
+                    .participant(user)
+                    .group(group)
+                    .event(event)
+                    .status(MISSING)
+                    .build();
+            eventParticipants.add(newEventParticipant);
+          }
+        });
     eventParticipantRepository.saveAll(eventParticipants);
   }
 
