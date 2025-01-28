@@ -126,14 +126,16 @@ public class EventIT extends FacadeITMockedThirdParties {
     assertEquals(expectedIntegrationEventCreated().getBeginDatetime(), event2.getBeginDatetime());
     assertEquals(expectedIntegrationEventCreated().getDescription(), event2.getDescription());
 
-    List<EventParticipant> actualEventParticipant =
+    List<EventParticipant> actualEventParticipant0 =
         api.getEventParticipants(event2.getId(), 1, 15, null);
-    assertEquals(3, actualEventParticipant.size());
+    assertEquals(3, actualEventParticipant0.size());
 
     // Assert that EventParticipant is not duplicated
     api.crupdateEvents(
         List.of(createEventCourse1(), createIntegrationEvent()), null, null, null, null);
-    assertEquals(3, actualEventParticipant.size());
+    List<EventParticipant> actualEventParticipant1 =
+            api.getEventParticipants(event2.getId(), 1, 15, null);
+    assertEquals(3, actualEventParticipant1.size());
   }
 
   @Test
