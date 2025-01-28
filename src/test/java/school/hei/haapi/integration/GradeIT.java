@@ -1,6 +1,8 @@
 package school.hei.haapi.integration;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.integration.StudentIT.student1;
@@ -31,6 +33,7 @@ import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.AwardedCourseExam;
 import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
+import school.hei.haapi.endpoint.rest.model.GetStudentGrade;
 import school.hei.haapi.endpoint.rest.model.Grade;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
@@ -181,5 +184,23 @@ class GradeIT extends FacadeITMockedThirdParties {
 
     assertThrowsForbiddenException(
         () -> api.crupdateParticipantGrade(EXAM1_ID, STUDENT1_ID, newCrupdateGrade));
+  }
+
+  @Test
+  void teacher_get_all_grade_ok() throws ApiException {
+    TeachingApi managerApi = new TeachingApi(anApiClient(MANAGER1_TOKEN));
+
+    List<GetStudentGrade> participantsGradeForExam =
+        managerApi.getParticipantsGradeForExam(EXAM1_ID, 1, 10);
+
+    assertNotNull(participantsGradeForExam);
+    assertFalse(participantsGradeForExam.isEmpty());
+  }
+
+  @Test
+  void student_get_all_grade_ko() {
+    TeachingApi studentApi = new TeachingApi(anApiClient(STUDENT1_TOKEN));
+
+    assertThrowsForbiddenException(() -> studentApi.getParticipantsGradeForExam(EXAM1_ID, 1, 10));
   }
 }
