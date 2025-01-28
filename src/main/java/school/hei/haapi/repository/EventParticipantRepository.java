@@ -10,7 +10,7 @@ import school.hei.haapi.model.EventParticipant;
 
 @Repository
 public interface EventParticipantRepository extends JpaRepository<EventParticipant, String> {
-  Optional<List<EventParticipant>> findByEventIdAndGroupIdAndParticipantId(
+  boolean existsByEventIdAndGroupIdAndParticipantId(
       String eventId, String groupId, String participantId);
 
   Optional<List<EventParticipant>> findAllByEventId(String eventId, Pageable pageable);
