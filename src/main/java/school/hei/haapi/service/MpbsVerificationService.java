@@ -133,7 +133,6 @@ public class MpbsVerificationService {
     Sheet sheet = workbook.getSheetAt(0);
 
     for (Row row : sheet) {
-      if (row.getRowNum() < 26) continue;
 
       Cell dateCell = row.getCell(1);
       Cell timeCell = row.getCell(2);
@@ -145,7 +144,7 @@ public class MpbsVerificationService {
           || timeCell == null
           || StringUtils.isBlank(dateCell.getStringCellValue())
           || StringUtils.isBlank(timeCell.getStringCellValue())) {
-        log.warn("Row ignored because of an empty cell");
+        log.warn("Row {} ignored because of an empty cell", row.getRowNum());
         continue;
       }
 
@@ -154,10 +153,19 @@ public class MpbsVerificationService {
       String ref = refCell.getStringCellValue().trim();
 
       if (pendingMpbsPspIds.contains(ref)) {
+
+        Instant transactionCreationTime;
+        try {
+          transactionCreationTime = Instant.from(convertStringToInstant(dateTimeStr));
+        } catch (Exception e) {
+          log.warn("Failed to parse date/time for row {}: {}", row.getRowNum(), e.getMessage());
+          continue;
+        }
+
         MobileTransactionDetails transaction =
             MobileTransactionDetails.builder()
                 .id(randomUUID().toString())
-                .pspDatetimeTransactionCreation(Instant.from(convertStringToInstant(dateTimeStr)))
+                .pspDatetimeTransactionCreation(transactionCreationTime)
                 .pspTransactionRef(refCell.getStringCellValue().trim())
                 .pspTransactionAmount((int) montantCell.getNumericCellValue())
                 .status(
@@ -170,8 +178,9 @@ public class MpbsVerificationService {
 
         transactions.add(transaction);
         log.info("Generated mobile transaction psp id {}", transaction.getPspTransactionRef());
+      } else {
+        log.info("Unverified mobile transaction psp id {}", ref);
       }
-      ;
     }
     mobilePaymentService.saveAll(transactions);
     log.info("Verification done...");

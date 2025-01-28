@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -51,6 +52,7 @@ import org.testcontainers.shaded.com.google.common.primitives.Bytes;
 import school.hei.haapi.endpoint.rest.api.PayingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
+import school.hei.haapi.endpoint.rest.mapper.MpbsMapper;
 import school.hei.haapi.endpoint.rest.model.CreateFee;
 import school.hei.haapi.endpoint.rest.model.CrupdateMpbs;
 import school.hei.haapi.endpoint.rest.model.Fee;
@@ -58,6 +60,7 @@ import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.endpoint.rest.model.Mpbs;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
+import school.hei.haapi.service.MpbsVerificationService;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 @Testcontainers
@@ -68,6 +71,8 @@ public class MpbsIT extends FacadeITMockedThirdParties {
   public static final String FEE8_ID = "fee8_id";
   @MockBean private EventBridgeClient eventBridgeClientMock;
   static final String FEE_TEST_ID = "test_id";
+  @Autowired MpbsVerificationService verificationService;
+  @Autowired MpbsMapper mpbsMapper;
 
   @BeforeEach
   public void setUp() {
@@ -156,7 +161,6 @@ public class MpbsIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled
   void verify_mpbs_via_xls() throws ApiException, IOException, InterruptedException {
     ApiClient managerClient = anApiClient(MANAGER1_TOKEN);
     PayingApi api = new PayingApi(managerClient);
@@ -168,9 +172,13 @@ public class MpbsIT extends FacadeITMockedThirdParties {
     assertEquals(MPBS_FEE4_REF, fee3BeforeVerification.getPspId());
 
     // Upload xls file
-    HttpResponse<InputStream> streamHttpResponse = uploadXls(localPort, MANAGER1_TOKEN);
+    List<Mpbs> mpbsVerified =
+        verificationService.computeFromXls(getMockedFile("test-mpbs", ".xls")).stream()
+            .map(mpbsMapper::toRest)
+            .toList();
 
-    Mpbs actualMpbs = convertResponseToStudentList(streamHttpResponse).getFirst();
+    Mpbs actualMpbs = mpbsVerified.getFirst();
+
     assertEquals(SUCCESS, actualMpbs.getStatus());
     assertEquals(MPBS_FEE4_REF, actualMpbs.getPspId());
 
