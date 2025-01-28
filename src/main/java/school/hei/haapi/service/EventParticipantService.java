@@ -61,18 +61,19 @@ public class EventParticipantService {
     users.forEach(
         user -> {
           Optional<EventParticipant> oEventParticipant =
-              eventParticipantRepository.findByEventIdAndGroupId(eventId, groupId);
+              eventParticipantRepository.findByEventIdAndGroupIdAndParticipantId(
+                  eventId, groupId, user.getId());
           if (!oEventParticipant.isPresent()) {
             EventParticipant newEventParticipant =
-                    EventParticipant.builder()
-                            .participant(user)
-                            .group(group)
-                            .event(event)
-                            .status(MISSING)
-                            .build();
+                EventParticipant.builder()
+                    .participant(user)
+                    .group(group)
+                    .event(event)
+                    .status(MISSING)
+                    .build();
             eventParticipants.add(newEventParticipant);
           } else {
-           // nothing
+            // nothing
           }
         });
     eventParticipantRepository.saveAll(eventParticipants);

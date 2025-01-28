@@ -134,7 +134,7 @@ public class EventIT extends FacadeITMockedThirdParties {
     api.crupdateEvents(
         List.of(createEventCourse1(), createIntegrationEvent()), null, null, null, null);
     List<EventParticipant> actualEventParticipant1 =
-            api.getEventParticipants(event2.getId(), 1, 15, null);
+        api.getEventParticipants(event2.getId(), 1, 15, null);
     assertEquals(3, actualEventParticipant1.size());
   }
 
