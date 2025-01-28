@@ -4187,6 +4187,18 @@ paths:
           schema:
             type: string
           required: false
+        - name: ref
+          in: query
+          description: Filter by student std
+          schema:
+            type: string
+          required: false
+        - name: name
+          in: query
+          description: Filter by student name
+          schema:
+            type: string
+          required: false
       responses:
         '200':
           description: Participants of the event
