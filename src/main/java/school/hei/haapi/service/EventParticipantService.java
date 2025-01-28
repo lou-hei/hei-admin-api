@@ -8,7 +8,6 @@ import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.PRESENT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,10 +59,7 @@ public class EventParticipantService {
     Group actualGroup = groupService.findById(groupId);
     users.forEach(
         user -> {
-          Optional<List<EventParticipant>> oEventParticipant =
-              eventParticipantRepository.findByEventIdAndGroupIdAndParticipantId(
-                  eventId, groupId, user.getId());
-          if (oEventParticipant.get().isEmpty()) {
+          if (!isParticipantAlreadyInEvent(eventId, groupId, user.getId())) {
             EventParticipant newEventParticipant =
                 EventParticipant.builder()
                     .participant(user)
@@ -109,5 +105,10 @@ public class EventParticipantService {
         .missing(missing)
         .present(present)
         .total(missing + present + late);
+  }
+
+  private boolean isParticipantAlreadyInEvent(String eventId, String groupId, String userId) {
+    return eventParticipantRepository.existsByEventIdAndGroupIdAndParticipantId(
+        eventId, groupId, userId);
   }
 }
