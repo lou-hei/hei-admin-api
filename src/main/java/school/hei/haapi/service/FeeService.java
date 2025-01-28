@@ -194,7 +194,8 @@ public class FeeService {
   private Fee updateFeeStatus(Fee initialFee) {
     if (initialFee.getRemainingAmount() == 0) {
       initialFee.setStatus(PAID);
-    } else if (Instant.now().isAfter(initialFee.getDueDatetime())) {
+    } else if (Instant.now().isAfter(initialFee.getDueDatetime())
+        && initialFee.getStatus() == UNPAID) {
       initialFee.setStatus(LATE);
     }
     return feeRepository.save(initialFee);

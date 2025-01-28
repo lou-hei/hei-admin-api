@@ -1,6 +1,7 @@
 package school.hei.haapi.model;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static org.hibernate.type.SqlTypes.NAMED_ENUM;
 
@@ -21,18 +22,20 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import school.hei.haapi.endpoint.rest.model.EventType;
 
 @Entity
 @Table(name = "\"event\"")
 @Getter
 @Setter
-@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "update \"event\" set is_deleted = true where id = ?")
+@Where(clause = "is_deleted = false")
 public class Event {
 
   @Id
@@ -48,6 +51,8 @@ public class Event {
   private String description;
 
   private String colorCode;
+
+  private boolean isDeleted;
 
   // TODO : Add promotion
 
@@ -65,10 +70,27 @@ public class Event {
   @JoinColumn(name = "course_id", referencedColumnName = "id")
   private Course course;
 
-  @ManyToMany
+  @ManyToMany(fetch = EAGER)
   @JoinTable(
       name = "event_group_participate",
       joinColumns = @JoinColumn(name = "event_id"),
       inverseJoinColumns = @JoinColumn(name = "group_id"))
   private List<Group> groups;
+
+  @Override
+  public String toString() {
+    return "Event {id="
+        + id
+        + ", type="
+        + type
+        + ", title="
+        + title
+        + ", description="
+        + description
+        + ", colorCode="
+        + colorCode
+        + ", isDeleted"
+        + isDeleted
+        + "}";
+  }
 }

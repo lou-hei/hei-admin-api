@@ -52,18 +52,25 @@ public class EventParticipantService {
   }
 
   public void createEventParticipantsForAGroup(Group group, Event event) {
-    List<User> users = userService.getByGroupId(group.getId());
+    String groupId = group.getId();
+    String eventId = event.getId();
+    List<User> users = userService.getByGroupId(groupId);
     List<EventParticipant> eventParticipants = new ArrayList<>();
-    Group actualGroup = groupService.findById(group.getId());
+    Group actualGroup = groupService.findById(groupId);
     users.forEach(
         user -> {
-          eventParticipants.add(
-              EventParticipant.builder()
-                  .event(event)
-                  .participant(user)
-                  .status(MISSING)
-                  .group(actualGroup)
-                  .build());
+          if (!isParticipantAlreadyInEvent(eventId, groupId, user.getId())) {
+            EventParticipant newEventParticipant =
+                EventParticipant.builder()
+                    .participant(user)
+                    .group(actualGroup)
+                    .event(event)
+                    .status(MISSING)
+                    .build();
+            eventParticipants.add(newEventParticipant);
+          } else {
+            // nothing
+          }
         });
     eventParticipantRepository.saveAll(eventParticipants);
   }
@@ -98,5 +105,10 @@ public class EventParticipantService {
         .missing(missing)
         .present(present)
         .total(missing + present + late);
+  }
+
+  private boolean isParticipantAlreadyInEvent(String eventId, String groupId, String userId) {
+    return eventParticipantRepository.existsByEventIdAndGroupIdAndParticipantId(
+        eventId, groupId, userId);
   }
 }
