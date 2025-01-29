@@ -4199,6 +4199,12 @@ paths:
           schema:
             type: string
           required: false
+        - name: status
+          in: query
+          description: Filter by AttendanceStatus
+          schema:
+            $ref: "#/components/schemas/AttendanceStatus"
+          required: false
       responses:
         '200':
           description: Participants of the event
