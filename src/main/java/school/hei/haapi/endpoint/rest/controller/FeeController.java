@@ -5,6 +5,9 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -108,6 +111,14 @@ public class FeeController {
       @RequestParam(name = "month_to", required = false) Instant monthTo,
       @RequestParam(name = "isMpbs", required = false) boolean isMpbs,
       @RequestParam(name = "student_ref", required = false) String studentRef) {
+
+    if (monthFrom == null)
+      monthFrom =
+          LocalDate.now()
+              .with(TemporalAdjusters.firstDayOfMonth())
+              .atStartOfDay(ZoneId.of("UTC"))
+              .toInstant();
+
     var feesStats =
         feeService.getFeesStats(
             transactionStatus, feeType, status, monthFrom, monthTo, isMpbs, studentRef);
