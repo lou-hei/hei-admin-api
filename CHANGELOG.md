@@ -1,15 +1,3 @@
-# [1.96.0](https://github.com/hei-school/hei-admin-api/compare/v1.95.0...v1.96.0) (2025-02-06)
-
-
-### Features
-
-* GET /event/participants/{participant_id}/stats ([6c752a5](https://github.com/hei-school/hei-admin-api/commit/6c752a53611a27bb3dabae8372d26ea28b8332cb))
-* get event stats ([eb7bd48](https://github.com/hei-school/hei-admin-api/commit/eb7bd48b5a0d0108ad1f8715e5572a14edef1516))
-* get students exam grades  ([0fe0c42](https://github.com/hei-school/hei-admin-api/commit/0fe0c426bec33b7b68ddd960b65503a098f47cd5))
-* mail student on failed mpbs  ([aebd92c](https://github.com/hei-school/hei-admin-api/commit/aebd92c8d6d9b8e1f64ef58308cb09244da2b4da))
-
-
-
 # [1.95.0](https://github.com/hei-school/hei-admin-api/compare/v1.94.0...v1.95.0) (2025-01-29)
 
 
@@ -129,6 +117,20 @@
 * manually upgrade code version ([54bb3e2](https://github.com/hei-school/hei-admin-api/commit/54bb3e25fad98153dae7d7063cfd8c75fa947292))
 * **not-implemented:** verify mpbs via xls file ([d9b6107](https://github.com/hei-school/hei-admin-api/commit/d9b610716c818cb027cea518699c7368abd5af32))
 * verify mpbs via xls file provided by orange ([b902d9e](https://github.com/hei-school/hei-admin-api/commit/b902d9e820c5e17e3ce8597d2007148a39b10eda))
+
+
+
+# [1.86.0](https://github.com/hei-school/hei-admin-api/compare/v1.85.0...v1.86.0) (2024-12-09)
+
+
+### Bug Fixes
+
+* use subquery for joining case  ([5e902d9](https://github.com/hei-school/hei-admin-api/commit/5e902d90fa2245a07e269446b4ccf4a6a9e29529))
+
+
+### Features
+
+* fee stats depends on fee criteria filter   ([e9a8206](https://github.com/hei-school/hei-admin-api/commit/e9a820656f2387d4fdff1da8c6d400c126f445e5))
 
 
 
