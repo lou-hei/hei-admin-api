@@ -1,3 +1,19 @@
+# [1.95.0](https://github.com/hei-school/hei-admin-api/compare/v1.94.0...v1.95.0) (2025-01-29)
+
+
+### Bug Fixes
+
+* event participant  ([7338d7b](https://github.com/hei-school/hei-admin-api/commit/7338d7b1cc78d0bcdbf6c1af5b0102bb23c58d78))
+* make PUT /events indempotant  ([1d7ca19](https://github.com/hei-school/hei-admin-api/commit/1d7ca196549e6e17fcba8ab9890ee43596153a7c))
+
+
+### Features
+
+* mail on participant missing event ([8ccff8d](https://github.com/hei-school/hei-admin-api/commit/8ccff8d218ce02db642ceeaca070432e15e1fd39))
+* **not-implemented:** delete events by id  ([ee8ff2c](https://github.com/hei-school/hei-admin-api/commit/ee8ff2cfa8162994ce6a92ebb35ac0ae29d5121f))
+
+
+
 # [1.94.0](https://github.com/hei-school/hei-admin-api/compare/v1.93.0...v1.94.0) (2025-01-22)
 
 
@@ -115,25 +131,6 @@
 ### Features
 
 * fee stats depends on fee criteria filter   ([e9a8206](https://github.com/hei-school/hei-admin-api/commit/e9a820656f2387d4fdff1da8c6d400c126f445e5))
-
-
-
-# [1.85.0](https://github.com/hei-school/hei-admin-api/compare/v1.83.1...v1.85.0) (2024-12-06)
-
-
-### Bug Fixes
-
-* crupdate staff member access ([b375d3a](https://github.com/hei-school/hei-admin-api/commit/b375d3a547b08f5b9b80d495e17d45e7b9ff076f))
-
-
-### Features
-
-* filter fees by status and type  ([c838c1b](https://github.com/hei-school/hei-admin-api/commit/c838c1bfa4822a8de03966183ac6211fdbf1ea9a))
-
-
-### Reverts
-
-* Revert "chore: lower min code coverage(line)" ([8c13767](https://github.com/hei-school/hei-admin-api/commit/8c1376736009c117d09fb558d2ae427348e3b878))
 
 
 
