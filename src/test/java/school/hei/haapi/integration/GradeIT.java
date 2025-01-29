@@ -19,11 +19,13 @@ import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam2;
 import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam4;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
+import static school.hei.haapi.model.User.Status.ENABLED;
 
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.TeachingApi;
@@ -34,10 +36,13 @@ import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
 import school.hei.haapi.endpoint.rest.model.Grade;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
+import school.hei.haapi.model.User;
+import school.hei.haapi.repository.UserRepository;
 
 @Testcontainers
 @AutoConfigureMockMvc
 class GradeIT extends FacadeITMockedThirdParties {
+  @Autowired UserRepository userRepository;
 
   private ApiClient anApiClient(String token) {
     return TestUtils.anApiClient(token, localPort);
@@ -47,6 +52,10 @@ class GradeIT extends FacadeITMockedThirdParties {
   void setUp() {
     setUpCognito(cognitoComponentMock);
     setUpS3Service(fileService, student1());
+
+    User student = userRepository.findByRef(student1().getRef());
+    student.setStatus(ENABLED);
+    userRepository.save(student);
   }
 
   @Test

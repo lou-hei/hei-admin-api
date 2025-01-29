@@ -7,7 +7,6 @@ import static school.hei.haapi.endpoint.rest.model.AttendanceStatus.PRESENT;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import school.hei.haapi.endpoint.event.EventProducer;
 import school.hei.haapi.endpoint.event.model.MissedEventEmail;
+import school.hei.haapi.endpoint.rest.model.AttendanceStatus;
 import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.Event;
@@ -25,6 +25,7 @@ import school.hei.haapi.model.User;
 import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.repository.EventParticipantRepository;
 import school.hei.haapi.repository.dao.EventDao;
+import school.hei.haapi.repository.dao.EventParticipantDao;
 
 @Service
 @AllArgsConstructor
@@ -35,16 +36,22 @@ public class EventParticipantService {
   private final EventProducer<MissedEventEmail> eventProducer;
   private final GroupService groupService;
   private final EventDao eventDao;
+  private final EventParticipantDao eventParticipantDao;
 
   public List<EventParticipant> getEventParticipants(
-      String eventId, PageFromOne page, BoundedPageSize pageSize, String groupRef) {
+      String eventId,
+      PageFromOne page,
+      BoundedPageSize pageSize,
+      String groupRef,
+      String name,
+      String ref,
+      AttendanceStatus attendanceStatus) {
 
     Pageable pageable =
         PageRequest.of(page.getValue() - 1, pageSize.getValue(), Sort.by(ASC, "participant.ref"));
 
-    return Objects.isNull(groupRef)
-        ? findByEventId(eventId, pageable)
-        : findByEventIdAndGroupRef(eventId, groupRef, pageable);
+    return eventParticipantDao.findByCriteria(
+        eventId, pageable, groupRef, name, ref, attendanceStatus);
   }
 
   public List<EventParticipant> updateEventParticipants(List<EventParticipant> eventParticipants) {
