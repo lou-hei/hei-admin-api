@@ -126,14 +126,14 @@ public class EventIT extends FacadeITMockedThirdParties {
     assertEquals(expectedIntegrationEventCreated().getDescription(), event2.getDescription());
 
     List<EventParticipant> actualEventParticipant0 =
-        api.getEventParticipants(event2.getId(), 1, 15, null, null, null);
+        api.getEventParticipants(event2.getId(), 1, 15, null, null, null, null);
     assertEquals(3, actualEventParticipant0.size());
 
     // Assert that participant is not duplicated
     api.crupdateEvents(
         List.of(createEventCourse1(), createIntegrationEvent()), null, null, null, null);
     List<EventParticipant> actualEventParticipant1 =
-        api.getEventParticipants(event2.getId(), 1, 15, null, null, null);
+        api.getEventParticipants(event2.getId(), 1, 15, null, null, null, null);
     assertEquals(3, actualEventParticipant1.size());
   }
 
@@ -199,14 +199,15 @@ public class EventIT extends FacadeITMockedThirdParties {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
 
-    List<EventParticipant> actual = api.getEventParticipants(EVENT1_ID, 1, 15, null, null, null);
+    List<EventParticipant> actual =
+        api.getEventParticipants(EVENT1_ID, 1, 15, null, null, null, null);
 
     assertTrue(actual.contains(student1MissEvent1()));
     assertTrue(actual.contains(student3AttendEvent1()));
     assertFalse(actual.contains(student1AttendEvent2()));
 
     List<EventParticipant> participantsFilteredByGroupRef =
-        api.getEventParticipants(EVENT2_ID, 1, 15, "G2", null, null);
+        api.getEventParticipants(EVENT2_ID, 1, 15, "G2", null, null, null);
 
     // Notice :
     // Student 1 and Student 3 are in GROUP 1

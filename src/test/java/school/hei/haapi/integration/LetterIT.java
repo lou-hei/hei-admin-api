@@ -299,7 +299,7 @@ public class LetterIT extends FacadeITMockedThirdParties {
     EventsApi eventsApi = new EventsApi(apiClient);
 
     List<EventParticipant> eventParticipants =
-        eventsApi.getEventParticipants(EVENT2_ID, 1, 15, null, null, null);
+        eventsApi.getEventParticipants(EVENT2_ID, 1, 15, null, null, null, null);
     assertEquals(expectedEventParticipantLetter, eventParticipants.get(2).getLetter().getFirst());
   }
 
