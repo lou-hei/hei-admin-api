@@ -15,7 +15,6 @@ import school.hei.haapi.repository.dao.GradeDao;
 @Service
 @AllArgsConstructor
 public class GradeService {
-  // todo: to review all class
   private final GradeRepository gradeRepository;
   private final GradeDao gradeDao;
 
