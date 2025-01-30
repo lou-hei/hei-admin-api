@@ -39,4 +39,11 @@ public class InstantUtils {
     LocalDate now = LocalDate.now();
     return now.minusDays(1).atStartOfDay(ZoneId.of("UTC")).plusHours(8).toInstant();
   }
+
+  public static Instant getFirstDayOfActualMonth() {
+    return LocalDate.now()
+        .with(TemporalAdjusters.firstDayOfMonth())
+        .atStartOfDay(ZoneId.of("UTC"))
+        .toInstant();
+  }
 }
