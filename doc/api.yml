@@ -4301,6 +4301,54 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /events/stats:
+    get:
+      tags:
+        - Events
+      summary: Get some stats infos about events.
+      operationId: getEventStats
+      parameters:
+        - name: id
+          in: query
+          description: the eventId of the event if you want to see the stats for a specific event
+          required: false
+          schema:
+            type: string
+        - name: from
+          required: false
+          in: query
+          description: |
+            specify the date of start of the event. 
+            If `to` is specified but this parameter is left blank, the default value will be the current date_time
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          required: false
+          description: |
+            specify the date of start of the event. 
+            If `from` is specified but this parameter is left blank, the default value will be the current date_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Stats info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventStats'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   '/comments':
     get:
       tags:
