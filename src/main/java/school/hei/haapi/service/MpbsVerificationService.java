@@ -83,10 +83,12 @@ public class MpbsVerificationService {
               .collect(toUnmodifiableList());
 
       if (!correspondingTransactionDetails.isEmpty()) {
-        log.info("mobile transaction found = {}", correspondingTransactionDetails.getFirst());
+        MobileTransactionDetails firstCorrespondingTransactionDetails =
+            correspondingTransactionDetails.getFirst();
+        log.info("mobile transaction found = {}", firstCorrespondingTransactionDetails);
         TransactionDetails transactionDetails =
             externalResponseMapper.toExternalTransactionDetails(
-                correspondingTransactionDetails.getFirst());
+                firstCorrespondingTransactionDetails);
         log.info("mapped transaction details = {}", transactionDetails);
         verifiedMpbs.add(saveTheVerifiedMpbs(mpbs, transactionDetails, toCompare));
       } else {
