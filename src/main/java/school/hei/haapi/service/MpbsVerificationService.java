@@ -1,6 +1,7 @@
 package school.hei.haapi.service;
 
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.FAILED;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.PENDING;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.SUCCESS;
@@ -79,7 +80,7 @@ public class MpbsVerificationService {
               .filter(
                   transactionDetail ->
                       mpbs.getPspId().equals(transactionDetail.getPspTransactionRef()))
-              .collect(Collectors.toUnmodifiableList());
+              .collect(toUnmodifiableList());
 
       if (!correspondingTransactionDetails.isEmpty()) {
         log.info("mobile transaction found = {}", correspondingTransactionDetails.getFirst());
@@ -212,7 +213,7 @@ public class MpbsVerificationService {
     List<Mpbs> failedMpbs =
         mpbsList.stream()
             .filter(mpbs -> FAILED.equals(mpbs.getStatus()))
-            .collect(Collectors.toUnmodifiableList());
+            .collect(toUnmodifiableList());
 
     notifyStudentForFailedPayment(failedMpbs);
     return mpbsRepository.saveAll(mpbsList);
