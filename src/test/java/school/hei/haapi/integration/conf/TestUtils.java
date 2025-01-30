@@ -970,7 +970,7 @@ public class TestUtils {
   }
 
   public static GetStudentGrade studentGrade7() {
-    return new GetStudentGrade().grade(grade7());
+    return new GetStudentGrade().grade(grade7()).student(student3());
   }
 
   public static FeeTemplate feeTemplate1() {
