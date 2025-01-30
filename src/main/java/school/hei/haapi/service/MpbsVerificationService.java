@@ -308,6 +308,7 @@ public class MpbsVerificationService {
     mpbsList.forEach(
         mpbs -> {
           Payment paymentFromMpbs = getPaymentFromMpbs(mpbs);
+          log.info("Fail verification {} for student {}", mpbs.getId(), mpbs.getStudent().getId());
           notifications.add(PaidFeeByMpbsFailedNotificationBody.from(paymentFromMpbs));
         });
     eventProducer.accept(notifications);
