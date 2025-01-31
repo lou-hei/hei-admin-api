@@ -29,7 +29,7 @@ public class UserManagerDao {
       String firstName,
       String lastName,
       Pageable pageable,
-      User.Status status,
+      List<User.Status> status,
       User.Sex sex,
       WorkStudyStatus workStatus,
       Instant commitmentBeginDate,
@@ -80,7 +80,7 @@ public class UserManagerDao {
     }
 
     if (status != null) {
-      predicate = builder.and(predicate, builder.equal(root.get("status"), status));
+      predicate = builder.and(predicate, root.get("status").in(status));
     }
 
     if (sex != null) {
