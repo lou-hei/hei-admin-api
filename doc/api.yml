@@ -4261,24 +4261,20 @@ paths:
         - name: from
           required: false
           in: query
-          description: |
-            specify the date of start of the event. 
-            If `to` is specified but this parameter is left blank, the default value will be the current date_time
+          description: from event datetime to fetch, by default the current date_time.
           schema:
             type: string
             format: date-time
         - name: to
           required: false
-          description: |
-            specify the date of start of the event. 
-            If `from` is specified but this parameter is left blank, the default value will be the current date_time
+          description: to event datetime to fetch, by default the current date_time.
           in: query
           schema:
             type: string
             format: date-time
       responses:
         '200':
-          description: Stats info
+          description: Event stats info
           content:
             application/json:
               schema:
