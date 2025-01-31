@@ -175,6 +175,30 @@ public class EventParticipantService {
         .total(missing + present + late);
   }
 
+  public EventStats getOverallEventParticipantsStats() {
+    Integer missing = eventParticipantRepository.countByStatus(MISSING);
+    Integer late = eventParticipantRepository.countByStatus(LATE);
+    Integer present = eventParticipantRepository.countByStatus(PRESENT);
+
+    return new EventStats()
+        .late(late)
+        .missing(missing)
+        .present(present)
+        .total(missing + present + late);
+  }
+
+  public EventStats getEventParticipantsStats(List<String> eventIds) {
+    Integer missing = eventParticipantRepository.countByEventIdInAndStatus(eventIds, MISSING);
+    Integer late = eventParticipantRepository.countByEventIdInAndStatus(eventIds, LATE);
+    Integer present = eventParticipantRepository.countByEventIdInAndStatus(eventIds, PRESENT);
+
+    return new EventStats()
+        .late(late)
+        .missing(missing)
+        .present(present)
+        .total(missing + present + late);
+  }
+
   private boolean isParticipantAlreadyInEvent(String eventId, String groupId, String userId) {
     return eventParticipantRepository.existsByEventIdAndGroupIdAndParticipantId(
         eventId, groupId, userId);

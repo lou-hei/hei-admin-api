@@ -19,6 +19,7 @@ import school.hei.haapi.endpoint.rest.model.AttendanceStatus;
 import school.hei.haapi.endpoint.rest.model.CreateEvent;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
+import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.endpoint.rest.model.EventParticipantStats;
 import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.endpoint.rest.model.FrequencyScopeDay;
@@ -84,6 +85,18 @@ public class EventController {
   @GetMapping("/events/{event_id}")
   public Event getEventById(@PathVariable(name = "event_id") String eventId) {
     return mapper.toRest(eventService.findEventById(eventId));
+  }
+
+  @GetMapping("/events/stats")
+  public EventStats getEventStats(
+      @RequestParam(name = "id", required = false) String eventId,
+      @RequestParam(name = "from", required = false) Instant from,
+      @RequestParam(name = "to", required = false) Instant to) {
+    Optional<String> optionalEventId = Optional.ofNullable(eventId);
+    Optional<Instant> optionalFrom = Optional.ofNullable(from);
+    Optional<Instant> optionalTo = Optional.ofNullable(to);
+
+    return eventService.getStats(optionalEventId, optionalFrom, optionalTo);
   }
 
   @GetMapping("/events/{event_id}/participants")

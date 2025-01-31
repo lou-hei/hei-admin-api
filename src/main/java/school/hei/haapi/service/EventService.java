@@ -1,5 +1,6 @@
 package school.hei.haapi.service;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import java.time.Instant;
@@ -15,12 +16,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.endpoint.rest.model.Group;
 import school.hei.haapi.http.model.CreateEventFrequency;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.Event;
 import school.hei.haapi.model.PageFromOne;
+import school.hei.haapi.model.exception.BadRequestException;
 import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.repository.EventRepository;
 import school.hei.haapi.repository.dao.EventDao;
@@ -50,13 +53,39 @@ public class EventService {
     return eventsCreated;
   }
 
+  public EventStats getStats(
+      Optional<String> eventId, Optional<Instant> from, Optional<Instant> to) {
+    if (eventId.isPresent()) {
+      eventRepository
+          .findById(eventId.get())
+          .orElseThrow(
+              () -> new NotFoundException("Event with id : " + eventId.get() + "not found"));
+
+      return eventParticipantService.getEventParticipantsStats(eventId.get());
+    }
+
+    if (from.isEmpty() && to.isEmpty()) {
+      return eventParticipantService.getOverallEventParticipantsStats();
+    }
+
+    Instant fromInstant = from.orElse(Instant.now());
+    Instant toInstant = to.orElse(Instant.now());
+
+    if (fromInstant.isAfter(toInstant)) {
+      throw new BadRequestException("from cannot be after to");
+    }
+
+    List<Event> filteredEvents =
+        eventDao.findByCriteria(null, fromInstant, toInstant, null, null, null);
+    List<String> filteredEventIds =
+        filteredEvents.stream().map(Event::getId).collect(toUnmodifiableList());
+    return eventParticipantService.getEventParticipantsStats(filteredEventIds);
+  }
+
   public Event findEventById(String eventId) {
     return eventRepository
         .findById(eventId)
-        .orElseThrow(
-            () -> {
-              throw new NotFoundException("Event with id #" + eventId + " not found");
-            });
+        .orElseThrow(() -> new NotFoundException("Event with id " + eventId + " not found"));
   }
 
   public List<Event> getEvents(
@@ -77,10 +106,10 @@ public class EventService {
     // TIPS: by default when we create event, the front send always only one event to be created
     // then:
     Instant originOfTheFrequencies = eventToCrupdate.getFirst().getBeginDatetime();
-    Optional<CreateEventFrequency> optionalFrequence = generateFrequency(eventFrequencyToCreate);
+    Optional<CreateEventFrequency> optionalFrequency = generateFrequency(eventFrequencyToCreate);
     List<Event> eventsToSave = new ArrayList<>();
 
-    if (optionalFrequence.isPresent()) {
+    if (optionalFrequency.isPresent()) {
       int goalsDay = eventFrequencyToCreate.getEventFrequencyNumber().getValue();
       List<LocalDate> eachDateOfEventFrequency =
           dateProducerFrom.apply(
