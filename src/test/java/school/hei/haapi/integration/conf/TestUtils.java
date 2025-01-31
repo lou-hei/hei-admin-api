@@ -1397,7 +1397,8 @@ public class TestUtils {
         .groups(List.of(createGroupIdentifier(group1())));
   }
 
-  public static CreateEvent someCreatableEvent(EventType eventType, String planerId, Instant beginDatetime, Instant endDatetime) {
+  public static CreateEvent someCreatableEvent(
+      EventType eventType, String planerId, Instant beginDatetime, Instant endDatetime) {
     return new CreateEvent()
         .id("event" + randomUUID() + "_id")
         .courseId(COURSE1_ID)

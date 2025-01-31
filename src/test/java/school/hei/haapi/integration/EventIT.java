@@ -37,9 +37,7 @@ import static school.hei.haapi.integration.conf.TestUtils.student3MissEvent2;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +49,6 @@ import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.EventStats;
-import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.endpoint.rest.model.UpdateEventParticipant;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
@@ -274,12 +271,15 @@ public class EventIT extends FacadeITMockedThirdParties {
   @Test
   void event_stats_are_exact() throws ApiException {
     EventsApi managerApi = new EventsApi(anApiClient(MANAGER1_TOKEN));
-    List<Event> createdEvents = managerApi.crupdateEvents(List.of(
-            someCreatableEvent(COURSE, MANAGER_ID, Instant.now(), Instant.now().plus(Duration.of(4, HOURS)))),
-        null,
-        null,
-        null,
-        null);
+    List<Event> createdEvents =
+        managerApi.crupdateEvents(
+            List.of(
+                someCreatableEvent(
+                    COURSE, MANAGER_ID, Instant.now(), Instant.now().plus(Duration.of(4, HOURS)))),
+            null,
+            null,
+            null,
+            null);
 
     Event createdEvent = createdEvents.getFirst();
 
@@ -287,11 +287,7 @@ public class EventIT extends FacadeITMockedThirdParties {
 
     // Notice :
     // Student 1 and Student 3 are in GROUP 1
-    EventStats expectedEventStats = new EventStats()
-        .late(0)
-        .present(0)
-        .missing(2)
-        .total(2);
+    EventStats expectedEventStats = new EventStats().late(0).present(0).missing(2).total(2);
 
     assertEquals(expectedEventStats, actualEventStats);
   }
