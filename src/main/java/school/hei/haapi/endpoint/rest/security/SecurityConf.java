@@ -250,6 +250,7 @@ public class SecurityConf {
                     .requestMatchers(
                         new OrRequestMatcher(
                             new AntPathRequestMatcher("/ping", GET.name()),
+                            new AntPathRequestMatcher("/hello-world", GET.name()),
                             new AntPathRequestMatcher("/uuid-created", GET.name()),
                             new AntPathRequestMatcher("/health/db", GET.name()),
                             new AntPathRequestMatcher("/health/email", GET.name()),
