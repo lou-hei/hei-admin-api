@@ -13,7 +13,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -140,7 +139,7 @@ public class FeeService {
       boolean isMpbs,
       String studentRef) {
 
-    if (Objects.nonNull(monthFrom)) monthFrom = getFirstDayOfActualMonth();
+    if (Objects.isNull(monthFrom)) monthFrom = getFirstDayOfActualMonth();
 
     var stats =
         feeDao.getStatByCriteria(
@@ -160,7 +159,7 @@ public class FeeService {
       String studentRef) {
     Pageable pageable = PageRequest.of(page.getValue() - 1, pageSize.getValue());
 
-    if (Objects.nonNull(monthFrom)) monthFrom = getFirstDayOfActualMonth();
+    if (Objects.isNull(monthFrom)) monthFrom = getFirstDayOfActualMonth();
 
     return feeDao.getByCriteria(
         mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs, pageable);
