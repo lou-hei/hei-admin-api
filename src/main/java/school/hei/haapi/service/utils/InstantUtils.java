@@ -43,7 +43,7 @@ public class InstantUtils {
   public static Instant getFirstDayOfActualMonth() {
     return LocalDate.now()
         .with(TemporalAdjusters.firstDayOfMonth())
-        .atStartOfDay(ZoneId.of("UTC"))
+        .atStartOfDay(ZoneId.of("UTC+3"))
         .toInstant();
   }
 }
