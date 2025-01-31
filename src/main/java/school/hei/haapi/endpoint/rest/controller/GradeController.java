@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import school.hei.haapi.endpoint.rest.mapper.AwardedCourseMapper;
 import school.hei.haapi.endpoint.rest.mapper.GradeMapper;
@@ -14,7 +15,9 @@ import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
 import school.hei.haapi.endpoint.rest.model.GetStudentGrade;
 import school.hei.haapi.endpoint.rest.validator.GradeValidator;
 import school.hei.haapi.model.AwardedCourse;
+import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.Grade;
+import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.User;
 import school.hei.haapi.service.AwardedCourseService;
 import school.hei.haapi.service.GradeService;
@@ -71,5 +74,15 @@ public class GradeController {
     validator.accept(grade);
     Grade toSave = gradeMapper.toDomain(grade, examId, studentId);
     return gradeMapper.toRest(gradeService.crupdateParticipantGrade(toSave));
+  }
+
+  @GetMapping(value = "/exams/{exam_id}/grades")
+  public List<GetStudentGrade> getParticipantsGradeForExam(
+      @PathVariable String exam_id,
+      @RequestParam PageFromOne page,
+      @RequestParam("page_size") BoundedPageSize pageSize) {
+    return gradeService.getParticipantsGradeForExam(exam_id, page, pageSize).stream()
+        .map(gradeMapper::toRestStudentGrade)
+        .toList();
   }
 }

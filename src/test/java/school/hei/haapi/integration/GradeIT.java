@@ -1,5 +1,6 @@
 package school.hei.haapi.integration;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,8 +20,11 @@ import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam2;
 import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam4;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
+import static school.hei.haapi.integration.conf.TestUtils.studentGrade1;
+import static school.hei.haapi.integration.conf.TestUtils.studentGrade7;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,10 +35,12 @@ import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.AwardedCourseExam;
 import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
+import school.hei.haapi.endpoint.rest.model.GetStudentGrade;
 import school.hei.haapi.endpoint.rest.model.Grade;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 
+@Slf4j
 @Testcontainers
 @AutoConfigureMockMvc
 class GradeIT extends FacadeITMockedThirdParties {
@@ -181,5 +187,23 @@ class GradeIT extends FacadeITMockedThirdParties {
 
     assertThrowsForbiddenException(
         () -> api.crupdateParticipantGrade(EXAM1_ID, STUDENT1_ID, newCrupdateGrade));
+  }
+
+  @Test
+  void teacher_get_all_grade_ok() throws ApiException {
+    TeachingApi managerApi = new TeachingApi(anApiClient(MANAGER1_TOKEN));
+
+    List<GetStudentGrade> participantsGradeForExam =
+        managerApi.getParticipantsGradeForExam(EXAM1_ID, 1, 2);
+
+    assertNotNull(participantsGradeForExam);
+    assertTrue(participantsGradeForExam.containsAll(List.of(studentGrade1(), studentGrade7())));
+  }
+
+  @Test
+  void student_get_all_grade_ko() {
+    TeachingApi studentApi = new TeachingApi(anApiClient(STUDENT1_TOKEN));
+
+    assertThrowsForbiddenException(() -> studentApi.getParticipantsGradeForExam(EXAM1_ID, 1, 10));
   }
 }
