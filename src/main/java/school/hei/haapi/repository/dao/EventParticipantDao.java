@@ -36,7 +36,6 @@ public class EventParticipantDao {
     Root<EventParticipant> root = query.from(EventParticipant.class);
     Join<EventParticipant, User> userJoin = root.join("participant", JoinType.LEFT);
     Join<EventParticipant, Event> eventJoin = root.join("event", JoinType.LEFT);
-    Join<EventParticipant, Group> groupJoin = root.join("group", JoinType.LEFT);
 
     List<Predicate> predicates = new ArrayList<>();
 
@@ -45,6 +44,7 @@ public class EventParticipantDao {
     }
 
     if (groupRef != null) {
+      Join<EventParticipant, Group> groupJoin = root.join("group", JoinType.LEFT);
       predicates.add(builder.equal(groupJoin.get("ref"), groupRef));
     }
 
