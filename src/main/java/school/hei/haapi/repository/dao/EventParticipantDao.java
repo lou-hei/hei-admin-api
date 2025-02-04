@@ -38,6 +38,37 @@ public class EventParticipantDao {
     Join<EventParticipant, User> userJoin = root.join("participant", LEFT);
     Join<EventParticipant, Event> eventJoin = root.join("event", LEFT);
 
+    List<Predicate> predicates =
+        getPredicates(
+            builder, root, userJoin, eventJoin, eventId, groupRef, name, ref, attendanceStatus);
+
+    if (!predicates.isEmpty()) {
+      query.where(predicates.toArray(new Predicate[0]));
+    }
+
+    if (pageable != null) {
+      query.orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));
+
+      return entityManager
+          .createQuery(query)
+          .setFirstResult((pageable.getPageNumber()) * pageable.getPageSize())
+          .setMaxResults(pageable.getPageSize())
+          .getResultList();
+    }
+
+    return entityManager.createQuery(query).getResultList();
+  }
+
+  private List<Predicate> getPredicates(
+      CriteriaBuilder builder,
+      Root<EventParticipant> root,
+      Join<EventParticipant, User> userJoin,
+      Join<EventParticipant, Event> eventJoin,
+      String eventId,
+      String groupRef,
+      String name,
+      String ref,
+      AttendanceStatus attendanceStatus) {
     List<Predicate> predicates = new ArrayList<>();
 
     if (eventId != null) {
@@ -68,24 +99,10 @@ public class EventParticipantDao {
           builder.like(builder.lower(userJoin.get("ref")), "%" + ref.toLowerCase() + "%"));
     }
 
-    if (!predicates.isEmpty()) {
-      query.where(predicates.toArray(new Predicate[0]));
-    }
-
     if (attendanceStatus != null) {
-      predicates.add(builder.equal(root.get("status"), attendanceStatus.toString()));
+      predicates.add(builder.equal(root.get("status"), attendanceStatus));
     }
 
-    if (pageable != null) {
-      query.orderBy(QueryUtils.toOrders(pageable.getSort(), root, builder));
-
-      return entityManager
-          .createQuery(query)
-          .setFirstResult((pageable.getPageNumber()) * pageable.getPageSize())
-          .setMaxResults(pageable.getPageSize())
-          .getResultList();
-    }
-
-    return entityManager.createQuery(query).getResultList();
+    return predicates;
   }
 }

@@ -8,6 +8,7 @@ import static school.hei.haapi.endpoint.rest.model.EventType.INTEGRATION;
 import static school.hei.haapi.endpoint.rest.model.FrequencyScopeDay.MONDAY;
 import static school.hei.haapi.endpoint.rest.model.FrequencyScopeDay.WEDNESDAY;
 import static school.hei.haapi.integration.StudentIT.student1;
+import static school.hei.haapi.integration.StudentIT.student2;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT2_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
@@ -40,6 +41,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.EventsApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
+import school.hei.haapi.endpoint.rest.model.AttendanceStatus;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.UpdateEventParticipant;
@@ -219,7 +221,38 @@ public class EventIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  void student_create_or_update_event_or_event_participant_ko() throws ApiException {
+  void manager_read_event_participant_with_criteria_ok() throws ApiException {
+    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
+    EventsApi api = new EventsApi(apiClient);
+
+    // Notice :
+    // Student 1 and Student 3 are in GROUP 1
+    // Student 2 is in GROUP 2
+
+    // Test the ref filter
+
+    List<EventParticipant> participantsFilteredByRef =
+        api.getEventParticipants(EVENT2_ID, 1, 15, null, student2().getRef(), null, null);
+
+    assertEquals(participantsFilteredByRef.getFirst(), student2AttendEvent2());
+
+    // Test the name filter
+
+    List<EventParticipant> participantsFilteredByName =
+        api.getEventParticipants(EVENT2_ID, 1, 15, null, null, student2().getLastName(), null);
+
+    assertTrue(participantsFilteredByName.contains(student2AttendEvent2()));
+
+    // Test the status filter
+
+    List<EventParticipant> participantsFilteredByStatus =
+        api.getEventParticipants(EVENT2_ID, 1, 15, null, null, null, AttendanceStatus.MISSING);
+
+    assertEquals(participantsFilteredByStatus.getFirst(), student3MissEvent2());
+  }
+
+  @Test
+  void student_create_or_update_event_or_event_participant_ko() {
     ApiClient apiClient = anApiClient(STUDENT1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
 
