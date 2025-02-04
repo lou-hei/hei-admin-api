@@ -1,10 +1,11 @@
 package school.hei.haapi.repository.dao;
 
+import static jakarta.persistence.criteria.JoinType.LEFT;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -34,8 +35,8 @@ public class EventParticipantDao {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<EventParticipant> query = builder.createQuery(EventParticipant.class);
     Root<EventParticipant> root = query.from(EventParticipant.class);
-    Join<EventParticipant, User> userJoin = root.join("participant", JoinType.LEFT);
-    Join<EventParticipant, Event> eventJoin = root.join("event", JoinType.LEFT);
+    Join<EventParticipant, User> userJoin = root.join("participant", LEFT);
+    Join<EventParticipant, Event> eventJoin = root.join("event", LEFT);
 
     List<Predicate> predicates = new ArrayList<>();
 
@@ -44,7 +45,7 @@ public class EventParticipantDao {
     }
 
     if (groupRef != null) {
-      Join<EventParticipant, Group> groupJoin = root.join("group", JoinType.LEFT);
+      Join<EventParticipant, Group> groupJoin = root.join("group", LEFT);
       predicates.add(builder.equal(groupJoin.get("ref"), groupRef));
     }
 
