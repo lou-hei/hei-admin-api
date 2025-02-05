@@ -4257,6 +4257,50 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /events/participants/{participant_id}/stats:
+    get:
+      tags:
+        - Events
+      summary: Get stats for en event participant
+      operationId: getEventParticipantStats
+      parameters:
+        - name: from_event_begin
+          description: from event datetime to fetch, by default the current date_time.
+          required: false
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to_event_begin
+          description: to event datetime to fetch, by default the current date_time.
+          required: false
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: participant_id
+          description: participantId to get stats
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: EventParticipantStats filtered by criteria if provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventParticipantStats'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   '/comments':
     get:
       tags:
@@ -6095,6 +6139,17 @@ components:
         late:
           type: integer
         total:
+          type: integer
+    EventParticipantStats:
+      type: object
+      properties:
+        missed_events:
+          type: integer
+        assisted_events:
+          type: integer
+        late_events:
+          type: integer
+        total_events:
           type: integer
     CrupdatePromotion:
       type: object
