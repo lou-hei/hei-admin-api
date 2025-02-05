@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -92,11 +91,8 @@ public class EventController {
       @RequestParam(name = "id", required = false) String eventId,
       @RequestParam(name = "from", required = false) Instant from,
       @RequestParam(name = "to", required = false) Instant to) {
-    Optional<String> optionalEventId = Optional.ofNullable(eventId);
-    Optional<Instant> optionalFrom = Optional.ofNullable(from);
-    Optional<Instant> optionalTo = Optional.ofNullable(to);
 
-    return eventService.getStats(optionalEventId, optionalFrom, optionalTo);
+    return eventService.getStats(eventId, from, to);
   }
 
   @GetMapping("/events/{event_id}/participants")

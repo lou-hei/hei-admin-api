@@ -288,7 +288,6 @@ public class EventIT extends FacadeITMockedThirdParties {
   @Test
   void student_get_event_stats_ko() {
     EventsApi studentApi = new EventsApi(anApiClient(STUDENT1_TOKEN));
-
     assertThrowsForbiddenException(() -> studentApi.getEventStats(null, null, null));
   }
 

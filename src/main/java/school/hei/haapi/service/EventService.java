@@ -53,23 +53,25 @@ public class EventService {
     return eventsCreated;
   }
 
-  public EventStats getStats(
-      Optional<String> eventId, Optional<Instant> from, Optional<Instant> to) {
-    if (eventId.isPresent()) {
+  public EventStats getStats(String eventId, Instant from, Instant to) {
+    Optional<String> optionalEventId = Optional.ofNullable(eventId);
+    Optional<Instant> optionalFrom = Optional.ofNullable(from);
+    Optional<Instant> optionalTo = Optional.ofNullable(to);
+    if (optionalEventId.isPresent()) {
+      String evId = optionalEventId.get();
       eventRepository
-          .findById(eventId.get())
-          .orElseThrow(
-              () -> new NotFoundException("Event with id : " + eventId.get() + "not found"));
+          .findById(evId)
+          .orElseThrow(() -> new NotFoundException("Event with id : " + evId + "not found"));
 
-      return eventParticipantService.getEventParticipantsStats(eventId.get());
+      return eventParticipantService.getEventParticipantsStats(evId);
     }
 
-    if (from.isEmpty() && to.isEmpty()) {
+    if (optionalFrom.isEmpty() && optionalTo.isEmpty()) {
       return eventParticipantService.getOverallEventParticipantsStats();
     }
 
-    Instant fromInstant = from.orElse(Instant.now());
-    Instant toInstant = to.orElse(Instant.now());
+    Instant fromInstant = optionalFrom.orElse(Instant.now());
+    Instant toInstant = optionalTo.orElse(Instant.now());
 
     if (fromInstant.isAfter(toInstant)) {
       throw new BadRequestException("from cannot be after to");

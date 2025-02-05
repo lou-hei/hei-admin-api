@@ -164,9 +164,9 @@ public class EventParticipantService {
   }
 
   public EventStats getEventParticipantsStats(String eventId) {
-    Integer missing = eventParticipantRepository.countByEventIdAndStatus(eventId, MISSING);
-    Integer late = eventParticipantRepository.countByEventIdAndStatus(eventId, LATE);
-    Integer present = eventParticipantRepository.countByEventIdAndStatus(eventId, PRESENT);
+    int missing = eventParticipantRepository.countByEventIdAndStatus(eventId, MISSING);
+    int late = eventParticipantRepository.countByEventIdAndStatus(eventId, LATE);
+    int present = eventParticipantRepository.countByEventIdAndStatus(eventId, PRESENT);
 
     return new EventStats()
         .late(late)
@@ -176,9 +176,9 @@ public class EventParticipantService {
   }
 
   public EventStats getOverallEventParticipantsStats() {
-    Integer missing = eventParticipantRepository.countByStatus(MISSING);
-    Integer late = eventParticipantRepository.countByStatus(LATE);
-    Integer present = eventParticipantRepository.countByStatus(PRESENT);
+    int missing = eventParticipantRepository.countByStatus(MISSING);
+    int late = eventParticipantRepository.countByStatus(LATE);
+    int present = eventParticipantRepository.countByStatus(PRESENT);
 
     return new EventStats()
         .late(late)
@@ -188,9 +188,9 @@ public class EventParticipantService {
   }
 
   public EventStats getEventParticipantsStats(List<String> eventIds) {
-    Integer missing = eventParticipantRepository.countByEventIdInAndStatus(eventIds, MISSING);
-    Integer late = eventParticipantRepository.countByEventIdInAndStatus(eventIds, LATE);
-    Integer present = eventParticipantRepository.countByEventIdInAndStatus(eventIds, PRESENT);
+    int missing = eventParticipantRepository.countByEventIdInAndStatus(eventIds, MISSING);
+    int late = eventParticipantRepository.countByEventIdInAndStatus(eventIds, LATE);
+    int present = eventParticipantRepository.countByEventIdInAndStatus(eventIds, PRESENT);
 
     return new EventStats()
         .late(late)
