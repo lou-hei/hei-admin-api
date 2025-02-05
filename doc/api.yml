@@ -5199,18 +5199,30 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
-  '/cor/{student_id}':
+  '/students/{student_id}/cors':
     get:
       tags:
         - Cor
-      operationId: getStudentCor
-      summary: Get all COR for the given student_id
+        - User
+      operationId: getStudentCors
+      summary: Get all CORs for the given student_id
       parameters:
         - in: path
           name: student_id
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+          description: Set value to 1 by default if null is provided
+          required: false
+        - name: page_size
+          in: query
+          description: Set value to 15 by default if null is provided
+          schema:
+            $ref: '#/components/schemas/PageSize'
       responses:
         '200':
           description: List of COR for the given student_id
@@ -5233,6 +5245,8 @@ paths:
     put:
       tags:
         - Cor
+        - User
+      operationId: crupdateStudentCors
       parameters:
         - in: path
           name: student_id
