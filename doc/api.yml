@@ -5199,6 +5199,74 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/cor/{student_id}':
+    get:
+      tags:
+        - Cor
+      operationId: getStudentCor
+      summary: Get all COR for the given student_id
+      parameters:
+        - in: path
+          name: student_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of COR for the given student_id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cor"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Cor
+      parameters:
+        - in: path
+          name: student_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: List of CORs to Crupdate
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/CrupdateCor"
+      responses:
+        '200':
+          description: List of Crupdated CORs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cor"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 components:
   securitySchemes:
     BearerAuth:
@@ -6412,6 +6480,23 @@ components:
       enum:
         - YEARLY
         - MONTHLY
+    CrupdateCor:
+      type: object
+      properties:
+        id:
+          type: string
+        creation_datetime:
+          type: string
+          format: date-time
+        description:
+          type: string
+    Cor:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/CrupdateCor"
+      properties:
+        concerned_student:
+          $ref: "#/components/schemas/Student"
     UpdateLettersStatus:
       type: object
       properties:
