@@ -20,8 +20,12 @@ public interface EventParticipantRepository extends JpaRepository<EventParticipa
 
   Integer countByEventIdAndStatus(String eventId, AttendanceStatus status);
 
-  Integer countAllByParticipantIdAndStatus(String participantId, AttendanceStatus status);
+  int countByStatus(AttendanceStatus status);
 
-  Integer countAllByParticipantIdAndStatusAndEventIdIn(
+  int countAllByParticipantIdAndStatus(String participantId, AttendanceStatus status);
+
+  int countByEventIdInAndStatus(List<String> eventIds, AttendanceStatus status);
+
+  int countAllByParticipantIdAndStatusAndEventIdIn(
       String participantId, AttendanceStatus status, List<String> eventIds);
 }

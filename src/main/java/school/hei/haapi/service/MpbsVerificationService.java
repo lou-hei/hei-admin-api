@@ -1,5 +1,6 @@
 package school.hei.haapi.service;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.FAILED;
@@ -14,7 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -293,7 +293,7 @@ public class MpbsVerificationService {
   }
 
   private MpbsStatus defineMpbsStatusWithoutOrangeTransactionDetails(Mpbs mpbs, Instant toCompare) {
-    long dayValidity = mpbs.getCreationDatetime().until(toCompare, ChronoUnit.DAYS);
+    long dayValidity = mpbs.getCreationDatetime().until(toCompare, DAYS);
     if (dayValidity > 2) {
       log.info("failed transaction");
       return FAILED;
