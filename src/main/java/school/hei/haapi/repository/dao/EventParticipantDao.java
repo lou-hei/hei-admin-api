@@ -35,10 +35,9 @@ public class EventParticipantDao {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<EventParticipant> query = builder.createQuery(EventParticipant.class);
     Root<EventParticipant> root = query.from(EventParticipant.class);
-    Join<EventParticipant, User> userJoin = root.join("participant", LEFT);
 
     List<Predicate> predicates =
-        getPredicates(builder, root, userJoin, eventId, groupRef, name, ref, attendanceStatus);
+        getPredicates(builder, root, eventId, groupRef, name, ref, attendanceStatus);
 
     if (!predicates.isEmpty()) {
       query.where(predicates.toArray(new Predicate[0]));
@@ -60,7 +59,6 @@ public class EventParticipantDao {
   private List<Predicate> getPredicates(
       CriteriaBuilder builder,
       Root<EventParticipant> root,
-      Join<EventParticipant, User> userJoin,
       String eventId,
       String groupRef,
       String name,
@@ -78,23 +76,28 @@ public class EventParticipantDao {
       predicates.add(builder.equal(groupJoin.get("ref"), groupRef));
     }
 
-    if (name != null) {
-      predicates.add(
-          builder.and(
-              builder.or(
-                  builder.or(
-                      builder.like(
-                          builder.lower(userJoin.get("firstName")), "%" + name.toLowerCase() + "%"),
-                      builder.like(userJoin.get("firstName"), "%" + name + "%")),
-                  builder.or(
-                      builder.like(
-                          builder.lower(userJoin.get("lastName")), "%" + name.toLowerCase() + "%"),
-                      builder.like(userJoin.get("lastName"), "%" + name + "%")))));
-    }
+    if (name != null || ref != null) {
+      Join<EventParticipant, User> userJoin = root.join("participant", LEFT);
+      if (name != null) {
+        predicates.add(
+            builder.and(
+                builder.or(
+                    builder.or(
+                        builder.like(
+                            builder.lower(userJoin.get("firstName")),
+                            "%" + name.toLowerCase() + "%"),
+                        builder.like(userJoin.get("firstName"), "%" + name + "%")),
+                    builder.or(
+                        builder.like(
+                            builder.lower(userJoin.get("lastName")),
+                            "%" + name.toLowerCase() + "%"),
+                        builder.like(userJoin.get("lastName"), "%" + name + "%")))));
+      }
 
-    if (ref != null) {
-      predicates.add(
-          builder.like(builder.lower(userJoin.get("ref")), "%" + ref.toLowerCase() + "%"));
+      if (ref != null) {
+        predicates.add(
+            builder.like(builder.lower(userJoin.get("ref")), "%" + ref.toLowerCase() + "%"));
+      }
     }
 
     if (attendanceStatus != null) {
