@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import school.hei.haapi.endpoint.rest.mapper.EventMapper;
 import school.hei.haapi.endpoint.rest.mapper.EventParticipantMapper;
+import school.hei.haapi.endpoint.rest.model.AttendanceStatus;
 import school.hei.haapi.endpoint.rest.model.CreateEvent;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
@@ -88,8 +89,13 @@ public class EventController {
       @PathVariable(name = "event_id") String eventId,
       @RequestParam(name = "page", defaultValue = "1") PageFromOne page,
       @RequestParam(name = "page_size", defaultValue = "15") BoundedPageSize pageSize,
-      @RequestParam(name = "group_ref", required = false) String groupRef) {
-    return eventParticipantService.getEventParticipants(eventId, page, pageSize, groupRef).stream()
+      @RequestParam(name = "group_ref", required = false) String groupRef,
+      @RequestParam(name = "student_ref", required = false) String ref,
+      @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "status", required = false) AttendanceStatus attendanceStatus) {
+    return eventParticipantService
+        .getEventParticipants(eventId, page, pageSize, groupRef, name, ref, attendanceStatus)
+        .stream()
         .map(eventParticipantMapper::toRest)
         .collect(toUnmodifiableList());
   }

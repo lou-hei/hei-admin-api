@@ -4187,6 +4187,24 @@ paths:
           schema:
             type: string
           required: false
+        - name: student_ref
+          in: query
+          description: Filter by student std
+          schema:
+            type: string
+          required: false
+        - name: name
+          in: query
+          description: Filter by student name
+          schema:
+            type: string
+          required: false
+        - name: status
+          in: query
+          description: Filter by AttendanceStatus
+          schema:
+            $ref: "#/components/schemas/AttendanceStatus"
+          required: false
       responses:
         '200':
           description: Participants of the event
