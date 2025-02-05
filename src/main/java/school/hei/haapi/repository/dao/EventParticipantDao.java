@@ -36,11 +36,9 @@ public class EventParticipantDao {
     CriteriaQuery<EventParticipant> query = builder.createQuery(EventParticipant.class);
     Root<EventParticipant> root = query.from(EventParticipant.class);
     Join<EventParticipant, User> userJoin = root.join("participant", LEFT);
-    Join<EventParticipant, Event> eventJoin = root.join("event", LEFT);
 
     List<Predicate> predicates =
-        getPredicates(
-            builder, root, userJoin, eventJoin, eventId, groupRef, name, ref, attendanceStatus);
+        getPredicates(builder, root, userJoin, eventId, groupRef, name, ref, attendanceStatus);
 
     if (!predicates.isEmpty()) {
       query.where(predicates.toArray(new Predicate[0]));
@@ -63,7 +61,6 @@ public class EventParticipantDao {
       CriteriaBuilder builder,
       Root<EventParticipant> root,
       Join<EventParticipant, User> userJoin,
-      Join<EventParticipant, Event> eventJoin,
       String eventId,
       String groupRef,
       String name,
@@ -72,6 +69,7 @@ public class EventParticipantDao {
     List<Predicate> predicates = new ArrayList<>();
 
     if (eventId != null) {
+      Join<EventParticipant, Event> eventJoin = root.join("event", LEFT);
       predicates.add(builder.equal(eventJoin.get("id"), eventId));
     }
 
