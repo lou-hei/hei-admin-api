@@ -2,6 +2,7 @@ package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.EventType.COURSE;
 import static school.hei.haapi.endpoint.rest.model.EventType.INTEGRATION;
@@ -12,6 +13,7 @@ import static school.hei.haapi.integration.StudentIT.student2;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.EVENT2_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsApiException;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
@@ -44,6 +46,7 @@ import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.AttendanceStatus;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
+import school.hei.haapi.endpoint.rest.model.EventParticipantStats;
 import school.hei.haapi.endpoint.rest.model.UpdateEventParticipant;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
@@ -274,5 +277,23 @@ public class EventIT extends FacadeITMockedThirdParties {
 
     Event deletedEvent = managerApi.deleteEventById(events.getFirst().getId());
     assertEquals(events.getFirst().getId(), deletedEvent.getId());
+  }
+
+  @Test
+  void student_get_stats_ko() {
+    EventsApi studentApi = new EventsApi(anApiClient(STUDENT1_TOKEN));
+
+    assertThrowsForbiddenException(
+        () -> studentApi.getEventParticipantStats(STUDENT1_ID, null, null));
+  }
+
+  @Test
+  void get_stats_ok() throws ApiException {
+    EventsApi managerApi = new EventsApi(anApiClient(MANAGER1_TOKEN));
+    // TODO: create dynamically some events during test and apply filters to get stats for these
+    // events
+    EventParticipantStats eventParticipantStats =
+        managerApi.getEventParticipantStats(STUDENT1_ID, null, null);
+    assertNotEquals(0, eventParticipantStats.getTotalEvents());
   }
 }
