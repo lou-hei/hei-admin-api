@@ -4270,15 +4270,15 @@ paths:
       summary: Get stats for en event participant
       operationId: getEventParticipantStats
       parameters:
-        - name: from
+        - name: from_event_begin
           description: from event datetime to fetch, by default the current date_time.
           required: false
           in: query
           schema:
             type: string
             format: date-time
-        - name: to
-          description: from event datetime to fetch, by default the current date_time.
+        - name: to_event_begin
+          description: to event datetime to fetch, by default the current date_time.
           required: false
           in: query
           schema:
@@ -4292,7 +4292,7 @@ paths:
             type: string
       responses:
         '200':
-          description: EventParticipantStats filtered with criteria if provided
+          description: EventParticipantStats filtered by criteria if provided
           content:
             application/json:
               schema:

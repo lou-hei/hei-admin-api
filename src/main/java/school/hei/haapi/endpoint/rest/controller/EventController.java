@@ -105,8 +105,8 @@ public class EventController {
   @GetMapping("/events/participants/{participant_id}/stats")
   public EventParticipantStats getEventParticipantStats(
       @PathVariable(name = "participant_id") String participantId,
-      @RequestParam(name = "from", required = false) Instant from,
-      @RequestParam(name = "to", required = false) Instant to) {
+      @RequestParam(name = "from_event_begin", required = false) Instant from,
+      @RequestParam(name = "to_event_begin", required = false) Instant to) {
     Optional<Instant> optionalFrom = Optional.ofNullable(from);
     Optional<Instant> optionalTo = Optional.ofNullable(to);
 
