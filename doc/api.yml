@@ -2834,6 +2834,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeesStatistics'
+  /fees/advanced-stats:
+    get:
+      tags:
+        - Paying
+      summary: Get advanced monthly statistics on Fees, the actual month by default
+      parameters:
+        - name: month_from
+          in: query
+          schema:
+            type: string
+            format: date-time
+          required: false
+        - name: month_to
+          in: query
+          schema:
+            type: string
+            format: date-time
+          required: false
+      operationId: getAdvancedFeesStats
+      responses:
+        '200':
+          description: Advanced Fees stats info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvancedFeesStatistics'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /fees/templates:
     get:
       tags:
@@ -6588,6 +6624,61 @@ components:
           type: integer
         suspended:
           type: integer
+    AdvancedFeesStatistics:
+      type: object
+      properties:
+        total_expected_fees_stats:
+          $ref: "#/components/schemas/TotalExpectedFeesStats"
+        paid_fees_stats:
+          $ref: "#/components/schemas/PaidFeesStats"
+        pending_fees_stats:
+          $ref: "#/components/schemas/PendingFeesStats"
+        late_fees_stats:
+          $ref: "#/components/schemas/LateFeesStats"
+    BaseFeesStats:
+      type: object
+      properties:
+        fist_year:
+          type: integer
+        second_year:
+          type: integer
+        third_year:
+          type: integer
+        work_study_fees:
+          type: integer
+        monthly_fees:
+          type: integer
+        yearly_fees:
+          type: integer
+    TotalExpectedFeesStats:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseFeesStats"
+    PaidFeesStats:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseFeesStats"
+      properties:
+        mobile_money_fees:
+          type: number
+        bank_fees:
+          type: number
+        catchup_fees:
+          type: number
+    PendingFeesStats:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseFeesStats"
+      properties:
+        catchup_fees:
+          type: number
+    LateFeesStats:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseFeesStats"
+      properties:
+        catchup_fees:
+          type: number
     FeesStatistics:
       type: object
       properties:
