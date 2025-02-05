@@ -355,6 +355,28 @@ public class UserMapper {
         .build();
   }
 
+  public User toDomain(Student student) {
+    return User.builder()
+        .role(User.Role.MONITOR)
+        .id(student.getId())
+        .firstName(student.getFirstName())
+        .lastName(student.getLastName())
+        .email(student.getEmail())
+        .ref(student.getRef())
+        .status(statusEnumMapper.toDomainStatus(student.getStatus()))
+        .phone(student.getPhone())
+        .entranceDatetime(student.getEntranceDatetime())
+        .birthDate(student.getBirthDate())
+        .sex(sexEnumMapper.toDomainSexEnum(student.getSex()))
+        .address(student.getAddress())
+        .nic(student.getNic())
+        .birthPlace(student.getBirthPlace())
+        .longitude(student.getCoordinates().getLongitude())
+        .latitude(student.getCoordinates().getLatitude())
+        .highSchoolOrigin(student.getHighSchoolOrigin())
+        .build();
+  }
+
   public User toDomain(UserIdentifier userIdentifier) {
     return userService.findById(userIdentifier.getId());
   }
