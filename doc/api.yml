@@ -4187,7 +4187,7 @@ paths:
           schema:
             type: string
           required: false
-        - name: ref
+        - name: student_ref
           in: query
           description: Filter by student std
           schema:
