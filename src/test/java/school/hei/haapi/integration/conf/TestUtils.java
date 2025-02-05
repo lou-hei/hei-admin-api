@@ -1386,15 +1386,11 @@ public class TestUtils {
   }
 
   public static CreateEvent someCreatableEventByManager1(EventType eventType) {
-    return new CreateEvent()
-        .id("event" + randomUUID() + "_id")
-        .courseId(COURSE1_ID)
-        .beginDatetime(Instant.parse("2023-12-08T08:00:00.00Z"))
-        .endDatetime(Instant.parse("2023-12-08T10:00:00.00Z"))
-        .description("Another event")
-        .eventType(eventType)
-        .plannerId(MANAGER_ID)
-        .groups(List.of(createGroupIdentifier(group1())));
+    return someCreatableEvent(
+        eventType,
+        MANAGER_ID,
+        Instant.parse("2023-12-08T08:00:00.00Z"),
+        Instant.parse("2023-12-08T10:00:00.00Z"));
   }
 
   public static CreateEvent someCreatableEvent(

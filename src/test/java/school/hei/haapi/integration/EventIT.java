@@ -30,6 +30,7 @@ import static school.hei.haapi.integration.conf.TestUtils.expectedCourseEventCre
 import static school.hei.haapi.integration.conf.TestUtils.expectedIntegrationEventCreated;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
+import static school.hei.haapi.integration.conf.TestUtils.someCreatableEvent;
 import static school.hei.haapi.integration.conf.TestUtils.someCreatableEventByManager1;
 import static school.hei.haapi.integration.conf.TestUtils.student1AttendEvent2;
 import static school.hei.haapi.integration.conf.TestUtils.student1MissEvent1;
@@ -51,8 +52,8 @@ import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.AttendanceStatus;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
-import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.endpoint.rest.model.EventParticipantStats;
+import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.endpoint.rest.model.UpdateEventParticipant;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
@@ -306,12 +307,15 @@ public class EventIT extends FacadeITMockedThirdParties {
   @Test
   void event_stats_are_exact() throws ApiException {
     EventsApi managerApi = new EventsApi(anApiClient(MANAGER1_TOKEN));
-    List<Event> createdEvents = managerApi.crupdateEvents(List.of(
-            someCreatableEvent(COURSE, MANAGER_ID, Instant.now(), Instant.now().plus(Duration.of(4, HOURS)))),
-        null,
-        null,
-        null,
-        null);
+    List<Event> createdEvents =
+        managerApi.crupdateEvents(
+            List.of(
+                someCreatableEvent(
+                    COURSE, MANAGER_ID, Instant.now(), Instant.now().plus(Duration.of(4, HOURS)))),
+            null,
+            null,
+            null,
+            null);
 
     Event createdEvent = createdEvents.getFirst();
 
@@ -319,11 +323,7 @@ public class EventIT extends FacadeITMockedThirdParties {
 
     // Notice :
     // Student 1 and Student 3 are in GROUP 1
-    EventStats expectedEventStats = new EventStats()
-        .late(0)
-        .present(0)
-        .missing(2)
-        .total(2);
+    EventStats expectedEventStats = new EventStats().late(0).present(0).missing(2).total(2);
 
     assertEquals(expectedEventStats, actualEventStats);
   }

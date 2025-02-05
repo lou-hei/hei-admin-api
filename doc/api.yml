@@ -4310,7 +4310,7 @@ paths:
       parameters:
         - name: id
           in: query
-          description: the eventId of the event if you want to see the stats for a specific event
+          description: the eventId of the event, this can be left empty and will return the stats of all events
           required: false
           schema:
             type: string
