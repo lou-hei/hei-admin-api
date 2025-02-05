@@ -2436,11 +2436,7 @@ paths:
         - name: status
           in: query
           schema:
-            type: string
-            enum:
-              - UNPAID
-              - PAID
-              - LATE
+            $ref: '#/components/schemas/FeeStatusEnum'
       operationId: getStudentFees
       responses:
         '200':
@@ -2637,10 +2633,8 @@ paths:
           schema:
             type: string
             default: LATE
-            enum:
-              - UNPAID
-              - LATE
-              - PAID
+            allOf:
+              - $ref: '#/components/schemas/FeeStatusEnum'
         - name: month_from
           in: query
           schema:
