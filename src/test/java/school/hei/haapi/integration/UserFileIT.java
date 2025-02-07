@@ -310,7 +310,6 @@ public class UserFileIT extends FacadeITMockedThirdParties {
   void organizer_load_other_files_ko() {
     ApiClient organizerClient = anApiClient(ORGANIZER1_TOKEN);
     FilesApi api = new FilesApi(organizerClient);
-
     assertThrowsForbiddenException(() -> api.getUserFiles(STUDENT1_ID, 1, 15, null));
   }
 

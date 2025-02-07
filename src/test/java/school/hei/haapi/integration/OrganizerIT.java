@@ -110,7 +110,6 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
   void read_student_ko() {
     ApiClient student1Client = anApiClient(ORGANIZER2_TOKEN);
     UsersApi api = new UsersApi(student1Client);
-
     assertThrowsForbiddenException(() -> api.getStudentById(STUDENT1_ID));
     assertThrowsForbiddenException(
         () -> api.getStudents(1, 20, null, null, null, null, null, null, null, null, null));
@@ -120,7 +119,6 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
   void read_teacher_ko() {
     ApiClient teacher1Client = anApiClient(ORGANIZER1_TOKEN);
     UsersApi api = new UsersApi(teacher1Client);
-
     assertThrowsForbiddenException(() -> api.getTeacherById(TEACHER1_ID));
     assertThrowsForbiddenException(() -> api.getTeachers(1, 20, null, null, null, null, null));
   }
@@ -129,7 +127,6 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
   void read_events_ok() {
     ApiClient organizerClient = anApiClient(ORGANIZER1_TOKEN);
     EventsApi api = new EventsApi(organizerClient);
-
     assertDoesNotThrow(() -> api.getEvents(1, 10, null, null, null, null, null));
   }
 
