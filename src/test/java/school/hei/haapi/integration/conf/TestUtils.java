@@ -207,6 +207,11 @@ public class TestUtils {
   public static final String LETTER3_REF = "letter3_ref";
   public static final String EVENT_PARTICIPANT5_ID = "event_participant5_id";
 
+  public static final String ORGANIZER1_ID = "organizer1_id";
+  public static final String ORGANIZER2_ID = "organizer2_id";
+  public static final String ORGANIZER1_TOKEN = "organizer1_token";
+  public static final String ORGANIZER2_TOKEN = "organizer2_token";
+
   public static ApiClient anApiClient(String token, int serverPort) {
     ApiClient client = new ApiClient();
     client.setScheme("http");
@@ -244,6 +249,10 @@ public class TestUtils {
     when(cognitoComponent.getEmailByIdToken(STAFF_MEMBER1_TOKEN))
         .thenReturn("test+staff@hei.school");
     when(cognitoComponent.getEmailByIdToken(ADMIN1_TOKEN)).thenReturn("test+admin@hei.school");
+    when(cognitoComponent.getEmailByIdToken(ORGANIZER1_TOKEN))
+        .thenReturn("test+organizer@hei.school");
+    when(cognitoComponent.getEmailByIdToken(ORGANIZER2_TOKEN))
+        .thenReturn("test+organizer+2@hei.school");
     when(cognitoComponent.getEmailByIdToken(SUSPENDED_TOKEN))
         .thenReturn("test+suspended@hei.school");
   }
@@ -1295,6 +1304,20 @@ public class TestUtils {
         .planner(planner1())
         .count(new EventStats().late(0).missing(1).present(1).total(2))
         .groups(List.of(createGroupIdentifier(group1())));
+  }
+
+  public static CreateEvent creatableEvent1() {
+    return new CreateEvent()
+        .id(event1().getId())
+        .color(event1().getColor())
+        .beginDatetime(event1().getBeginDatetime())
+        .endDatetime(event1().getEndDatetime())
+        .description(event1().getDescription())
+        .title(event1().getTitle())
+        .eventType(event1().getType())
+        .courseId(event1().getCourse().getId())
+        .plannerId(event1().getPlanner().getId())
+        .groups(event1().getGroups());
   }
 
   public static Event event2() {

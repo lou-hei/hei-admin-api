@@ -5356,6 +5356,7 @@ components:
             - MANAGER
             - ADMIN
             - STAFF_MEMBER
+            - ORGANIZER
         bearer:
           type: string
     UserIdentifier:
@@ -5508,6 +5509,9 @@ components:
     CrupdateManager:
       allOf:
         - $ref: '#/components/schemas/CrupdateUser'
+    CrupdateOrganizer:
+      allOf:
+        - $ref: '#/components/schemas/CrupdateUser'
     CrupdateWorkStudyStudent:
       properties:
         id:
@@ -5589,6 +5593,12 @@ components:
         profile_picture:
           type: string
     Admin:
+      allOf:
+        - $ref: '#/components/schemas/CrupdateUser'
+      properties:
+        profile_picture:
+          type: string
+    Organizer:
       allOf:
         - $ref: '#/components/schemas/CrupdateUser'
       properties:
