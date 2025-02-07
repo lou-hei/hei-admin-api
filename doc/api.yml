@@ -6638,18 +6638,24 @@ components:
     BaseFeesStats:
       type: object
       properties:
-        fist_year:
+        first_year:
           type: integer
+          format: int64
         second_year:
           type: integer
+          format: int64
         third_year:
           type: integer
+          format: int64
         work_study_fees:
           type: integer
+          format: int64
         monthly_fees:
           type: integer
+          format: int64
         yearly_fees:
           type: integer
+          format: int64
     TotalExpectedFeesStats:
       type: object
       allOf:
@@ -6658,27 +6664,30 @@ components:
       type: object
       allOf:
         - $ref: "#/components/schemas/BaseFeesStats"
+        - $ref: "#/components/schemas/WithRemedialFeesStatistics"
       properties:
         mobile_money_fees:
           type: number
+          format: int64
         bank_fees:
           type: number
-        catchup_fees:
-          type: number
+          format: int64
     PendingFeesStats:
       type: object
       allOf:
         - $ref: "#/components/schemas/BaseFeesStats"
-      properties:
-        catchup_fees:
-          type: number
+        - $ref: "#/components/schemas/WithRemedialFeesStatistics"
     LateFeesStats:
       type: object
       allOf:
         - $ref: "#/components/schemas/BaseFeesStats"
+        - $ref: "#/components/schemas/WithRemedialFeesStatistics"
+    WithRemedialFeesStatistics:
+      type: object
       properties:
-        catchup_fees:
+        remedial_fees:
           type: number
+          format: int64
     FeesStatistics:
       type: object
       properties:
