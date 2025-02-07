@@ -1,5 +1,6 @@
 package school.hei.haapi.integration;
 
+import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_ID;
@@ -18,7 +19,6 @@ import java.io.InputStream;
 import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -137,7 +137,7 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
 
     CreateEvent createEvent =
         someCreatableEvent(
-            EventType.EXAM, ORGANIZER1_ID, Instant.now(), Instant.now().plus(1, ChronoUnit.HOURS));
+            EventType.EXAM, ORGANIZER1_ID, Instant.now(), Instant.now().plus(1, HOURS));
 
     List<Event> events = api.crupdateEvents(List.of(createEvent), null, null, null, null);
     assertEquals(createEvent.getTitle(), events.getFirst().getTitle());
