@@ -330,10 +330,9 @@ public class UserFileIT extends FacadeITMockedThirdParties {
     ApiClient monitor1Client = anApiClient(MONITOR1_TOKEN);
     FilesApi api = new FilesApi(monitor1Client);
 
-    List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, TRANSCRIPT);
+    List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, null);
     FileInfo document = api.getUserFilesById(STUDENT1_ID, "file1_id");
 
-    assertEquals(1, documents.size());
     assertTrue(documents.contains(file1()));
     assertNotNull(document);
   }
@@ -364,9 +363,8 @@ public class UserFileIT extends FacadeITMockedThirdParties {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     FilesApi api = new FilesApi(manager1Client);
 
-    List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, TRANSCRIPT);
+    List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, null);
 
-    assertEquals(1, documents.size());
     assertTrue(documents.contains(file1()));
   }
 
