@@ -3,6 +3,7 @@ package school.hei.haapi.integration;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER2_TOKEN;
@@ -59,7 +60,7 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
     organizer.setEmail("test+organizer@hei.school");
     organizer.setRef("ORG22001");
     organizer.setPhone("0322400028");
-    organizer.setStatus(EnableStatus.ENABLED);
+    organizer.setStatus(ENABLED);
     organizer.setSex(Sex.M);
     organizer.setBirthDate(LocalDate.parse("1980-10-10"));
     organizer.setEntranceDatetime(Instant.parse("2022-09-08T08:25:29.00Z"));
@@ -78,7 +79,7 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
     organizer.setEmail("test+organizer+2@hei.school");
     organizer.setRef("ORG22002");
     organizer.setPhone("0322411113");
-    organizer.setStatus(EnableStatus.ENABLED);
+    organizer.setStatus(ENABLED);
     organizer.setSex(Sex.F);
     organizer.setBirthDate(LocalDate.parse("1890-01-01"));
     organizer.setEntranceDatetime(Instant.parse("2022-09-08T08:25:29.00Z"));

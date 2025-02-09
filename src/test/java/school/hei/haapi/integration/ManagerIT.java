@@ -1,6 +1,7 @@
 package school.hei.haapi.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
@@ -52,7 +53,7 @@ public class ManagerIT extends FacadeITMockedThirdParties {
     manager.setEmail("test+manager1@hei.school");
     manager.setRef("MGR21001");
     manager.setPhone("0322411127");
-    manager.setStatus(EnableStatus.ENABLED);
+    manager.setStatus(ENABLED);
     manager.setSex(Sex.M);
     manager.setBirthDate(LocalDate.parse("1890-01-01"));
     manager.setEntranceDatetime(Instant.parse("2021-09-08T08:25:29Z"));
@@ -71,7 +72,7 @@ public class ManagerIT extends FacadeITMockedThirdParties {
     manager.setEmail("test+manager1@hei.school");
     manager.setRef("MGR21001");
     manager.setPhone("0322411127");
-    manager.setStatus(EnableStatus.ENABLED);
+    manager.setStatus(ENABLED);
     manager.setSex(Sex.M);
     manager.setBirthDate(LocalDate.parse("1890-01-01"));
     manager.setEntranceDatetime(Instant.parse("2021-09-08T08:25:29Z"));

@@ -110,7 +110,7 @@ public class MonitorIT extends FacadeITMockedThirdParties {
         .email("test+monitor@hei.school")
         .ref("MTR21001")
         .phone("0322411123")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
         .nic("")
         .birthPlace("")
