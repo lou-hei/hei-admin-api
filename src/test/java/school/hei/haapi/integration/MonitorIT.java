@@ -28,7 +28,6 @@ import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.Coordinates;
 import school.hei.haapi.endpoint.rest.model.CrupdateMonitor;
-import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Monitor;
 import school.hei.haapi.endpoint.rest.model.Sex;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;

@@ -49,7 +49,6 @@ import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.CreatePayment;
 import school.hei.haapi.endpoint.rest.model.CrupdateStudent;
-import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Fee;
 import school.hei.haapi.endpoint.rest.model.Payment;
 import school.hei.haapi.endpoint.rest.model.Student;

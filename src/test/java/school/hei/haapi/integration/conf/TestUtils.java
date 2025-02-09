@@ -82,7 +82,6 @@ import school.hei.haapi.endpoint.rest.model.CrupdateMonitor;
 import school.hei.haapi.endpoint.rest.model.CrupdatePromotion;
 import school.hei.haapi.endpoint.rest.model.CrupdateStudentFee;
 import school.hei.haapi.endpoint.rest.model.CrupdateTeacher;
-import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.EventStats;

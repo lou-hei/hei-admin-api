@@ -4,6 +4,8 @@ import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
+import static school.hei.haapi.endpoint.rest.model.Sex.F;
+import static school.hei.haapi.endpoint.rest.model.Sex.M;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER2_TOKEN;
@@ -34,11 +36,9 @@ import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.Coordinates;
 import school.hei.haapi.endpoint.rest.model.CreateEvent;
-import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.endpoint.rest.model.Organizer;
-import school.hei.haapi.endpoint.rest.model.Sex;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
 
@@ -61,7 +61,7 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
     organizer.setRef("ORG22001");
     organizer.setPhone("0322400028");
     organizer.setStatus(ENABLED);
-    organizer.setSex(Sex.M);
+    organizer.setSex(M);
     organizer.setBirthDate(LocalDate.parse("1980-10-10"));
     organizer.setEntranceDatetime(Instant.parse("2022-09-08T08:25:29.00Z"));
     organizer.setAddress("Adr 10");
@@ -80,7 +80,7 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
     organizer.setRef("ORG22002");
     organizer.setPhone("0322411113");
     organizer.setStatus(ENABLED);
-    organizer.setSex(Sex.F);
+    organizer.setSex(F);
     organizer.setBirthDate(LocalDate.parse("1890-01-01"));
     organizer.setEntranceDatetime(Instant.parse("2022-09-08T08:25:29.00Z"));
     organizer.setAddress("Adr 12");
