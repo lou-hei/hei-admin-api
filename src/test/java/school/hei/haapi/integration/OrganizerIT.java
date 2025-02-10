@@ -2,6 +2,7 @@ package school.hei.haapi.integration;
 
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
 import static school.hei.haapi.endpoint.rest.model.Sex.F;
@@ -145,8 +146,10 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
             EventType.EXAM, ORGANIZER1_ID, Instant.now(), Instant.now().plus(1, HOURS));
 
     List<Event> events = api.crupdateEvents(List.of(createEvent), null, null, null, null);
-    assertEquals(createEvent.getTitle(), events.getFirst().getTitle());
+    Event newEvent = events.getFirst();
+    assertEquals(createEvent.getTitle(), newEvent.getTitle());
 
-    api.deleteEventById(events.getFirst().getId());
+    api.deleteEventById(newEvent.getId());
+    assertThrows(ApiException.class, () -> api.getEventById(newEvent.getId()));
   }
 }
