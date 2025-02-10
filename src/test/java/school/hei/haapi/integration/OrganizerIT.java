@@ -1,8 +1,8 @@
 package school.hei.haapi.integration;
 
 import static java.time.temporal.ChronoUnit.HOURS;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
 import static school.hei.haapi.endpoint.rest.model.Sex.F;
 import static school.hei.haapi.endpoint.rest.model.Sex.M;
@@ -12,6 +12,8 @@ import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER2_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
+import static school.hei.haapi.integration.conf.TestUtils.event2;
+import static school.hei.haapi.integration.conf.TestUtils.event3;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.someCreatableEvent;
 import static school.hei.haapi.integration.conf.TestUtils.uploadProfilePicture;
@@ -125,10 +127,12 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  void read_events_ok() {
+  void read_events_ok() throws ApiException {
     ApiClient organizerClient = anApiClient(ORGANIZER1_TOKEN);
     EventsApi api = new EventsApi(organizerClient);
-    assertDoesNotThrow(() -> api.getEvents(1, 10, null, null, null, null, null));
+    List<Event> events = api.getEvents(1, 10, null, null, null, null, null);
+
+    assertTrue(events.containsAll(List.of(event2(), event3())));
   }
 
   @Test
