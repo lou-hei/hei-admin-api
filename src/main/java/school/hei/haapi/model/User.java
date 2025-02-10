@@ -220,6 +220,7 @@ public class User implements Serializable {
     STUDENT,
     TEACHER,
     MANAGER,
-    ORGANIZER;
+    ORGANIZER,
+    GATE_KEEPER;
   }
 }

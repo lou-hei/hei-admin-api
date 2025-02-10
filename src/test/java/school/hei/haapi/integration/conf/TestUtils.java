@@ -89,6 +89,7 @@ import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.endpoint.rest.model.ExamInfo;
 import school.hei.haapi.endpoint.rest.model.Fee;
 import school.hei.haapi.endpoint.rest.model.FeeTemplate;
+import school.hei.haapi.endpoint.rest.model.GateKeeper;
 import school.hei.haapi.endpoint.rest.model.GetStudentGrade;
 import school.hei.haapi.endpoint.rest.model.Grade;
 import school.hei.haapi.endpoint.rest.model.Group;
@@ -211,6 +212,11 @@ public class TestUtils {
   public static final String ORGANIZER1_TOKEN = "organizer1_token";
   public static final String ORGANIZER2_TOKEN = "organizer2_token";
 
+  public static final String GATE_KEEPER1_ID = "gate_keeper1_id";
+  public static final String GATE_KEEPER2_ID = "gate_keeper2_id";
+  public static final String GATE_KEEPER1_TOKEN = "gate_keeper1_token";
+  public static final String GATE_KEEPER2_TOKEN = "gate_keeper2_token";
+
   public static ApiClient anApiClient(String token, int serverPort) {
     ApiClient client = new ApiClient();
     client.setScheme("http");
@@ -254,6 +260,10 @@ public class TestUtils {
         .thenReturn("test+organizer+2@hei.school");
     when(cognitoComponent.getEmailByIdToken(SUSPENDED_TOKEN))
         .thenReturn("test+suspended@hei.school");
+    when(cognitoComponent.getEmailByIdToken(GATE_KEEPER1_TOKEN))
+        .thenReturn("test+gatekeeper@hei.school");
+    when(cognitoComponent.getEmailByIdToken(GATE_KEEPER2_TOKEN))
+        .thenReturn("test+gatekeeper+2@hei.school");
   }
 
   public static void setUpS3Service(FileService fileService, Student user) {
@@ -1653,6 +1663,38 @@ public class TestUtils {
         .creationDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
         .fileUrl(null)
         .description("CV");
+  }
+
+  public static GateKeeper gateKeeper1() {
+    return new GateKeeper()
+        .id("gatekeeper1_id")
+        .firstName("GateKeeper 1")
+        .lastName("John")
+        .email("test+gatekeeper@hei.school")
+        .ref("GKP22001")
+        .status(ENABLED)
+        .sex(M)
+        .birthDate(LocalDate.parse("1980-10-10"))
+        .entranceDatetime(Instant.parse("2022-09-08T08:25:29.00Z"))
+        .phone("0322400028")
+        .address("Adr 9")
+        .coordinates(new Coordinates().longitude(55.555).latitude(-55.555));
+  }
+
+  public static GateKeeper gateKeeper2() {
+    return new GateKeeper()
+        .id("gatekeeper2_id")
+        .firstName("GateKeeper 2")
+        .lastName("One")
+        .email("test+gatekeeper+2@hei.school")
+        .ref("GKP22002")
+        .status(ENABLED)
+        .sex(F)
+        .birthDate(LocalDate.parse("1890-01-01"))
+        .entranceDatetime(Instant.parse("2022-09-08T08:25:29.00Z"))
+        .phone("0322411113")
+        .address("Adr 21")
+        .coordinates(new Coordinates().longitude(55.555).latitude(-55.555));
   }
 
   public static UpdatePromotionSGroup addGroupToPromotion3() {

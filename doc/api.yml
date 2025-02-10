@@ -5554,6 +5554,7 @@ components:
             - ADMIN
             - STAFF_MEMBER
             - ORGANIZER
+            - GATE_KEEPER
         bearer:
           type: string
     UserIdentifier:
@@ -5709,6 +5710,9 @@ components:
     CrupdateOrganizer:
       allOf:
         - $ref: '#/components/schemas/CrupdateUser'
+    CrupdateGateKeeper:
+      allOf:
+        - $ref: '#/components/schemas/CrupdateUser'
     CrupdateWorkStudyStudent:
       properties:
         id:
@@ -5796,6 +5800,12 @@ components:
         profile_picture:
           type: string
     Organizer:
+      allOf:
+        - $ref: '#/components/schemas/CrupdateUser'
+      properties:
+        profile_picture:
+          type: string
+    GateKeeper:
       allOf:
         - $ref: '#/components/schemas/CrupdateUser'
       properties:
