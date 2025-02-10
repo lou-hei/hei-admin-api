@@ -37,6 +37,7 @@ import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
@@ -51,6 +52,7 @@ import school.hei.haapi.endpoint.event.consumer.EventConsumer;
 import school.hei.haapi.endpoint.rest.api.PayingApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
+import school.hei.haapi.endpoint.rest.model.AdvancedFeesStatistics;
 import school.hei.haapi.endpoint.rest.model.CreateFee;
 import school.hei.haapi.endpoint.rest.model.Fee;
 import school.hei.haapi.endpoint.rest.model.FeesStatistics;
@@ -490,6 +492,25 @@ class FeeIT extends FacadeITMockedThirdParties {
     assertEquals(9, stats.getTotalFees());
     assertEquals(2, stats.getPaidFees());
     assertEquals(2, stats.getUnpaidFees());
+  }
+
+  @Test
+  void manager_get_advanced_fees_stats_ok() throws ApiException {
+    ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
+    PayingApi api = new PayingApi(manager1Client);
+    AdvancedFeesStatistics advStats =
+        api.getAdvancedFeesStats(
+            Instant.parse("2021-12-01T00:00:00.00Z"), Instant.parse("2021-12-31T00:00:00.00Z"));
+
+    assertEquals(1, advStats.getTotalExpectedFeesStats().getFirstYear());
+    assertEquals(1, advStats.getTotalExpectedFeesStats().getThirdYear());
+    assertEquals(1, advStats.getTotalExpectedFeesStats().getWorkStudyFees());
+
+    assertEquals(BigDecimal.valueOf(1), advStats.getPaidFeesStats().getMobileMoneyFees());
+    assertEquals(1, advStats.getPaidFeesStats().getFirstYear());
+
+    assertEquals(1, advStats.getLateFeesStats().getThirdYear());
+    assertEquals(1, advStats.getLateFeesStats().getWorkStudyFees());
   }
 
   @Test
