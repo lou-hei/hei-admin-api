@@ -23,6 +23,7 @@ import school.hei.haapi.endpoint.event.model.LateFeeVerified;
 import school.hei.haapi.endpoint.event.model.PojaEvent;
 import school.hei.haapi.endpoint.event.model.StudentsWithOverdueFeesReminder;
 import school.hei.haapi.endpoint.event.model.UnpaidFeesReminder;
+import school.hei.haapi.endpoint.rest.model.AdvancedFeesStatistics;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.endpoint.rest.model.FeeTypeEnum;
 import school.hei.haapi.endpoint.rest.model.FeesStatistics;
@@ -109,7 +110,7 @@ public class FeeService {
 
   public Fee getById(String id) {
     var loggedFee = updateFeeStatus(feeRepository.getById(id));
-    log.info("fee: ------------########## {}", loggedFee.toString());
+    log.info("fee: ------------########## {}", loggedFee);
     log.info("now: ---------------#########" + Instant.now());
     return loggedFee;
   }
@@ -168,6 +169,10 @@ public class FeeService {
   public FeesStatistics getFeesStats(Instant monthFrom, Instant monthTo) {
     var result = feeDao.getStatByCriteria(null, null, null, null, monthFrom, monthTo, false);
     return FeesStats.to(getHandledNullDataStats(result));
+  }
+
+  public AdvancedFeesStatistics getAdvancedFeesStats(Instant monthFrom, Instant monthTo) {
+    return feeDao.getAdvancedFeesStatistics(monthFrom, monthTo);
   }
 
   private FeesStats getHandledNullDataStats(List<FeesStats> feesStats) {

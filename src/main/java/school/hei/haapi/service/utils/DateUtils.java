@@ -30,7 +30,7 @@ public class DateUtils {
   }
 
   // Returns the start and end dates of the current month if the parameters are null
-  public Instant[] getDefaultMonthRange(Instant monthFrom, Instant monthTo) {
+  public static Instant[] getDefaultMonthRange(Instant monthFrom, Instant monthTo) {
     LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
     LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
 
