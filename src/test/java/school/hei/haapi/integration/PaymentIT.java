@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
+import static school.hei.haapi.endpoint.rest.model.EnableStatus.SUSPENDED;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
 import static school.hei.haapi.integration.StudentIT.someCreatableStudent;
 import static school.hei.haapi.integration.StudentIT.student1;
@@ -47,7 +49,6 @@ import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.CreatePayment;
 import school.hei.haapi.endpoint.rest.model.CrupdateStudent;
-import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Fee;
 import school.hei.haapi.endpoint.rest.model.Payment;
 import school.hei.haapi.endpoint.rest.model.Student;
@@ -278,16 +279,16 @@ class PaymentIT extends FacadeITMockedThirdParties {
     PayingApi payingApi = new PayingApi(manager1Client);
     UsersApi usersApi = new UsersApi(manager1Client);
     CrupdateStudent subject = someCreatableStudent();
-    subject.setStatus(EnableStatus.ENABLED);
+    subject.setStatus(ENABLED);
 
     // Assert before all that the actual student is SUSPENDED ...
     Student student = usersApi.createOrUpdateStudents(List.of(subject), null).getFirst();
-    assertEquals(EnableStatus.ENABLED, student.getStatus());
+    assertEquals(ENABLED, student.getStatus());
     // Update inserted user
     subject.setId(student.getId());
-    subject.setStatus(EnableStatus.SUSPENDED);
+    subject.setStatus(SUSPENDED);
     Student actualSuspended = usersApi.createOrUpdateStudents(List.of(subject), null).getFirst();
-    assertEquals(EnableStatus.SUSPENDED, actualSuspended.getStatus());
+    assertEquals(SUSPENDED, actualSuspended.getStatus());
 
     String subjectId = student.getId();
 
@@ -300,7 +301,7 @@ class PaymentIT extends FacadeITMockedThirdParties {
     Student actualStudent = usersApi.getStudentById(subjectId);
 
     assertEquals(PAID, actualFee.getStatus());
-    assertEquals(EnableStatus.ENABLED, actualStudent.getStatus());
+    assertEquals(ENABLED, actualStudent.getStatus());
   }
 
   @Test

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_ID;
@@ -322,7 +323,7 @@ class TeacherIT extends FacadeITMockedThirdParties {
         .email(randomUUID() + "@hei.school")
         .ref("TCR21-" + randomUUID())
         .phone("0332511129")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.M)
         .birthDate(LocalDate.parse("2000-01-01"))
         .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
@@ -372,7 +373,7 @@ class TeacherIT extends FacadeITMockedThirdParties {
         .email("test+teacher1@hei.school")
         .ref("TCR21001")
         .phone("0322411125")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.F)
         .entranceDatetime(Instant.parse("2021-10-08T08:27:24.00Z"))
         .nic("")

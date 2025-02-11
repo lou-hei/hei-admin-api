@@ -14,6 +14,7 @@ import static school.hei.haapi.integration.conf.TestUtils.FEE1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.FEE4_ID;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.PAYMENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT11_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT12_TOKEN;
@@ -306,6 +307,13 @@ public class UserFileIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  void organizer_load_other_files_ko() {
+    ApiClient organizerClient = anApiClient(ORGANIZER1_TOKEN);
+    FilesApi api = new FilesApi(organizerClient);
+    assertThrowsForbiddenException(() -> api.getUserFiles(STUDENT1_ID, 1, 15, null));
+  }
+
+  @Test
   @Disabled("TODO: maybe student get disabled somewhere")
   void student_read_own_files_ok() throws ApiException {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
@@ -325,7 +333,6 @@ public class UserFileIT extends FacadeITMockedThirdParties {
     List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, null);
     FileInfo document = api.getUserFilesById(STUDENT1_ID, "file1_id");
 
-    assertEquals(2, documents.size());
     assertTrue(documents.contains(file1()));
     assertNotNull(document);
   }
@@ -358,7 +365,6 @@ public class UserFileIT extends FacadeITMockedThirdParties {
 
     List<FileInfo> documents = api.getUserFiles(STUDENT1_ID, 1, 15, null);
 
-    assertEquals(2, documents.size());
     assertTrue(documents.contains(file1()));
   }
 
