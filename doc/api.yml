@@ -2229,7 +2229,7 @@ paths:
       summary: Create or update organizers
       operationId: crupdateOrganizers
       requestBody:
-        description: staff members
+        description: organizers
         required: true
         content:
           application/json:
