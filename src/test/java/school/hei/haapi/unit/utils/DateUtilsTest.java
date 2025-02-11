@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,11 +45,11 @@ public class DateUtilsTest extends FacadeITMockedThirdParties {
     LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
     LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
 
-    Instant[] defaultRange = dateUtils.getDefaultMonthRange(null, null);
+    DateUtils.RangedInstant defaultRange = dateUtils.getDefaultMonthRange(null, null);
 
-    assertEquals(firstDayOfMonth.atStartOfDay(ZoneOffset.UTC).toInstant(), defaultRange[0]);
+    assertEquals(firstDayOfMonth.atStartOfDay(ZoneOffset.UTC).toInstant(), defaultRange.from());
     assertEquals(
         lastDayOfMonth.atTime(23, 59, 59, 999999999).atZone(ZoneOffset.UTC).toInstant(),
-        defaultRange[1]);
+        defaultRange.to());
   }
 }
