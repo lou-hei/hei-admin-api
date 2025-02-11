@@ -2159,6 +2159,132 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /organizers:
+    get:
+      tags:
+        - Users
+      summary: Get all organizers
+      operationId: getOrganizers
+      parameters:
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+        - name: page_size
+          in: query
+          schema:
+            $ref: '#/components/schemas/PageSize'
+        - name: status
+          required: false
+          in: query
+          description: Filter organizers by status value return all by default
+          schema:
+            $ref: '#/components/schemas/EnableStatus'
+        - name: sex
+          required: false
+          in: query
+          description: Filter organizers by sex value return all by default
+          schema:
+            $ref: '#/components/schemas/Sex'
+        - name: first_name
+          required: false
+          in: query
+          description: Filter organizers by first name, case is ignored
+          schema:
+            type: string
+        - name: last_name
+          required: false
+          in: query
+          description: Filter organizers by last name, case is ignored
+          schema:
+            type: string
+        - name: ref
+          required: false
+          in: query
+          description: Filter organizers by ref
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of organizers, ordered by ref.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organizer'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Users
+      summary: Create or update organizers
+      operationId: crupdateOrganizers
+      requestBody:
+        description: organizers
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Organizer'
+      responses:
+        '200':
+          description: List of organizer, ordered by ref.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organizer'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /organizers/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get organizer by id
+      operationId: getOrganizerById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The organizer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
   /staff_members/raw/xlsx:
     get:

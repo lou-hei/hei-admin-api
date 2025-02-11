@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
 import static school.hei.haapi.endpoint.rest.model.Sex.F;
 import static school.hei.haapi.endpoint.rest.model.Sex.M;
+import static school.hei.haapi.integration.conf.TestUtils.ADMIN1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER2_TOKEN;
@@ -14,6 +15,7 @@ import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.TEACHER1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
+import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.integration.conf.TestUtils.someCreatableEvent;
 import static school.hei.haapi.integration.conf.TestUtils.uploadProfilePicture;
 
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import school.hei.haapi.endpoint.rest.api.EventsApi;
 import school.hei.haapi.endpoint.rest.api.UsersApi;
@@ -42,11 +45,13 @@ import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.endpoint.rest.model.Organizer;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
 import school.hei.haapi.integration.conf.TestUtils;
+import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 @Slf4j
 @Testcontainers
 @AutoConfigureMockMvc
 public class OrganizerIT extends FacadeITMockedThirdParties {
+  @MockBean private EventBridgeClient eventBridgeClientMock;
   @Autowired ObjectMapper objectMapper;
 
   private ApiClient anApiClient(String token) {
@@ -93,6 +98,7 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
 
   @BeforeEach
   public void setUp() {
+    setUpEventBridge(eventBridgeClientMock);
     setUpCognito(cognitoComponentMock);
   }
 
@@ -149,5 +155,49 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
 
     api.deleteEventById(newEvent.getId());
     assertThrows(ApiException.class, () -> api.getEventById(newEvent.getId()));
+  }
+
+  @Test
+  void admin_all_organizers_ok() throws ApiException {
+    ApiClient adminClient = anApiClient(ADMIN1_TOKEN);
+    UsersApi api = new UsersApi(adminClient);
+
+    List<Organizer> organizers = api.getOrganizers(1, 10, null, null, null, null, null);
+
+    assertEquals(organizer1(), organizers.getFirst());
+    assertEquals(organizer2(), organizers.get(1));
+  }
+
+  @Test
+  void admin_organizer_by_id_ok() throws ApiException {
+    ApiClient adminClient = anApiClient(ADMIN1_TOKEN);
+    UsersApi api = new UsersApi(adminClient);
+    Organizer organizer = api.getOrganizerById(organizer1().getId());
+    assertEquals(organizer1(), organizer);
+  }
+
+  @Test
+  void organizer_access_to_its_own_account_ok() throws ApiException {
+    ApiClient organizerClient = anApiClient(ORGANIZER1_TOKEN);
+    UsersApi api = new UsersApi(organizerClient);
+    Organizer organizer = api.getOrganizerById(organizer1().getId());
+    assertEquals(organizer1(), organizer);
+  }
+
+  @Test
+  void admin_modify_organizers_ok() throws ApiException {
+    ApiClient adminClient = anApiClient(ADMIN1_TOKEN);
+    UsersApi api = new UsersApi(adminClient);
+
+    String modifiedFirstName = "firstName()";
+    Organizer organizer = organizer1().firstName(modifiedFirstName);
+
+    List<Organizer> crupdatedOrganizers = api.crupdateOrganizers(List.of(organizer));
+    assertEquals(modifiedFirstName, crupdatedOrganizers.getFirst().getFirstName());
+
+    organizer.firstName(organizer1().getFirstName());
+    List<Organizer> crupdatedOrganizersToNormal = api.crupdateOrganizers(List.of(organizer));
+    assertEquals(
+        organizer1().getFirstName(), crupdatedOrganizersToNormal.getFirst().getFirstName());
   }
 }
