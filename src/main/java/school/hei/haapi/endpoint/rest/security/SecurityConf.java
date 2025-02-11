@@ -713,6 +713,8 @@ public class SecurityConf {
                     //
                     .requestMatchers(GET, "/organizers")
                     .hasAnyRole(ADMIN.getRole())
+                    .requestMatchers(new SelfMatcher(GET, "/organizers/*", "organizers"))
+                    .hasAnyRole(ORGANIZER.getRole())
                     .requestMatchers(GET, "/organizers/*")
                     .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(PUT, "/organizers")

@@ -177,6 +177,14 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
   }
 
   @Test
+  void organizer_access_to_its_own_account_ok() throws ApiException {
+    ApiClient organizerClient = anApiClient(ORGANIZER1_TOKEN);
+    UsersApi api = new UsersApi(organizerClient);
+    Organizer organizer = api.getOrganizerById(organizer1().getId());
+    assertEquals(organizer1(), organizer);
+  }
+
+  @Test
   void admin_modify_organizers_ok() throws ApiException {
     ApiClient adminClient = anApiClient(ADMIN1_TOKEN);
     UsersApi api = new UsersApi(adminClient);
