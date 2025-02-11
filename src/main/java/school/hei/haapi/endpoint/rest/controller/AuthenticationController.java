@@ -1,4 +1,4 @@
-package school.hei.haapi.endpoint.rest.security.casdoorAuthentication; // Copyright 2022 The Casdoor
+package school.hei.haapi.endpoint.rest.controller; // Copyright 2022 The Casdoor
 
 // Authors. All Rights
 // Reserved.
@@ -30,20 +30,20 @@ import school.hei.haapi.endpoint.rest.security.casdoorAuthentication.model.Resul
 import school.hei.haapi.endpoint.rest.security.model.Principal;
 
 @RestController
-public class UserController {
+public class AuthenticationController {
 
-  private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+  private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
   private final CasdoorAuthService casdoorAuthService;
   private final String redirectUrl;
 
-  public UserController(
+  public AuthenticationController(
       CasdoorAuthService casdoorAuthService, @Value("${casdoor.redirect-url}") String redirectUrl) {
     this.casdoorAuthService = casdoorAuthService;
     this.redirectUrl = redirectUrl;
   }
 
-  @GetMapping("/api/redirect-url")
+  @GetMapping("/authentication/casdoor/login-url")
   public Result getRedirectUrl() {
     try {
       String signinUrl = casdoorAuthService.getSigninUrl(redirectUrl);
@@ -54,7 +54,7 @@ public class UserController {
     }
   }
 
-  @PostMapping("/api/signin")
+  @PostMapping("/authentication/casdoor/signin")
   public Result signin(@RequestParam("code") String code, @RequestParam("state") String state) {
     try {
       String token = casdoorAuthService.getOAuthToken(code, state);
@@ -65,7 +65,7 @@ public class UserController {
     }
   }
 
-  @GetMapping("/api/userinfo")
+  @GetMapping("/authentication/casdoor/userinfo")
   public Result userinfo(Authentication authentication) {
     Principal customUserDetails = (Principal) authentication.getPrincipal();
     return Result.success(customUserDetails);
