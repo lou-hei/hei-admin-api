@@ -502,15 +502,15 @@ class FeeIT extends FacadeITMockedThirdParties {
         api.getAdvancedFeesStats(
             Instant.parse("2021-12-01T00:00:00.00Z"), Instant.parse("2021-12-31T00:00:00.00Z"));
 
-    assertEquals(1, advStats.getTotalExpectedFeesStats().getFirstYear());
-    assertEquals(1, advStats.getTotalExpectedFeesStats().getThirdYear());
-    assertEquals(1, advStats.getTotalExpectedFeesStats().getWorkStudyFees());
+    assertEquals(1, advStats.getTotalExpectedFeesCount().getFirstGrade());
+    assertEquals(1, advStats.getTotalExpectedFeesCount().getWorkStudy());
+    assertEquals(1, advStats.getTotalExpectedFeesCount().getThirdGrade());
 
-    assertEquals(BigDecimal.valueOf(1), advStats.getPaidFeesStats().getMobileMoneyFees());
-    assertEquals(1, advStats.getPaidFeesStats().getFirstYear());
+    assertEquals(BigDecimal.valueOf(1), advStats.getPaidFeesCount().getMobileMoney());
+    assertEquals(1, advStats.getPaidFeesCount().getFirstGrade());
 
-    assertEquals(1, advStats.getLateFeesStats().getThirdYear());
-    assertEquals(1, advStats.getLateFeesStats().getWorkStudyFees());
+    assertEquals(1, advStats.getLateFeesCount().getThirdGrade());
+    assertEquals(1, advStats.getLateFeesCount().getWorkStudy());
   }
 
   @Test

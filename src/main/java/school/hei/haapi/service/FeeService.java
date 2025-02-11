@@ -2,11 +2,20 @@ package school.hei.haapi.service;
 
 import static java.util.UUID.randomUUID;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.*;
+import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.REMEDIAL_COSTS;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
+import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.MONTHLY;
+import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.YEARLY;
 import static school.hei.haapi.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
+import static school.hei.haapi.service.FeeService.PaymentType.BANK;
+import static school.hei.haapi.service.FeeService.PaymentType.MPBS;
+import static school.hei.haapi.service.FeeService.StudentGrade.L1;
+import static school.hei.haapi.service.FeeService.StudentGrade.L2;
+import static school.hei.haapi.service.FeeService.StudentGrade.L3;
 import static school.hei.haapi.service.utils.InstantUtils.getFirstDayOfActualMonth;
 
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -27,8 +36,12 @@ import school.hei.haapi.endpoint.rest.model.AdvancedFeesStatistics;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.endpoint.rest.model.FeeTypeEnum;
 import school.hei.haapi.endpoint.rest.model.FeesStatistics;
+import school.hei.haapi.endpoint.rest.model.LateFeesStats;
 import school.hei.haapi.endpoint.rest.model.MpbsStatus;
+import school.hei.haapi.endpoint.rest.model.PaidFeesStats;
 import school.hei.haapi.endpoint.rest.model.PaymentFrequency;
+import school.hei.haapi.endpoint.rest.model.PendingFeesStats;
+import school.hei.haapi.endpoint.rest.model.TotalExpectedFeesStats;
 import school.hei.haapi.model.*;
 import school.hei.haapi.model.exception.ApiException;
 import school.hei.haapi.model.validator.FeeValidator;
@@ -109,9 +122,9 @@ public class FeeService {
   }
 
   public Fee getById(String id) {
-    var loggedFee = updateFeeStatus(feeRepository.getById(id));
-    log.info("fee: ------------########## {}", loggedFee);
-    log.info("now: ---------------#########" + Instant.now());
+    var loggedFee = updateFeeStatus(feeRepository.findById(id).orElse(null));
+    log.debug("fee: ------------########## {}", loggedFee);
+    log.debug("now: ---------------######### {}", Instant.now());
     return loggedFee;
   }
 
@@ -172,7 +185,127 @@ public class FeeService {
   }
 
   public AdvancedFeesStatistics getAdvancedFeesStats(Instant monthFrom, Instant monthTo) {
-    return feeDao.getAdvancedFeesStatistics(monthFrom, monthTo);
+    List<Fee> allFees = feeRepository.findAllByDueDatetimeBetween(monthFrom, monthTo);
+    return new AdvancedFeesStatistics()
+        .lateFeesCount(getLateFeesStats(allFees))
+        .paidFeesCount(getPaidFeesStats(allFees))
+        .pendingFeesCount(getPendingFeesStats(allFees))
+        .totalExpectedFeesCount(getTotalExpectedFeesStats(allFees));
+  }
+
+  private LateFeesStats getLateFeesStats(List<Fee> fees) {
+    List<Fee> lateFees = filterFeesByStatus(fees, LATE);
+    return new LateFeesStats()
+        .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(lateFees)))
+        .workStudy(countWorkStudyFees(lateFees))
+        .monthly(countFeesByPaymentFrequency(lateFees, MONTHLY))
+        .yearly(countFeesByPaymentFrequency(lateFees, YEARLY))
+        .firstGrade(countFeesByGrades(lateFees, L1))
+        .secondGrade(countFeesByGrades(lateFees, L2))
+        .thirdGrade(countFeesByGrades(lateFees, L3));
+  }
+
+  private PaidFeesStats getPaidFeesStats(List<Fee> fees) {
+    List<Fee> paidFees = filterFeesByStatus(fees, PAID);
+    return new PaidFeesStats()
+        .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(paidFees)))
+        .workStudy(countWorkStudyFees(paidFees))
+        .monthly(countFeesByPaymentFrequency(paidFees, MONTHLY))
+        .yearly(countFeesByPaymentFrequency(paidFees, YEARLY))
+        .firstGrade(countFeesByGrades(paidFees, L1))
+        .secondGrade(countFeesByGrades(paidFees, L2))
+        .thirdGrade(countFeesByGrades(paidFees, L3))
+        .bankFees(BigDecimal.valueOf(countFeesByPaymentType(paidFees, BANK)))
+        .mobileMoney(BigDecimal.valueOf(countFeesByPaymentType(paidFees, MPBS)));
+  }
+
+  private PendingFeesStats getPendingFeesStats(List<Fee> fees) {
+    List<Fee> pendingFees = filterFeesByStatus(fees, PENDING);
+    return new PendingFeesStats()
+        .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(pendingFees)))
+        .workStudy(countWorkStudyFees(pendingFees))
+        .monthly(countFeesByPaymentFrequency(pendingFees, MONTHLY))
+        .yearly(countFeesByPaymentFrequency(pendingFees, YEARLY))
+        .firstGrade(countFeesByGrades(pendingFees, L1))
+        .secondGrade(countFeesByGrades(pendingFees, L2))
+        .thirdGrade(countFeesByGrades(pendingFees, L3));
+  }
+
+  private TotalExpectedFeesStats getTotalExpectedFeesStats(List<Fee> fees) {
+    return new TotalExpectedFeesStats()
+        .firstGrade(countFeesByGrades(fees, L1))
+        .secondGrade(countFeesByGrades(fees, L2))
+        .thirdGrade(countFeesByGrades(fees, L3))
+        .monthly(countFeesByPaymentFrequency(fees, MONTHLY))
+        .yearly(countFeesByPaymentFrequency(fees, YEARLY))
+        .workStudy(countWorkStudyFees(fees));
+  }
+
+  enum StudentGrade {
+    L1,
+    L2,
+    L3
+  }
+
+  enum PaymentType {
+    MPBS,
+    BANK
+  }
+
+  private long countFeesByGrades(List<Fee> fees, StudentGrade grade) {
+    return filterFeesByType(fees, TUITION).stream()
+        .filter(
+            fee -> {
+              String feeComment = fee.getComment();
+              return switch (grade) {
+                case L1 -> feeComment.toLowerCase().contains("l1");
+                case L2 -> feeComment.toLowerCase().contains("l2");
+                case L3 -> feeComment.toLowerCase().contains("l3");
+              };
+            })
+        .count();
+  }
+
+  private long countFeesByPaymentFrequency(List<Fee> fees, PaymentFrequency paymentFrequency) {
+    return filterFeesByType(fees, TUITION).stream()
+        .filter(
+            fee -> {
+              String feeComment = fee.getComment();
+              return switch (paymentFrequency) {
+                case MONTHLY -> feeComment.toLowerCase().contains("mensuel");
+                case YEARLY -> feeComment.toLowerCase().contains("annuel");
+              };
+            })
+        .count();
+  }
+
+  private long countFeesByPaymentType(List<Fee> fees, PaymentType paymentType) {
+    return filterFeesByType(fees, TUITION).stream()
+        .filter(
+            fee ->
+                switch (paymentType) {
+                  case MPBS -> fee.getMpbs() != null;
+                  case BANK -> fee.getMpbs() == null;
+                })
+        .count();
+  }
+
+  private long countRemedialFees(List<Fee> fees) {
+    return fees.stream().filter(fee -> fee.getType().equals(REMEDIAL_COSTS)).count();
+  }
+
+  private long countWorkStudyFees(List<Fee> fees) {
+    return filterFeesByType(fees, TUITION).stream()
+        .filter(fee -> fee.getComment().toLowerCase().contains("alternance"))
+        .count();
+  }
+
+  private List<Fee> filterFeesByType(List<Fee> fees, FeeTypeEnum feeType) {
+    return fees.stream().filter(fee -> fee.getType().equals(feeType)).toList();
+  }
+
+  private List<Fee> filterFeesByStatus(List<Fee> fees, FeeStatusEnum feeStatus) {
+    return fees.stream().filter(fee -> fee.getStatus().equals(feeStatus)).toList();
   }
 
   private FeesStats getHandledNullDataStats(List<FeesStats> feesStats) {

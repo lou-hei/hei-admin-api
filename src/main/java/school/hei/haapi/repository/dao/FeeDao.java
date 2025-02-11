@@ -1,43 +1,22 @@
 package school.hei.haapi.repository.dao;
 
-import static jakarta.persistence.criteria.JoinType.LEFT;
 import static java.lang.Boolean.TRUE;
-import static java.util.Objects.requireNonNullElse;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
-import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PENDING;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.UNPAID;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.SUCCESS;
-import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.MONTHLY;
-import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.YEARLY;
-import static school.hei.haapi.repository.dao.FeeDao.FeePayementType.BANK;
-import static school.hei.haapi.repository.dao.FeeDao.FeePayementType.MPBS;
-import static school.hei.haapi.repository.dao.FeeDao.FeeTypeWithWorkStudyEnum.REMEDIAL_COSTS;
-import static school.hei.haapi.repository.dao.FeeDao.FeeTypeWithWorkStudyEnum.TUITION;
-import static school.hei.haapi.repository.dao.FeeDao.FeeTypeWithWorkStudyEnum.WORK_STUDY_FEES;
-import static school.hei.haapi.repository.dao.FeeDao.Grade.L1;
-import static school.hei.haapi.repository.dao.FeeDao.Grade.L2;
-import static school.hei.haapi.repository.dao.FeeDao.Grade.L3;
-import static school.hei.haapi.service.utils.DateUtils.getDefaultMonthRange;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import school.hei.haapi.endpoint.rest.model.AdvancedFeesStatistics;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.endpoint.rest.model.FeeTypeEnum;
-import school.hei.haapi.endpoint.rest.model.LateFeesStats;
 import school.hei.haapi.endpoint.rest.model.MpbsStatus;
-import school.hei.haapi.endpoint.rest.model.PaidFeesStats;
-import school.hei.haapi.endpoint.rest.model.PaymentFrequency;
-import school.hei.haapi.endpoint.rest.model.PendingFeesStats;
-import school.hei.haapi.endpoint.rest.model.TotalExpectedFeesStats;
 import school.hei.haapi.model.Fee;
 import school.hei.haapi.model.Mpbs.Mpbs;
 import school.hei.haapi.model.User;
@@ -47,154 +26,6 @@ import school.hei.haapi.repository.model.FeesStats;
 @AllArgsConstructor
 public class FeeDao {
   private final EntityManager entityManager;
-
-  enum FeeTypeWithWorkStudyEnum {
-    TUITION,
-    HARDWARE,
-    STUDENT_INSURANCE,
-    REMEDIAL_COSTS,
-    WORK_STUDY_FEES;
-  }
-
-  enum Grade {
-    L1,
-    L2,
-    L3;
-  }
-
-  enum FeePayementType {
-    BANK,
-    MPBS,
-  }
-
-  public AdvancedFeesStatistics getAdvancedFeesStatistics(Instant monthFrom, Instant monthTo) {
-    LateFeesStats lateFeesStats =
-        new LateFeesStats()
-            .monthlyFees(countFeeByCriteria(null, null, LATE, monthFrom, monthTo, MONTHLY, null))
-            .yearlyFees(countFeeByCriteria(null, null, LATE, monthFrom, monthTo, YEARLY, null))
-            .remedialFees(
-                BigDecimal.valueOf(
-                    countFeeByCriteria(null, REMEDIAL_COSTS, LATE, monthFrom, monthTo, null, null)))
-            .workStudyFees(
-                countFeeByCriteria(null, WORK_STUDY_FEES, LATE, monthFrom, monthTo, null, null))
-            .firstYear(countFeeByCriteria(L1, null, LATE, monthFrom, monthTo, null, null))
-            .secondYear(countFeeByCriteria(L2, null, LATE, monthFrom, monthTo, null, null))
-            .thirdYear(countFeeByCriteria(L3, null, LATE, monthFrom, monthTo, null, null));
-
-    PendingFeesStats pendingFeesStats =
-        new PendingFeesStats()
-            .monthlyFees(countFeeByCriteria(null, null, PENDING, monthFrom, monthTo, MONTHLY, null))
-            .yearlyFees(countFeeByCriteria(null, null, PENDING, monthFrom, monthTo, YEARLY, null))
-            .remedialFees(
-                BigDecimal.valueOf(
-                    countFeeByCriteria(
-                        null, REMEDIAL_COSTS, PENDING, monthFrom, monthTo, null, null)))
-            .workStudyFees(
-                countFeeByCriteria(null, WORK_STUDY_FEES, PENDING, monthFrom, monthTo, null, null))
-            .firstYear(countFeeByCriteria(L1, null, PENDING, monthFrom, monthTo, null, null))
-            .secondYear(countFeeByCriteria(L2, null, PENDING, monthFrom, monthTo, null, null))
-            .thirdYear(countFeeByCriteria(L3, null, PENDING, monthFrom, monthTo, null, null));
-
-    PaidFeesStats paidFeesStats =
-        new PaidFeesStats()
-            .monthlyFees(countFeeByCriteria(null, null, PAID, monthFrom, monthTo, MONTHLY, null))
-            .yearlyFees(countFeeByCriteria(null, null, PAID, monthFrom, monthTo, YEARLY, null))
-            .remedialFees(
-                BigDecimal.valueOf(
-                    countFeeByCriteria(null, REMEDIAL_COSTS, PAID, monthFrom, monthTo, null, null)))
-            .workStudyFees(
-                countFeeByCriteria(null, WORK_STUDY_FEES, PAID, monthFrom, monthTo, null, null))
-            .firstYear(countFeeByCriteria(L1, null, PAID, monthFrom, monthTo, null, null))
-            .secondYear(countFeeByCriteria(L2, null, PAID, monthFrom, monthTo, null, null))
-            .thirdYear(countFeeByCriteria(L3, null, PAID, monthFrom, monthTo, null, null))
-            .mobileMoneyFees(
-                BigDecimal.valueOf(
-                    countFeeByCriteria(null, null, PAID, monthFrom, monthTo, null, MPBS)))
-            .bankFees(
-                BigDecimal.valueOf(
-                    countFeeByCriteria(null, null, PAID, monthFrom, monthTo, null, BANK)));
-
-    TotalExpectedFeesStats totalExpectedFeesStats =
-        new TotalExpectedFeesStats()
-            .monthlyFees(countFeeByCriteria(null, null, null, monthFrom, monthTo, MONTHLY, null))
-            .yearlyFees(countFeeByCriteria(null, null, null, monthFrom, monthTo, YEARLY, null))
-            .workStudyFees(
-                countFeeByCriteria(null, WORK_STUDY_FEES, null, monthFrom, monthTo, null, null))
-            .firstYear(countFeeByCriteria(L1, null, null, monthFrom, monthTo, null, null))
-            .secondYear(countFeeByCriteria(L2, null, null, monthFrom, monthTo, null, null))
-            .thirdYear(countFeeByCriteria(L3, null, null, monthFrom, monthTo, null, null));
-
-    return new AdvancedFeesStatistics()
-        .lateFeesStats(lateFeesStats)
-        .paidFeesStats(paidFeesStats)
-        .pendingFeesStats(pendingFeesStats)
-        .totalExpectedFeesStats(totalExpectedFeesStats);
-  }
-
-  private Long countFeeByCriteria(
-      Grade grade,
-      FeeTypeWithWorkStudyEnum feeType,
-      FeeStatusEnum feeStatus,
-      Instant monthFrom,
-      Instant monthTo,
-      PaymentFrequency frequencyType,
-      FeePayementType paymentType) {
-    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Long> query = builder.createQuery(Long.class);
-    Root<Fee> root = query.from(Fee.class);
-
-    List<Predicate> predicates = new ArrayList<>();
-    FeeTypeWithWorkStudyEnum feeTypeEnum = requireNonNullElse(feeType, TUITION);
-    if (feeTypeEnum == WORK_STUDY_FEES) {
-      predicates.add(builder.like(builder.lower(root.get("comment")), "%alternance"));
-    } else {
-      predicates.add(builder.equal(root.get("type"), FeeTypeEnum.valueOf(feeTypeEnum.toString())));
-    }
-
-    if (grade != null) {
-      switch (grade) {
-        case L1 -> predicates.add(builder.like(builder.lower(root.get("comment")), "%l1%"));
-        case L2 -> predicates.add(builder.like(builder.lower(root.get("comment")), "%l2%"));
-        case L3 -> predicates.add(builder.like(builder.lower(root.get("comment")), "%l3%"));
-      }
-    }
-
-    if (feeStatus != null) {
-      predicates.add(builder.equal(root.get("status"), feeStatus));
-    }
-
-    Instant[] defaultMonthRange = getDefaultMonthRange(monthFrom, monthTo);
-    Instant startOfMonth = defaultMonthRange[0];
-    Instant endOfMonth = defaultMonthRange[1];
-
-    monthFrom = requireNonNullElse(monthFrom, startOfMonth);
-    monthTo = requireNonNullElse(monthTo, endOfMonth);
-    predicates.add(builder.between(root.get("dueDatetime"), monthFrom, monthTo));
-
-    if (frequencyType != null) {
-      switch (frequencyType) {
-        case YEARLY -> predicates.add(builder.like(builder.lower(root.get("comment")), "%annuel%"));
-        case MONTHLY ->
-            predicates.add(builder.like(builder.lower(root.get("comment")), "%mensuel%"));
-      }
-    }
-
-    if (paymentType != null) {
-      switch (paymentType) {
-        case BANK -> {
-          Join<Fee, Mpbs> mpbsJoin = root.join("mpbs", LEFT);
-          predicates.add(builder.isNull(mpbsJoin.get("id")));
-        }
-        case MPBS -> {
-          Join<Fee, Mpbs> mpbsJoin = root.join("mpbs");
-          predicates.add(builder.equal(mpbsJoin.get("id"), root.get("mpbs").get("id")));
-        }
-      }
-    }
-
-    query.where(predicates.toArray(new Predicate[0])).select(builder.count(root).as(Long.class));
-    return entityManager.createQuery(query).getSingleResult();
-  }
 
   public List<Fee> getByCriteria(
       MpbsStatus mpbsStatus,

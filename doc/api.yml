@@ -6627,33 +6627,33 @@ components:
     AdvancedFeesStatistics:
       type: object
       properties:
-        total_expected_fees_stats:
+        total_expected_fees_count:
           $ref: "#/components/schemas/TotalExpectedFeesStats"
-        paid_fees_stats:
+        paid_fees_count:
           $ref: "#/components/schemas/PaidFeesStats"
-        pending_fees_stats:
+        pending_fees_count:
           $ref: "#/components/schemas/PendingFeesStats"
-        late_fees_stats:
+        late_fees_count:
           $ref: "#/components/schemas/LateFeesStats"
     BaseFeesStats:
       type: object
       properties:
-        first_year:
+        first_grade:
           type: integer
           format: int64
-        second_year:
+        second_grade:
           type: integer
           format: int64
-        third_year:
+        third_grade:
           type: integer
           format: int64
-        work_study_fees:
+        work_study:
           type: integer
           format: int64
-        monthly_fees:
+        monthly:
           type: integer
           format: int64
-        yearly_fees:
+        yearly:
           type: integer
           format: int64
     TotalExpectedFeesStats:
@@ -6664,9 +6664,9 @@ components:
       type: object
       allOf:
         - $ref: "#/components/schemas/BaseFeesStats"
-        - $ref: "#/components/schemas/WithRemedialFeesStatistics"
+        - $ref: "#/components/schemas/RemedialFeesCount"
       properties:
-        mobile_money_fees:
+        mobile_money:
           type: number
           format: int64
         bank_fees:
@@ -6676,16 +6676,16 @@ components:
       type: object
       allOf:
         - $ref: "#/components/schemas/BaseFeesStats"
-        - $ref: "#/components/schemas/WithRemedialFeesStatistics"
+        - $ref: "#/components/schemas/RemedialFeesCount"
     LateFeesStats:
       type: object
       allOf:
         - $ref: "#/components/schemas/BaseFeesStats"
-        - $ref: "#/components/schemas/WithRemedialFeesStatistics"
-    WithRemedialFeesStatistics:
+        - $ref: "#/components/schemas/RemedialFeesCount"
+    RemedialFeesCount:
       type: object
       properties:
-        remedial_fees:
+        remedial_fees_count:
           type: number
           format: int64
     FeesStatistics:

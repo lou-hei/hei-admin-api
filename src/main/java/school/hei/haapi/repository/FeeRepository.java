@@ -25,6 +25,8 @@ public interface FeeRepository extends JpaRepository<Fee, String> {
 
   List<Fee> findAllByMpbsIsNotNullOrderByMpbsCreationDatetimeDesc(Pageable pageable);
 
+  List<Fee> findAllByDueDatetimeBetween(Instant from, Instant to);
+
   @Query(
       "select f from Fee f where f.status = 'UNPAID' "
           + "and f.remainingAmount > 0 "
