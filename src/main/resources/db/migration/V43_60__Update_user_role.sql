@@ -1,0 +1,1 @@
+alter type "role" add value 'ORGANIZER';

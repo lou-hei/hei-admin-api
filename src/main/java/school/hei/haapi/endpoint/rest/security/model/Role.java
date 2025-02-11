@@ -8,7 +8,8 @@ public enum Role implements GrantedAuthority {
   STUDENT,
   TEACHER,
   STAFF_MEMBER,
-  MANAGER;
+  MANAGER,
+  ORGANIZER;
 
   public String getRole() {
     return name();
