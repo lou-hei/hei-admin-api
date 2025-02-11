@@ -231,6 +231,9 @@ public class SecurityConf {
                     antMatcher(GET, "/organizers/*"),
                     antMatcher(PUT, "/organizers"),
                     antMatcher(POST, "/organizers/*/picture/raw"),
+                    antMatcher(GET, "/gate_keepers"),
+                    antMatcher(GET, "/gate_keepers/*"),
+                    antMatcher(PUT, "/gate_keepers"),
                     antMatcher(PUT, STUDENT_COURSE),
                     nonAccessibleBySuspendedUserPath)),
             AnonymousAuthenticationFilter.class)
@@ -726,6 +729,17 @@ public class SecurityConf {
                     .requestMatchers(
                         new SelfMatcher(POST, "/organizers/*/picture/raw", "organizers"))
                     .hasRole(ORGANIZER.getRole())
+                    //
+                    // Gate keeper resources
+                    //
+                    .requestMatchers(GET, "/gate_keepers")
+                    .hasAnyRole(ADMIN.getRole(), MANAGER.getRole())
+                    .requestMatchers(new SelfMatcher(GET, "/gate_keepers/*", "gate_keepers"))
+                    .hasAnyRole(GATE_KEEPER.getRole())
+                    .requestMatchers(GET, "/gate_keepers/*")
+                    .hasAnyRole(ADMIN.getRole(), MANAGER.getRole())
+                    .requestMatchers(PUT, "/gate_keepers")
+                    .hasAnyRole(ADMIN.getRole(), MANAGER.getRole())
                     //
                     // Letter resources
                     //

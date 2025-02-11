@@ -49,8 +49,7 @@ public class GradeMapper {
         exam.getGrades().stream()
             .filter(grade -> grade.getStudent().getId().equals(student.getId()))
             .findFirst();
-    school.hei.haapi.model.Grade grade = optionalGrade.get();
-    var getStudentGrade = new GetStudentGrade().grade(toRest(grade));
+    var getStudentGrade = new GetStudentGrade().grade(optionalGrade.map(this::toRest).orElse(null));
     getStudentGrade.setStudent(userMapper.toRestStudent(student));
     return getStudentGrade;
   }

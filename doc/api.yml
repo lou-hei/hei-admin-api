@@ -2285,6 +2285,132 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /gate_keepers:
+    get:
+      tags:
+        - Users
+      summary: Get all gate keepers
+      operationId: getGateKeepers
+      parameters:
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+        - name: page_size
+          in: query
+          schema:
+            $ref: '#/components/schemas/PageSize'
+        - name: status
+          required: false
+          in: query
+          description: Filter gate keepers by status value return all by default
+          schema:
+            $ref: '#/components/schemas/EnableStatus'
+        - name: sex
+          required: false
+          in: query
+          description: Filter gate keepers by sex value return all by default
+          schema:
+            $ref: '#/components/schemas/Sex'
+        - name: first_name
+          required: false
+          in: query
+          description: Filter gate keepers by first name, case is ignored
+          schema:
+            type: string
+        - name: last_name
+          required: false
+          in: query
+          description: Filter gate keepers by last name, case is ignored
+          schema:
+            type: string
+        - name: ref
+          required: false
+          in: query
+          description: Filter gate keeper by ref, case is ignored
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of gate keeper, ordered by ref.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GateKeeper'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Users
+      summary: Create or update gate keepers
+      operationId: crupdateGateKeepers
+      requestBody:
+        description: gate keepers
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CrupdateGateKeeper'
+      responses:
+        '200':
+          description: List of gate keepers, ordered by ref.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GateKeeper'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /gate_keepers/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get gate keeper by id
+      operationId: getGateKeeperById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The Gate Keeper
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GateKeeper'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 
   /staff_members/raw/xlsx:
     get:

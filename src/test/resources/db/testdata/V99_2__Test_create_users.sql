@@ -53,10 +53,9 @@ values ('student1_id', 'Ryan', 'Andria', 'test+ryan@hei.school', 'STD21001', 'EN
        ('organizer2_id', 'Organizer 2', 'Doe', 'test+organizer+2@hei.school', 'ORG22002', 'ENABLED', 'F',
         '1890-01-01',
         '2022-09-08T08:25:29.00Z', '0322411113', 'Adr 12', 'ORGANIZER', '', '', 55.555, -55.555, null),
-        '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'STAFF_MEMBER', '', '', 55.555, -55.555, null),
-       ('gatekeeper1_id', 'GateKeeper 1', 'John', 'test+gatekeeper@hei.school', 'GKP22001', 'ENABLED', 'M',
+       ('gate_keeper1_id', 'GateKeeper 1', 'John', 'test+gatekeeper@hei.school', 'GKP22001', 'ENABLED', 'M',
         '1980-10-10',
         '2022-09-08T08:25:29.00Z', '0322400028', 'Adr 9', 'GATE_KEEPER', '', '', 55.555, -55.555, null),
-       ('gatekeeper2_id', 'GateKeeper 2', 'One', 'test+gatekeeper+2@hei.school', 'GKP22002', 'ENABLED', 'F',
+       ('gate_keeper2_id', 'GateKeeper 2', 'One', 'test+gatekeeper+2@hei.school', 'GKP22002', 'ENABLED', 'F',
         '1890-01-01',
         '2022-09-08T08:25:29.00Z', '0322411113', 'Adr 21', 'GATE_KEEPER', '', '', 55.555, -55.555, null);

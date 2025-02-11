@@ -77,6 +77,7 @@ import school.hei.haapi.endpoint.rest.model.CreateEvent;
 import school.hei.haapi.endpoint.rest.model.CreateFee;
 import school.hei.haapi.endpoint.rest.model.CrupdateExam;
 import school.hei.haapi.endpoint.rest.model.CrupdateFeeTemplate;
+import school.hei.haapi.endpoint.rest.model.CrupdateGateKeeper;
 import school.hei.haapi.endpoint.rest.model.CrupdateGrade;
 import school.hei.haapi.endpoint.rest.model.CrupdateMonitor;
 import school.hei.haapi.endpoint.rest.model.CrupdatePromotion;
@@ -1667,7 +1668,7 @@ public class TestUtils {
 
   public static GateKeeper gateKeeper1() {
     return new GateKeeper()
-        .id("gatekeeper1_id")
+        .id(GATE_KEEPER1_ID)
         .firstName("GateKeeper 1")
         .lastName("John")
         .email("test+gatekeeper@hei.school")
@@ -1678,12 +1679,33 @@ public class TestUtils {
         .entranceDatetime(Instant.parse("2022-09-08T08:25:29.00Z"))
         .phone("0322400028")
         .address("Adr 9")
+        .nic("")
+        .birthPlace("")
         .coordinates(new Coordinates().longitude(55.555).latitude(-55.555));
+  }
+
+  public static CrupdateGateKeeper crupdateGateKeeper1() {
+    return new CrupdateGateKeeper()
+        .id(gateKeeper1().getId())
+        .ref(gateKeeper1().getRef())
+        .nic(gateKeeper1().getNic())
+        .address(gateKeeper1().getAddress())
+        .email(gateKeeper1().getEmail())
+        .birthDate(gateKeeper1().getBirthDate())
+        .birthPlace(gateKeeper1().getBirthPlace())
+        .coordinates(gateKeeper1().getCoordinates())
+        .entranceDatetime(gateKeeper1().getEntranceDatetime())
+        .firstName(gateKeeper1().getFirstName())
+        .highSchoolOrigin(gateKeeper1().getHighSchoolOrigin())
+        .lastName(gateKeeper1().getLastName())
+        .phone(gateKeeper1().getPhone())
+        .sex(gateKeeper1().getSex())
+        .status(gateKeeper1().getStatus());
   }
 
   public static GateKeeper gateKeeper2() {
     return new GateKeeper()
-        .id("gatekeeper2_id")
+        .id(GATE_KEEPER2_ID)
         .firstName("GateKeeper 2")
         .lastName("One")
         .email("test+gatekeeper+2@hei.school")
