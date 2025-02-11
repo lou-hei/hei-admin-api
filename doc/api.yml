@@ -5305,6 +5305,88 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/students/{student_id}/cors':
+    get:
+      tags:
+        - Cor
+        - User
+      operationId: getStudentCors
+      summary: Get all CORs for the given student_id
+      parameters:
+        - in: path
+          name: student_id
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+          description: Set value to 1 by default if null is provided
+          required: false
+        - name: page_size
+          in: query
+          description: Set value to 15 by default if null is provided
+          schema:
+            $ref: '#/components/schemas/PageSize'
+      responses:
+        '200':
+          description: List of COR for the given student_id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cor"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - Cor
+        - User
+      operationId: crupdateStudentCors
+      parameters:
+        - in: path
+          name: student_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: List of CORs to Crupdate
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/CrupdateCor"
+      responses:
+        '200':
+          description: List of Crupdated CORs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cor"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 components:
   securitySchemes:
     BearerAuth:
@@ -6539,6 +6621,23 @@ components:
       enum:
         - YEARLY
         - MONTHLY
+    CrupdateCor:
+      type: object
+      properties:
+        id:
+          type: string
+        creation_datetime:
+          type: string
+          format: date-time
+        description:
+          type: string
+    Cor:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/CrupdateCor"
+      properties:
+        concerned_student:
+          $ref: "#/components/schemas/Student"
     UpdateLettersStatus:
       type: object
       properties:
