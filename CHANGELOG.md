@@ -1,3 +1,13 @@
+# [1.97.0](https://github.com/hei-school/hei-admin-api/compare/v1.96.0...v1.97.0) (2025-02-11)
+
+
+### Features
+
+* crupdate organizers ([a7fe681](https://github.com/hei-school/hei-admin-api/commit/a7fe681a3fa1230d3026f7257ebff95e43d73780))
+* role organizer ([9cf27fd](https://github.com/hei-school/hei-admin-api/commit/9cf27fd7e3785988b873424ec750f3675c104917))
+
+
+
 # [1.96.0](https://github.com/hei-school/hei-admin-api/compare/v1.95.0...v1.96.0) (2025-02-06)
 
 
@@ -112,23 +122,6 @@
 ### Reverts
 
 * Revert "feat: filter fees by status and type " ([f2b8345](https://github.com/hei-school/hei-admin-api/commit/f2b8345d51d3d1ddf5a1f44f9318893325bbd7be))
-
-
-
-# [1.87.0](https://github.com/hei-school/hei-admin-api/compare/v1.86.0...v1.87.0) (2024-12-19)
-
-
-### Bug Fixes
-
-* take off LATE status by default for fees stats  ([1d5e253](https://github.com/hei-school/hei-admin-api/commit/1d5e253adeb0ff811b84c09b2e6dadf1fa3f00b3))
-
-
-### Features
-
-* add student_first_name field in fee endpoint response  ([ebc870f](https://github.com/hei-school/hei-admin-api/commit/ebc870f9aa811804cf43acb1b027f64673415d47))
-* manually upgrade code version ([54bb3e2](https://github.com/hei-school/hei-admin-api/commit/54bb3e25fad98153dae7d7063cfd8c75fa947292))
-* **not-implemented:** verify mpbs via xls file ([d9b6107](https://github.com/hei-school/hei-admin-api/commit/d9b610716c818cb027cea518699c7368abd5af32))
-* verify mpbs via xls file provided by orange ([b902d9e](https://github.com/hei-school/hei-admin-api/commit/b902d9e820c5e17e3ce8597d2007148a39b10eda))
 
 
 
