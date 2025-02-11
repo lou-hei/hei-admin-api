@@ -1,9 +1,9 @@
 package school.hei.haapi.endpoint.rest.controller;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static school.hei.haapi.model.User.Role.ORGANIZER;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,17 +46,16 @@ public class OrganizerController {
         .getByCriteria(ORGANIZER, firstName, lastName, ref, page, pageSize, domainStatus, domainSex)
         .stream()
         .map(userMapper::toRestOrganizer)
-        .collect(Collectors.toUnmodifiableList());
+        .collect(toUnmodifiableList());
   }
 
   @PutMapping("/organizers")
   public List<Organizer> crupdateOrganizers(@RequestBody List<CrupdateOrganizer> organizers) {
     return userService
-        .saveAll(
-            organizers.stream().map(userMapper::toDomain).collect(Collectors.toUnmodifiableList()))
+        .saveAll(organizers.stream().map(userMapper::toDomain).collect(toUnmodifiableList()))
         .stream()
         .map(userMapper::toRestOrganizer)
-        .collect(Collectors.toUnmodifiableList());
+        .collect(toUnmodifiableList());
   }
 
   @GetMapping("/organizers/{id}")
