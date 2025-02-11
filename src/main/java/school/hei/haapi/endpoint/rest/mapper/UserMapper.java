@@ -1,6 +1,7 @@
 package school.hei.haapi.endpoint.rest.mapper;
 
 import static school.hei.haapi.endpoint.rest.mapper.FileInfoMapper.ONE_DAY_DURATION_AS_LONG;
+import static school.hei.haapi.model.User.Role.ORGANIZER;
 
 import java.util.HashMap;
 import java.util.List;
@@ -231,6 +232,34 @@ public class UserMapper {
     return monitor;
   }
 
+  public Organizer toRestOrganizer(User user) {
+    Organizer organizer = new Organizer();
+    String profilePictureKey = user.getProfilePictureKey();
+    String url =
+        profilePictureKey != null
+            ? fileService.getPresignedUrl(profilePictureKey, ONE_DAY_DURATION_AS_LONG)
+            : null;
+
+    organizer.setId(user.getId());
+    organizer.setFirstName(user.getFirstName());
+    organizer.setLastName(user.getLastName());
+    organizer.setEmail(user.getEmail());
+    organizer.setRef(user.getRef());
+    organizer.setStatus(statusEnumMapper.toRestStatus(user.getStatus()));
+    organizer.setPhone(user.getPhone());
+    organizer.setEntranceDatetime(user.getEntranceDatetime());
+    organizer.setBirthDate(user.getBirthDate());
+    organizer.setSex(sexEnumMapper.toRestSexEnum(user.getSex()));
+    organizer.setAddress(user.getAddress());
+    organizer.setBirthPlace(user.getBirthPlace());
+    organizer.setNic(user.getNic());
+    organizer.setProfilePicture(url);
+    organizer.setCoordinates(
+        new Coordinates().longitude(user.getLongitude()).latitude(user.getLatitude()));
+    organizer.setHighSchoolOrigin(user.getHighSchoolOrigin());
+    return organizer;
+  }
+
   public User toDomain(CrupdateManager manager) {
     return User.builder()
         .role(User.Role.MANAGER)
@@ -352,6 +381,28 @@ public class UserMapper {
         .longitude(monitor.getCoordinates().getLongitude())
         .latitude(monitor.getCoordinates().getLatitude())
         .highSchoolOrigin(monitor.getHighSchoolOrigin())
+        .build();
+  }
+
+  public User toDomain(CrupdateOrganizer organizer) {
+    return User.builder()
+        .role(ORGANIZER)
+        .id(organizer.getId())
+        .firstName(organizer.getFirstName())
+        .lastName(organizer.getLastName())
+        .email(organizer.getEmail())
+        .ref(organizer.getRef())
+        .status(statusEnumMapper.toDomainStatus(organizer.getStatus()))
+        .phone(organizer.getPhone())
+        .entranceDatetime(organizer.getEntranceDatetime())
+        .birthDate(organizer.getBirthDate())
+        .sex(sexEnumMapper.toDomainSexEnum(organizer.getSex()))
+        .address(organizer.getAddress())
+        .nic(organizer.getNic())
+        .birthPlace(organizer.getBirthPlace())
+        .longitude(organizer.getCoordinates().getLongitude())
+        .latitude(organizer.getCoordinates().getLatitude())
+        .highSchoolOrigin(organizer.getHighSchoolOrigin())
         .build();
   }
 
