@@ -8,11 +8,6 @@ import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
 import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.MONTHLY;
 import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.YEARLY;
 import static school.hei.haapi.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
-import static school.hei.haapi.service.FeeService.PaymentType.BANK;
-import static school.hei.haapi.service.FeeService.PaymentType.MPBS;
-import static school.hei.haapi.service.FeeService.StudentGrade.L1;
-import static school.hei.haapi.service.FeeService.StudentGrade.L2;
-import static school.hei.haapi.service.FeeService.StudentGrade.L3;
 import static school.hei.haapi.service.utils.InstantUtils.getFirstDayOfActualMonth;
 
 import jakarta.transaction.Transactional;
@@ -210,12 +205,12 @@ public class FeeService {
     Map<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(lateFees);
     return new LateFeesStats()
         .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(lateFees)))
-        .workStudy(countWorkStudyFees(feesByType.get(TUITION)))
-        .monthly(countFeesByPaymentFrequency(feesByType.get(TUITION), MONTHLY))
-        .yearly(countFeesByPaymentFrequency(feesByType.get(TUITION), YEARLY))
-        .firstGrade(feeCountByGrade.get(L1))
-        .secondGrade(feeCountByGrade.get(L2))
-        .thirdGrade(feeCountByGrade.get(L3));
+        .workStudy(countWorkStudyFees(feesByType.getOrDefault(TUITION, List.of())))
+        .monthly(countFeesByPaymentFrequency(feesByType.getOrDefault(TUITION, List.of()), MONTHLY))
+        .yearly(countFeesByPaymentFrequency(feesByType.getOrDefault(TUITION, List.of()), YEARLY))
+        .firstGrade(feeCountByGrade.get(StudentGrade.L1))
+        .secondGrade(feeCountByGrade.get(StudentGrade.L2))
+        .thirdGrade(feeCountByGrade.get(StudentGrade.L3));
   }
 
   private PaidFeesStats getPaidFeesStats(List<Fee> fees) {
@@ -224,14 +219,20 @@ public class FeeService {
     Map<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(paidFees);
     return new PaidFeesStats()
         .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(paidFees)))
-        .workStudy(countWorkStudyFees(feesByType.get(TUITION)))
-        .monthly(countFeesByPaymentFrequency(feesByType.get(TUITION), MONTHLY))
-        .yearly(countFeesByPaymentFrequency(feesByType.get(TUITION), YEARLY))
-        .firstGrade(feeCountByGrade.get(L1))
-        .secondGrade(feeCountByGrade.get(L2))
-        .thirdGrade(feeCountByGrade.get(L3))
-        .bankFees(BigDecimal.valueOf(countFeesByPaymentType(feesByType.get(TUITION), BANK)))
-        .mobileMoney(BigDecimal.valueOf(countFeesByPaymentType(feesByType.get(TUITION), MPBS)));
+        .workStudy(countWorkStudyFees(feesByType.getOrDefault(TUITION, List.of())))
+        .monthly(countFeesByPaymentFrequency(feesByType.getOrDefault(TUITION, List.of()), MONTHLY))
+        .yearly(countFeesByPaymentFrequency(feesByType.getOrDefault(TUITION, List.of()), YEARLY))
+        .firstGrade(feeCountByGrade.get(StudentGrade.L1))
+        .secondGrade(feeCountByGrade.get(StudentGrade.L2))
+        .thirdGrade(feeCountByGrade.get(StudentGrade.L3))
+        .bankFees(
+            BigDecimal.valueOf(
+                countFeesByPaymentType(
+                    feesByType.getOrDefault(TUITION, List.of()), PaymentType.BANK)))
+        .mobileMoney(
+            BigDecimal.valueOf(
+                countFeesByPaymentType(
+                    feesByType.getOrDefault(TUITION, List.of()), PaymentType.MPBS)));
   }
 
   private PendingFeesStats getPendingFeesStats(List<Fee> fees) {
@@ -240,33 +241,33 @@ public class FeeService {
     Map<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(pendingFees);
     return new PendingFeesStats()
         .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(pendingFees)))
-        .workStudy(countWorkStudyFees(feesByType.get(TUITION)))
-        .monthly(countFeesByPaymentFrequency(feesByType.get(TUITION), MONTHLY))
-        .yearly(countFeesByPaymentFrequency(feesByType.get(TUITION), YEARLY))
-        .firstGrade(feeCountByGrade.get(L1))
-        .secondGrade(feeCountByGrade.get(L2))
-        .thirdGrade(feeCountByGrade.get(L3));
+        .workStudy(countWorkStudyFees(feesByType.getOrDefault(TUITION, List.of())))
+        .monthly(countFeesByPaymentFrequency(feesByType.getOrDefault(TUITION, List.of()), MONTHLY))
+        .yearly(countFeesByPaymentFrequency(feesByType.getOrDefault(TUITION, List.of()), YEARLY))
+        .firstGrade(feeCountByGrade.get(StudentGrade.L1))
+        .secondGrade(feeCountByGrade.get(StudentGrade.L2))
+        .thirdGrade(feeCountByGrade.get(StudentGrade.L3));
   }
 
   private TotalExpectedFeesStats getTotalExpectedFeesStats(List<Fee> fees) {
     Map<StudentGrade, Long> feeCountByGrade = countFeesByGrades(fees);
     Map<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(fees);
     return new TotalExpectedFeesStats()
-        .firstGrade(feeCountByGrade.get(L1))
-        .secondGrade(feeCountByGrade.get(L2))
-        .thirdGrade(feeCountByGrade.get(L3))
-        .monthly(countFeesByPaymentFrequency(feesByType.get(TUITION), MONTHLY))
-        .yearly(countFeesByPaymentFrequency(feesByType.get(TUITION), YEARLY))
-        .workStudy(countWorkStudyFees(feesByType.get(TUITION)));
+        .firstGrade(feeCountByGrade.get(StudentGrade.L1))
+        .secondGrade(feeCountByGrade.get(StudentGrade.L2))
+        .thirdGrade(feeCountByGrade.get(StudentGrade.L3))
+        .monthly(countFeesByPaymentFrequency(feesByType.getOrDefault(TUITION, List.of()), MONTHLY))
+        .yearly(countFeesByPaymentFrequency(feesByType.getOrDefault(TUITION, List.of()), YEARLY))
+        .workStudy(countWorkStudyFees(feesByType.getOrDefault(TUITION, List.of())));
   }
 
-  enum StudentGrade {
+  private enum StudentGrade {
     L1,
     L2,
     L3
   }
 
-  enum PaymentType {
+  private enum PaymentType {
     MPBS,
     BANK
   }
@@ -275,13 +276,13 @@ public class FeeService {
     var feesByGrades = new HashMap<StudentGrade, Long>();
     for (Fee fee : fees) {
       if (fee.getComment().toLowerCase().contains("l1")) {
-        feesByGrades.compute(L1, (grade, count) -> count == null ? 1L : count + 1);
+        feesByGrades.compute(StudentGrade.L1, (grade, count) -> count == null ? 1L : count + 1);
       }
       if (fee.getComment().toLowerCase().contains("l2")) {
-        feesByGrades.compute(L2, (grade, count) -> count == null ? 1L : count + 1);
+        feesByGrades.compute(StudentGrade.L2, (grade, count) -> count == null ? 1L : count + 1);
       }
       if (fee.getComment().toLowerCase().contains("l3")) {
-        feesByGrades.compute(L3, (grade, count) -> count == null ? 1L : count + 1);
+        feesByGrades.compute(StudentGrade.L3, (grade, count) -> count == null ? 1L : count + 1);
       }
     }
     return feesByGrades;
@@ -322,11 +323,7 @@ public class FeeService {
   }
 
   private Map<FeeTypeEnum, List<Fee>> groupFeesByType(List<Fee> fees) {
-    Map<FeeTypeEnum, List<Fee>> feesByType = fees.stream().collect(groupingBy(Fee::getType));
-    for (FeeTypeEnum type : FeeTypeEnum.values()) {
-      feesByType.putIfAbsent(type, List.of());
-    }
-    return feesByType;
+    return fees.stream().collect(groupingBy(Fee::getType));
   }
 
   private List<Fee> filterFeesByStatus(List<Fee> fees, FeeStatusEnum feeStatus) {
