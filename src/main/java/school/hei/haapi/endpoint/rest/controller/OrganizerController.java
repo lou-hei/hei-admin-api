@@ -1,21 +1,26 @@
 package school.hei.haapi.endpoint.rest.controller;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 import static school.hei.haapi.model.User.Role.ORGANIZER;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import school.hei.haapi.endpoint.rest.mapper.SexEnumMapper;
 import school.hei.haapi.endpoint.rest.mapper.StatusEnumMapper;
 import school.hei.haapi.endpoint.rest.mapper.UserMapper;
 import school.hei.haapi.endpoint.rest.model.CrupdateOrganizer;
 import school.hei.haapi.endpoint.rest.model.EnableStatus;
+import school.hei.haapi.endpoint.rest.model.Manager;
 import school.hei.haapi.endpoint.rest.model.Organizer;
 import school.hei.haapi.endpoint.rest.model.Sex;
 import school.hei.haapi.model.BoundedPageSize;
@@ -61,5 +66,13 @@ public class OrganizerController {
   @GetMapping("/organizers/{id}")
   public Organizer getOrganizerById(@PathVariable("id") String id) {
     return userMapper.toRestOrganizer(userService.findById(id));
+  }
+
+  @PostMapping(value = "/organizers/{id}/picture/raw", consumes = MULTIPART_FORM_DATA_VALUE)
+  public Manager uploadOrganizerProfilePicture(
+      @RequestPart("file_to_upload") MultipartFile profilePictureAsMultipartFile,
+      @PathVariable String id) {
+    userService.uploadUserProfilePicture(profilePictureAsMultipartFile, id);
+    return userMapper.toRestManager(userService.findById(id));
   }
 }
