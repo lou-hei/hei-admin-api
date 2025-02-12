@@ -45,6 +45,7 @@ import school.hei.haapi.endpoint.rest.model.PendingFeesStats;
 import school.hei.haapi.endpoint.rest.model.TotalExpectedFeesStats;
 import school.hei.haapi.model.*;
 import school.hei.haapi.model.exception.ApiException;
+import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.model.validator.FeeValidator;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
 import school.hei.haapi.repository.FeeRepository;
@@ -123,7 +124,11 @@ public class FeeService {
   }
 
   public Fee getById(String id) {
-    var loggedFee = updateFeeStatus(feeRepository.findById(id).orElse(null));
+    var loggedFee =
+        updateFeeStatus(
+            feeRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Fee of id: " + id + " not found")));
     log.debug("fee: ------------########## {}", loggedFee);
     log.debug("now: ---------------######### {}", Instant.now());
     return loggedFee;
@@ -185,6 +190,7 @@ public class FeeService {
     return FeesStats.to(getHandledNullDataStats(result));
   }
 
+  @Transactional
   public AdvancedFeesStatistics getAdvancedFeesStats(Instant monthFrom, Instant monthTo) {
     var instantRange = new DateUtils.RangedInstant(monthFrom, monthTo);
     List<Fee> allFees =
@@ -199,39 +205,43 @@ public class FeeService {
   private LateFeesStats getLateFeesStats(List<Fee> fees) {
     List<Fee> lateFees = filterFeesByStatus(fees, LATE);
     HashMap<StudentGrade, Long> feeCountByGrade = countFeesByGrades(lateFees);
+    HashMap<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(lateFees);
     return new LateFeesStats()
         .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(lateFees)))
-        .workStudy(countWorkStudyFees(lateFees))
-        .monthly(countFeesByPaymentFrequency(lateFees, MONTHLY))
-        .yearly(countFeesByPaymentFrequency(lateFees, YEARLY))
+        .workStudy(countWorkStudyFees(feesByType.get(TUITION)))
+        .monthly(countFeesByPaymentFrequency(feesByType.get(TUITION), MONTHLY))
+        .yearly(countFeesByPaymentFrequency(feesByType.get(TUITION), YEARLY))
         .firstGrade(feeCountByGrade.get(L1))
         .secondGrade(feeCountByGrade.get(L2))
         .thirdGrade(feeCountByGrade.get(L3));
   }
 
-  private PaidFeesStats getPaidFeesStats(List<Fee> fees) {
+  @Transactional
+  PaidFeesStats getPaidFeesStats(List<Fee> fees) {
     List<Fee> paidFees = filterFeesByStatus(fees, PAID);
     HashMap<StudentGrade, Long> feeCountByGrade = countFeesByGrades(paidFees);
+    HashMap<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(paidFees);
     return new PaidFeesStats()
         .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(paidFees)))
-        .workStudy(countWorkStudyFees(paidFees))
-        .monthly(countFeesByPaymentFrequency(paidFees, MONTHLY))
-        .yearly(countFeesByPaymentFrequency(paidFees, YEARLY))
+        .workStudy(countWorkStudyFees(feesByType.get(TUITION)))
+        .monthly(countFeesByPaymentFrequency(feesByType.get(TUITION), MONTHLY))
+        .yearly(countFeesByPaymentFrequency(feesByType.get(TUITION), YEARLY))
         .firstGrade(feeCountByGrade.get(L1))
         .secondGrade(feeCountByGrade.get(L2))
         .thirdGrade(feeCountByGrade.get(L3))
-        .bankFees(BigDecimal.valueOf(countFeesByPaymentType(paidFees, BANK)))
-        .mobileMoney(BigDecimal.valueOf(countFeesByPaymentType(paidFees, MPBS)));
+        .bankFees(BigDecimal.valueOf(countFeesByPaymentType(feesByType.get(TUITION), BANK)))
+        .mobileMoney(BigDecimal.valueOf(countFeesByPaymentType(feesByType.get(TUITION), MPBS)));
   }
 
   private PendingFeesStats getPendingFeesStats(List<Fee> fees) {
     List<Fee> pendingFees = filterFeesByStatus(fees, PENDING);
     HashMap<StudentGrade, Long> feeCountByGrade = countFeesByGrades(pendingFees);
+    HashMap<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(pendingFees);
     return new PendingFeesStats()
         .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(pendingFees)))
-        .workStudy(countWorkStudyFees(pendingFees))
-        .monthly(countFeesByPaymentFrequency(pendingFees, MONTHLY))
-        .yearly(countFeesByPaymentFrequency(pendingFees, YEARLY))
+        .workStudy(countWorkStudyFees(feesByType.get(TUITION)))
+        .monthly(countFeesByPaymentFrequency(feesByType.get(TUITION), MONTHLY))
+        .yearly(countFeesByPaymentFrequency(feesByType.get(TUITION), YEARLY))
         .firstGrade(feeCountByGrade.get(L1))
         .secondGrade(feeCountByGrade.get(L2))
         .thirdGrade(feeCountByGrade.get(L3));
@@ -239,13 +249,14 @@ public class FeeService {
 
   private TotalExpectedFeesStats getTotalExpectedFeesStats(List<Fee> fees) {
     HashMap<StudentGrade, Long> feeCountByGrade = countFeesByGrades(fees);
+    HashMap<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(fees);
     return new TotalExpectedFeesStats()
         .firstGrade(feeCountByGrade.get(L1))
         .secondGrade(feeCountByGrade.get(L2))
         .thirdGrade(feeCountByGrade.get(L3))
-        .monthly(countFeesByPaymentFrequency(fees, MONTHLY))
-        .yearly(countFeesByPaymentFrequency(fees, YEARLY))
-        .workStudy(countWorkStudyFees(fees));
+        .monthly(countFeesByPaymentFrequency(feesByType.get(TUITION), MONTHLY))
+        .yearly(countFeesByPaymentFrequency(feesByType.get(TUITION), YEARLY))
+        .workStudy(countWorkStudyFees(feesByType.get(TUITION)));
   }
 
   enum StudentGrade {
@@ -276,7 +287,7 @@ public class FeeService {
   }
 
   private long countFeesByPaymentFrequency(List<Fee> fees, PaymentFrequency paymentFrequency) {
-    return filterFeesByType(fees, TUITION).stream()
+    return fees.stream()
         .filter(
             fee -> {
               String feeComment = fee.getComment();
@@ -290,7 +301,7 @@ public class FeeService {
 
   @Transactional
   long countFeesByPaymentType(List<Fee> fees, PaymentType paymentType) {
-    return filterFeesByType(fees, TUITION).stream()
+    return fees.stream()
         .filter(
             fee ->
                 switch (paymentType) {
@@ -305,13 +316,23 @@ public class FeeService {
   }
 
   private long countWorkStudyFees(List<Fee> fees) {
-    return filterFeesByType(fees, TUITION).stream()
+    return fees.stream()
         .filter(fee -> fee.getComment().toLowerCase().contains("alternance"))
         .count();
   }
 
-  private List<Fee> filterFeesByType(List<Fee> fees, FeeTypeEnum feeType) {
-    return fees.stream().filter(fee -> fee.getType().equals(feeType)).toList();
+  private HashMap<FeeTypeEnum, List<Fee>> groupFeesByType(List<Fee> fees) {
+    var feesByType = new HashMap<FeeTypeEnum, List<Fee>>();
+    for (FeeTypeEnum feeType : FeeTypeEnum.values()) {
+      List<Fee> feeList = new ArrayList<>();
+      for (Fee fee : fees) {
+        if (fee.getType().equals(feeType)) {
+          feeList.add(fee);
+        }
+      }
+      feesByType.put(feeType, feeList);
+    }
+    return feesByType;
   }
 
   private List<Fee> filterFeesByStatus(List<Fee> fees, FeeStatusEnum feeStatus) {
