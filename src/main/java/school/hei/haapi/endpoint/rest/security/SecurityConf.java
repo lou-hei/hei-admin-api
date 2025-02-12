@@ -199,7 +199,6 @@ public class SecurityConf {
                     antMatcher(GET, "/comments"),
                     antMatcher(GET, "/students/*/comments"),
                     antMatcher(POST, "/students/*/comments"),
-                    antMatcher(GET, "/events"),
                     antMatcher(GET, "/events/participants/*/stats"),
                     antMatcher(PUT, "/events"),
                     antMatcher(GET, "/events/stats"),
@@ -257,6 +256,7 @@ public class SecurityConf {
                     .requestMatchers(
                         new OrRequestMatcher(
                             new AntPathRequestMatcher("/ping", GET.name()),
+                            new AntPathRequestMatcher("/events", GET.name()),
                             new AntPathRequestMatcher("/hello-world", GET.name()),
                             new AntPathRequestMatcher("/uuid-created", GET.name()),
                             new AntPathRequestMatcher("/health/db", GET.name()),
@@ -761,13 +761,6 @@ public class SecurityConf {
                     .requestMatchers(GET, "/events/participants/*/stats")
                     .hasAnyRole(
                         TEACHER.getRole(), MANAGER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
-                    .requestMatchers(GET, "/events")
-                    .hasAnyRole(
-                        MANAGER.getRole(),
-                        TEACHER.getRole(),
-                        STUDENT.getRole(),
-                        ADMIN.getRole(),
-                        ORGANIZER.getRole())
                     .requestMatchers(GET, "/events/stats")
                     .hasAnyRole(
                         MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())

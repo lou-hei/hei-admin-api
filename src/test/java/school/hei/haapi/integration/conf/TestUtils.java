@@ -216,8 +216,9 @@ public class TestUtils {
     client.setScheme("http");
     client.setHost("localhost");
     client.setPort(serverPort);
-    client.setRequestInterceptor(
-        httpRequestBuilder -> httpRequestBuilder.header("Authorization", "Bearer " + token));
+    if (token != null)
+      client.setRequestInterceptor(
+          httpRequestBuilder -> httpRequestBuilder.header("Authorization", "Bearer " + token));
     return client;
   }
 
