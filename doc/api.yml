@@ -3345,6 +3345,41 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  '/organizers/{organizer_id}/picture/raw':
+    post:
+      tags:
+        - Users
+      summary: Upload organizer profile picture
+      operationId: uploadOrganizerProfilePicture
+      parameters:
+        - name: organizer_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/UploadFile"
+      responses:
+        '200':
+          description: Organizer updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   '/managers/{manager_id}/picture/raw':
     post:
       tags:
