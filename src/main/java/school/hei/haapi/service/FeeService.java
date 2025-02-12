@@ -261,23 +261,17 @@ public class FeeService {
 
   private HashMap<StudentGrade, Long> countFeesByGrades(List<Fee> fees) {
     var feesByGrades = new HashMap<StudentGrade, Long>();
-    long firstGradeCount =
-        filterFeesByType(fees, TUITION).stream()
-            .filter(fee -> (fee.getComment().toLowerCase().contains("l1")))
-            .count();
-    long secondGradeCount =
-        filterFeesByType(fees, TUITION).stream()
-            .filter(fee -> (fee.getComment().toLowerCase().contains("l2")))
-            .count();
-    long thirdGradeCount =
-        filterFeesByType(fees, TUITION).stream()
-            .filter(fee -> (fee.getComment().toLowerCase().contains("l3")))
-            .count();
-
-    feesByGrades.put(L1, firstGradeCount);
-    feesByGrades.put(L2, secondGradeCount);
-    feesByGrades.put(L3, thirdGradeCount);
-
+    for (Fee fee : fees) {
+      if (fee.getComment().toLowerCase().contains("l1")) {
+        feesByGrades.compute(L1, (grade, count) -> count == null ? 1L : count + 1);
+      }
+      if (fee.getComment().toLowerCase().contains("l2")) {
+        feesByGrades.compute(L2, (grade, count) -> count == null ? 1L : count + 1);
+      }
+      if (fee.getComment().toLowerCase().contains("l3")) {
+        feesByGrades.compute(L3, (grade, count) -> count == null ? 1L : count + 1);
+      }
+    }
     return feesByGrades;
   }
 
@@ -294,7 +288,8 @@ public class FeeService {
         .count();
   }
 
-  private long countFeesByPaymentType(List<Fee> fees, PaymentType paymentType) {
+  @Transactional
+  long countFeesByPaymentType(List<Fee> fees, PaymentType paymentType) {
     return filterFeesByType(fees, TUITION).stream()
         .filter(
             fee ->
