@@ -8,6 +8,7 @@ import static school.hei.haapi.endpoint.rest.model.EnableStatus.ENABLED;
 import static school.hei.haapi.endpoint.rest.model.Sex.F;
 import static school.hei.haapi.endpoint.rest.model.Sex.M;
 import static school.hei.haapi.integration.conf.TestUtils.ADMIN1_TOKEN;
+import static school.hei.haapi.integration.conf.TestUtils.EVENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER2_TOKEN;
@@ -17,6 +18,8 @@ import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenE
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.integration.conf.TestUtils.someCreatableEvent;
+import static school.hei.haapi.integration.conf.TestUtils.student1MissEvent1;
+import static school.hei.haapi.integration.conf.TestUtils.student3AttendEvent1;
 import static school.hei.haapi.integration.conf.TestUtils.uploadProfilePicture;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +44,7 @@ import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.Coordinates;
 import school.hei.haapi.endpoint.rest.model.CreateEvent;
 import school.hei.haapi.endpoint.rest.model.Event;
+import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.endpoint.rest.model.Organizer;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
@@ -199,5 +203,14 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
     List<Organizer> crupdatedOrganizersToNormal = api.crupdateOrganizers(List.of(organizer));
     assertEquals(
         organizer1().getFirstName(), crupdatedOrganizersToNormal.getFirst().getFirstName());
+  }
+
+  @Test
+  void get_eventParticipants_ok() throws ApiException {
+    EventsApi api = new EventsApi(anApiClient(ORGANIZER1_TOKEN));
+    List<EventParticipant> eventParticipants =
+        api.getEventParticipants(EVENT1_ID, 1, 10, null, null, null, null);
+    assertEquals(student1MissEvent1(), eventParticipants.getFirst());
+    assertEquals(student3AttendEvent1(), eventParticipants.get(1));
   }
 }

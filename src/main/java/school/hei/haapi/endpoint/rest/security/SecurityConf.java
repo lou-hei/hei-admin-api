@@ -755,7 +755,8 @@ public class SecurityConf {
                     //
 
                     .requestMatchers(GET, "/events/participants/*/stats")
-                    .hasAnyRole(TEACHER.getRole(), MANAGER.getRole(), ADMIN.getRole())
+                    .hasAnyRole(
+                        TEACHER.getRole(), MANAGER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(GET, "/events")
                     .hasAnyRole(
                         MANAGER.getRole(),
@@ -764,7 +765,8 @@ public class SecurityConf {
                         ADMIN.getRole(),
                         ORGANIZER.getRole())
                     .requestMatchers(GET, "/events/stats")
-                    .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
+                    .hasAnyRole(
+                        MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(PUT, "/events")
                     .hasAnyRole(MANAGER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(GET, "/events/*")
@@ -778,11 +780,16 @@ public class SecurityConf {
                     .hasAnyRole(MANAGER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(GET, "/events/*/participants")
                     .hasAnyRole(
-                        MANAGER.getRole(), TEACHER.getRole(), STUDENT.getRole(), ADMIN.getRole())
+                        MANAGER.getRole(),
+                        TEACHER.getRole(),
+                        STUDENT.getRole(),
+                        ADMIN.getRole(),
+                        ORGANIZER.getRole())
                     .requestMatchers(PUT, "/events/*/participants")
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
                     .requestMatchers(GET, "/events/*/stats")
-                    .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
+                    .hasAnyRole(
+                        MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(GET, "/promotions")
                     .hasAnyRole(
                         MANAGER.getRole(), TEACHER.getRole(), STUDENT.getRole(), ADMIN.getRole())
