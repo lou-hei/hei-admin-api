@@ -229,6 +229,7 @@ public class SecurityConf {
                     antMatcher(GET, "/organizers"),
                     antMatcher(GET, "/organizers/*"),
                     antMatcher(PUT, "/organizers"),
+                    antMatcher(POST, "/organizers/*/picture/raw"),
                     antMatcher(PUT, STUDENT_COURSE),
                     nonAccessibleBySuspendedUserPath)),
             AnonymousAuthenticationFilter.class)
@@ -709,7 +710,7 @@ public class SecurityConf {
                     .requestMatchers(PUT, "/staff_members/*")
                     .hasAnyRole(ADMIN.getRole(), STAFF_MEMBER.getRole())
                     //
-                    // Staff resources
+                    // Organizer resources
                     //
                     .requestMatchers(GET, "/organizers")
                     .hasAnyRole(ADMIN.getRole())
@@ -719,6 +720,9 @@ public class SecurityConf {
                     .hasAnyRole(ADMIN.getRole())
                     .requestMatchers(PUT, "/organizers")
                     .hasAnyRole(ADMIN.getRole())
+                    .requestMatchers(
+                        new SelfMatcher(POST, "/organizers/*/picture/raw", "organizers"))
+                    .hasRole(ORGANIZER.getRole())
                     //
                     // Letter resources
                     //

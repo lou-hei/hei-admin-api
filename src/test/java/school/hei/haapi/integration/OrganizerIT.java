@@ -31,7 +31,6 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -107,10 +106,9 @@ public class OrganizerIT extends FacadeITMockedThirdParties {
   }
 
   @Test
-  @Disabled("Not implemented: organizer can modify picture")
   void organizer_update_own_profile_picture() throws IOException, InterruptedException {
     HttpResponse<InputStream> response =
-        uploadProfilePicture(localPort, ORGANIZER1_TOKEN, ORGANIZER1_ID, "organizer");
+        uploadProfilePicture(localPort, ORGANIZER1_TOKEN, ORGANIZER1_ID, "organizers");
 
     Organizer organizer = objectMapper.readValue(response.body(), Organizer.class);
 
