@@ -28,7 +28,6 @@ import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.Coordinates;
 import school.hei.haapi.endpoint.rest.model.CrupdateMonitor;
-import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Monitor;
 import school.hei.haapi.endpoint.rest.model.Sex;
 import school.hei.haapi.integration.conf.FacadeITMockedThirdParties;
@@ -110,7 +109,7 @@ public class MonitorIT extends FacadeITMockedThirdParties {
         .email("test+monitor@hei.school")
         .ref("MTR21001")
         .phone("0322411123")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
         .nic("")
         .birthPlace("")

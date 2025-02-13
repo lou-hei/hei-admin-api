@@ -226,6 +226,10 @@ public class SecurityConf {
                     antMatcher(GET, "/letters/stats"),
                     antMatcher(GET, "/users/*/letters"),
                     antMatcher(POST, "/users/*/letters"),
+                    antMatcher(GET, "/organizers"),
+                    antMatcher(GET, "/organizers/*"),
+                    antMatcher(PUT, "/organizers"),
+                    antMatcher(POST, "/organizers/*/picture/raw"),
                     antMatcher(PUT, STUDENT_COURSE),
                     nonAccessibleBySuspendedUserPath)),
             AnonymousAuthenticationFilter.class)
@@ -706,6 +710,20 @@ public class SecurityConf {
                     .requestMatchers(PUT, "/staff_members/*")
                     .hasAnyRole(ADMIN.getRole(), STAFF_MEMBER.getRole())
                     //
+                    // Organizer resources
+                    //
+                    .requestMatchers(GET, "/organizers")
+                    .hasAnyRole(ADMIN.getRole())
+                    .requestMatchers(new SelfMatcher(GET, "/organizers/*", "organizers"))
+                    .hasAnyRole(ORGANIZER.getRole())
+                    .requestMatchers(GET, "/organizers/*")
+                    .hasAnyRole(ADMIN.getRole())
+                    .requestMatchers(PUT, "/organizers")
+                    .hasAnyRole(ADMIN.getRole())
+                    .requestMatchers(
+                        new SelfMatcher(POST, "/organizers/*/picture/raw", "organizers"))
+                    .hasRole(ORGANIZER.getRole())
+                    //
                     // Letter resources
                     //
                     .requestMatchers(GET, "/students/letters")
@@ -741,26 +759,41 @@ public class SecurityConf {
                     //
 
                     .requestMatchers(GET, "/events/participants/*/stats")
-                    .hasAnyRole(TEACHER.getRole(), MANAGER.getRole(), ADMIN.getRole())
+                    .hasAnyRole(
+                        TEACHER.getRole(), MANAGER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(GET, "/events")
                     .hasAnyRole(
-                        MANAGER.getRole(), TEACHER.getRole(), STUDENT.getRole(), ADMIN.getRole())
+                        MANAGER.getRole(),
+                        TEACHER.getRole(),
+                        STUDENT.getRole(),
+                        ADMIN.getRole(),
+                        ORGANIZER.getRole())
                     .requestMatchers(GET, "/events/stats")
-                    .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
+                    .hasAnyRole(
+                        MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(PUT, "/events")
-                    .hasAnyRole(MANAGER.getRole(), ADMIN.getRole())
+                    .hasAnyRole(MANAGER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(GET, "/events/*")
                     .hasAnyRole(
-                        MANAGER.getRole(), TEACHER.getRole(), STUDENT.getRole(), ADMIN.getRole())
+                        ORGANIZER.getRole(),
+                        MANAGER.getRole(),
+                        TEACHER.getRole(),
+                        STUDENT.getRole(),
+                        ADMIN.getRole())
                     .requestMatchers(DELETE, "/events/*")
-                    .hasAnyRole(MANAGER.getRole(), ADMIN.getRole())
+                    .hasAnyRole(MANAGER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(GET, "/events/*/participants")
                     .hasAnyRole(
-                        MANAGER.getRole(), TEACHER.getRole(), STUDENT.getRole(), ADMIN.getRole())
+                        MANAGER.getRole(),
+                        TEACHER.getRole(),
+                        STUDENT.getRole(),
+                        ADMIN.getRole(),
+                        ORGANIZER.getRole())
                     .requestMatchers(PUT, "/events/*/participants")
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
                     .requestMatchers(GET, "/events/*/stats")
-                    .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
+                    .hasAnyRole(
+                        MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(GET, "/promotions")
                     .hasAnyRole(
                         MANAGER.getRole(), TEACHER.getRole(), STUDENT.getRole(), ADMIN.getRole())
@@ -779,7 +812,8 @@ public class SecurityConf {
                     .requestMatchers(GET, "/attendance")
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
                     .requestMatchers(GET, "/event/*/students/raw/xlsx")
-                    .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
+                    .hasAnyRole(
+                        MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole(), ORGANIZER.getRole())
                     .requestMatchers(GET, "/promotion/*/students/raw/xlsx")
                     .hasAnyRole(MANAGER.getRole(), TEACHER.getRole(), ADMIN.getRole())
                     .requestMatchers(GET, "/students/raw/xlsx")
