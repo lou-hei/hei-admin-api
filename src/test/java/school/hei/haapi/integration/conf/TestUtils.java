@@ -292,7 +292,6 @@ public class TestUtils {
 
     CasdoorRole casdoorRole = new CasdoorRole();
     casdoorRole.setOwner("dummy");
-    // todo : to check if ok monitor role is ok
     casdoorRole.setName("manager");
     String[] roleUsers = List.of("dummy/user").toArray(new String[0]);
     casdoorRole.setUsers(roleUsers);
@@ -304,6 +303,26 @@ public class TestUtils {
   public static CasdoorUser getCasdoorUserMonitor2() {
     CasdoorUser user = getCasdoorUserMonitor1();
     user.setEmail("test+monitor2@hei.school");
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserOrganizer1() {
+    CasdoorUser user = new CasdoorUser();
+    user.setEmail("test+organizer@hei.school");
+
+    CasdoorRole casdoorRole = new CasdoorRole();
+    casdoorRole.setOwner("dummy");
+    casdoorRole.setName("organizer");
+    String[] roleUsers = List.of("dummy/user").toArray(new String[0]);
+    casdoorRole.setUsers(roleUsers);
+    user.setRoles(List.of(casdoorRole));
+
+    return user;
+  }
+
+  public static CasdoorUser getCasdoorUserOrganizer2() {
+    CasdoorUser user = getCasdoorUserOrganizer1();
+    user.setEmail("test+organizer+2@hei.school");
     return user;
   }
 
@@ -337,6 +356,8 @@ public class TestUtils {
     when(casdoorAuthService.parseJwtToken(STUDENT13_TOKEN)).thenReturn(getCasdoorUserStudent13());
     when(casdoorAuthService.parseJwtToken(MONITOR1_TOKEN)).thenReturn(getCasdoorUserMonitor1());
     when(casdoorAuthService.parseJwtToken(MONITOR2_TOKEN)).thenReturn(getCasdoorUserMonitor2());
+    when(casdoorAuthService.parseJwtToken(ORGANIZER1_TOKEN)).thenReturn(getCasdoorUserOrganizer1());
+    when(casdoorAuthService.parseJwtToken(ORGANIZER2_TOKEN)).thenReturn(getCasdoorUserOrganizer2());
     when(casdoorAuthService.parseJwtToken(STAFF_MEMBER1_TOKEN))
         .thenReturn(getCasdoorUserStaffMember1());
     when(casdoorAuthService.parseJwtToken(ADMIN1_TOKEN)).thenReturn(getCasdoorUserAdmin1());
