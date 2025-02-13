@@ -108,7 +108,6 @@ public class FeeController {
       @RequestParam(name = "month_to", required = false) Instant monthTo,
       @RequestParam(name = "isMpbs", required = false) boolean isMpbs,
       @RequestParam(name = "student_ref", required = false) String studentRef) {
-
     var feesStats =
         feeService.getFeesStats(
             transactionStatus, feeType, status, monthFrom, monthTo, isMpbs, studentRef);
