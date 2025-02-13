@@ -115,10 +115,12 @@ public class EventIT extends FacadeITMockedThirdParties {
     EventsApi api = new EventsApi(apiClient);
 
     CreateEvent eventCourse1 = createEventCourse1();
+    int eventToBeCreated = 5;
 
     List<Event> notSortedActual =
-        api.crupdateEvents(List.of(eventCourse1), WEDNESDAY, 3, "08:30", "12:00");
-    assertEquals(3, notSortedActual.size());
+        api.crupdateEvents(List.of(eventCourse1), WEDNESDAY, eventToBeCreated, "08:30", "12:00");
+    // The count of the event must match
+    assertEquals(eventToBeCreated, notSortedActual.size());
 
     // Sort the result for better readability in the test
     List<Event> actual =
@@ -126,6 +128,7 @@ public class EventIT extends FacadeITMockedThirdParties {
             .sorted(comparing(Event::getBeginDatetime))
             .collect(toUnmodifiableList());
 
+    // The events are separated by 1 week
     Event eventWeek1 = actual.getFirst();
     assertEquals(Instant.parse("2023-12-13T08:30:00Z"), eventWeek1.getBeginDatetime());
     assertEquals(Instant.parse("2023-12-13T12:00:00Z"), eventWeek1.getEndDatetime());
