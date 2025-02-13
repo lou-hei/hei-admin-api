@@ -4,7 +4,6 @@ import static java.lang.Boolean.TRUE;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.LATE;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.PAID;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.UNPAID;
-import static school.hei.haapi.endpoint.rest.model.MpbsStatus.PENDING;
 import static school.hei.haapi.endpoint.rest.model.MpbsStatus.SUCCESS;
 
 import jakarta.persistence.EntityManager;
@@ -103,7 +102,7 @@ public class FeeDao {
     pendingSubquery
         .select(builder.literal(1L))
         .where(
-            builder.equal(pendingRoot.get("status"), PENDING),
+            builder.equal(pendingRoot.get("status"), MpbsStatus.PENDING),
             builder.equal(pendingRoot.get("fee"), root));
 
     Subquery<Long> successSubquery = query.subquery(Long.class);

@@ -16,6 +16,7 @@ import static school.hei.haapi.integration.conf.TestUtils.FEE1_ID;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import school.hei.haapi.endpoint.event.EventProducer;
@@ -149,8 +150,8 @@ class FeeServiceTest {
     Fee initial = fee(remainingAmount());
     when(feeRepository.save(any(Fee.class)))
         .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-    when(feeRepository.getById(FEE1_ID))
-        .thenReturn(initial.toBuilder().remainingAmount(0).status(PAID).build());
+    when(feeRepository.findById(FEE1_ID))
+        .thenReturn(Optional.of(initial.toBuilder().remainingAmount(0).status(PAID).build()));
 
     Fee actual = subject.getById(FEE1_ID);
 
@@ -167,12 +168,13 @@ class FeeServiceTest {
     Fee initial = fee(paymentAmount);
     when(feeRepository.save(any(Fee.class)))
         .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-    when(feeRepository.getById(FEE1_ID))
+    when(feeRepository.findById(FEE1_ID))
         .thenReturn(
-            initial.toBuilder()
-                .remainingAmount(remainingAmount() - paymentAmount)
-                .status(UNPAID)
-                .build());
+            Optional.of(
+                initial.toBuilder()
+                    .remainingAmount(remainingAmount() - paymentAmount)
+                    .status(UNPAID)
+                    .build()));
 
     Fee actual = subject.getById(FEE1_ID);
 
@@ -190,12 +192,13 @@ class FeeServiceTest {
     initial.setDueDatetime(yesterday);
     when(feeRepository.save(any(Fee.class)))
         .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-    when(feeRepository.getById(FEE1_ID))
+    when(feeRepository.findById(FEE1_ID))
         .thenReturn(
-            initial.toBuilder()
-                .remainingAmount(remainingAmount() - paymentAmount)
-                .status(LATE)
-                .build());
+            Optional.of(
+                initial.toBuilder()
+                    .remainingAmount(remainingAmount() - paymentAmount)
+                    .status(LATE)
+                    .build()));
 
     Fee actual = subject.getById(FEE1_ID);
 

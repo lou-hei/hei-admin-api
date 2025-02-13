@@ -137,6 +137,13 @@ public class FeeController {
     return feeService.getFeesStats(monthFrom, monthTo);
   }
 
+  @GetMapping("/fees/advanced-stats")
+  public AdvancedFeesStatistics getAdvancedFeesStats(
+      @RequestParam(name = "month_from", required = false) Instant monthFrom,
+      @RequestParam(name = "month_to", required = false) Instant monthTo) {
+    return feeService.getAdvancedFeesStats(monthFrom, monthTo);
+  }
+
   @PutMapping("/fees")
   public List<Fee> crupdateStudentFees(@RequestBody List<CrupdateStudentFee> crupdateStudentFees) {
     return feeService
