@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 
 public class InstantUtils {
-  private static final String UTC0 = "UTC+0";
+  public static final ZoneId UTC0 = ZoneId.of("UTC+0");
 
   public static Instant now() {
     return LocalDateTime.now().atZone(ZoneId.of("UTC+3")).toInstant();
@@ -20,7 +20,7 @@ public class InstantUtils {
     return LocalDate.now()
         .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
         .atStartOfDay()
-        .atZone(ZoneId.of(UTC0))
+        .atZone(UTC0)
         .toInstant();
   }
 
@@ -28,7 +28,7 @@ public class InstantUtils {
     return LocalDate.now()
         .with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
         .atStartOfDay()
-        .atZone(ZoneId.of(UTC0))
+        .atZone(UTC0)
         .toInstant();
   }
 

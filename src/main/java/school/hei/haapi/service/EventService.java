@@ -140,7 +140,6 @@ public class EventService {
   private List<Event> duplicateEventWithDifferentHour(
       Event event, Map<Instant, Instant> eventScheduled) {
     List<Event> duplicated = new ArrayList<>();
-    duplicated.add(event);
     eventScheduled.forEach(
         (b, e) -> {
           Event newEvent =
