@@ -219,6 +219,7 @@ public class User implements Serializable {
     MONITOR,
     STUDENT,
     TEACHER,
-    MANAGER;
+    MANAGER,
+    ORGANIZER;
   }
 }

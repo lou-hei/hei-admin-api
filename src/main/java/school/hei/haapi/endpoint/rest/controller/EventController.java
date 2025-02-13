@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import school.hei.haapi.endpoint.rest.mapper.EventMapper;
 import school.hei.haapi.endpoint.rest.mapper.EventParticipantMapper;
+import school.hei.haapi.endpoint.rest.model.AttendanceStatus;
 import school.hei.haapi.endpoint.rest.model.CreateEvent;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
+import school.hei.haapi.endpoint.rest.model.EventParticipantStats;
+import school.hei.haapi.endpoint.rest.model.EventStats;
 import school.hei.haapi.endpoint.rest.model.EventType;
 import school.hei.haapi.endpoint.rest.model.FrequencyScopeDay;
 import school.hei.haapi.endpoint.rest.model.Group;
@@ -83,15 +87,41 @@ public class EventController {
     return mapper.toRest(eventService.findEventById(eventId));
   }
 
+  @GetMapping("/events/stats")
+  public EventStats getEventStats(
+      @RequestParam(name = "id", required = false) String eventId,
+      @RequestParam(name = "from", required = false) Instant from,
+      @RequestParam(name = "to", required = false) Instant to) {
+
+    return eventService.getStats(eventId, from, to);
+  }
+
   @GetMapping("/events/{event_id}/participants")
   public List<EventParticipant> getEventParticipants(
       @PathVariable(name = "event_id") String eventId,
       @RequestParam(name = "page", defaultValue = "1") PageFromOne page,
       @RequestParam(name = "page_size", defaultValue = "15") BoundedPageSize pageSize,
-      @RequestParam(name = "group_ref", required = false) String groupRef) {
-    return eventParticipantService.getEventParticipants(eventId, page, pageSize, groupRef).stream()
+      @RequestParam(name = "group_ref", required = false) String groupRef,
+      @RequestParam(name = "student_ref", required = false) String ref,
+      @RequestParam(name = "name", required = false) String name,
+      @RequestParam(name = "status", required = false) AttendanceStatus attendanceStatus) {
+    return eventParticipantService
+        .getEventParticipants(eventId, page, pageSize, groupRef, name, ref, attendanceStatus)
+        .stream()
         .map(eventParticipantMapper::toRest)
         .collect(toUnmodifiableList());
+  }
+
+  @GetMapping("/events/participants/{participant_id}/stats")
+  public EventParticipantStats getEventParticipantStats(
+      @PathVariable(name = "participant_id") String participantId,
+      @RequestParam(name = "from_event_begin", required = false) Instant from,
+      @RequestParam(name = "to_event_begin", required = false) Instant to) {
+    Optional<Instant> optionalFrom = Optional.ofNullable(from);
+    Optional<Instant> optionalTo = Optional.ofNullable(to);
+
+    return eventParticipantService.getEventParticipantStats(
+        participantId, optionalFrom, optionalTo);
   }
 
   @PutMapping("/events/{event_id}/participants")

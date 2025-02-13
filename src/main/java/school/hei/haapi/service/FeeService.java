@@ -4,6 +4,7 @@ import static java.util.UUID.randomUUID;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.*;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
 import static school.hei.haapi.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
+import static school.hei.haapi.service.utils.InstantUtils.getFirstDayOfActualMonth;
 
 import jakarta.transaction.Transactional;
 import java.time.Instant;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -136,6 +138,9 @@ public class FeeService {
       Instant monthTo,
       boolean isMpbs,
       String studentRef) {
+
+    if (Objects.isNull(monthFrom)) monthFrom = getFirstDayOfActualMonth();
+
     var stats =
         feeDao.getStatByCriteria(
             mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs);
@@ -153,6 +158,9 @@ public class FeeService {
       boolean isMpbs,
       String studentRef) {
     Pageable pageable = PageRequest.of(page.getValue() - 1, pageSize.getValue());
+
+    if (Objects.isNull(monthFrom)) monthFrom = getFirstDayOfActualMonth();
+
     return feeDao.getByCriteria(
         mpbsStatus, feeType, status, studentRef, monthFrom, monthTo, isMpbs, pageable);
   }

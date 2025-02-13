@@ -1,5 +1,7 @@
 package school.hei.haapi.service.utils;
 
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -38,5 +40,9 @@ public class InstantUtils {
   public static Instant getYesterday() {
     LocalDate now = LocalDate.now();
     return now.minusDays(1).atStartOfDay(ZoneId.of("UTC")).plusHours(8).toInstant();
+  }
+
+  public static Instant getFirstDayOfActualMonth() {
+    return LocalDate.now().with(firstDayOfMonth()).atStartOfDay(ZoneId.of("UTC+3")).toInstant();
   }
 }

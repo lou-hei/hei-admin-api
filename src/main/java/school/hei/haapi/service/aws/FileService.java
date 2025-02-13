@@ -3,6 +3,7 @@ package school.hei.haapi.service.aws;
 import static jxl.biff.FormatRecord.logger;
 import static school.hei.haapi.model.User.Role.ADMIN;
 import static school.hei.haapi.model.User.Role.MANAGER;
+import static school.hei.haapi.model.User.Role.ORGANIZER;
 import static school.hei.haapi.model.User.Role.STAFF_MEMBER;
 import static school.hei.haapi.model.User.Role.STUDENT;
 import static school.hei.haapi.model.User.Role.TEACHER;
@@ -61,6 +62,8 @@ public class FileService {
       case STAFF_MEMBER ->
           String.format("%s/%s/%s_%s", STAFF_MEMBER, user.getRef(), fileType, user.getRef());
       case ADMIN -> String.format("%s/%s/%s_%s", ADMIN, user.getRef(), fileType, user.getRef());
+      case ORGANIZER ->
+          String.format("%s/%s/%s_%s", ORGANIZER, user.getRef(), fileType, user.getRef());
       default -> throw new BadRequestException("Unexpected type " + user.getRole());
     };
   }
@@ -73,6 +76,7 @@ public class FileService {
       case STAFF_MEMBER ->
           String.format("%s/%s/%s/%s", STAFF_MEMBER, user.getRef(), fileType, fileName);
       case ADMIN -> String.format("%s/%s/%s/%s", ADMIN, user.getRef(), fileType, fileName);
+      case ORGANIZER -> String.format("%s/%s/%s/%s", ORGANIZER, user.getRef(), fileType, fileName);
       default -> throw new BadRequestException("Unexpected type " + user.getRole());
     };
   }
@@ -85,6 +89,7 @@ public class FileService {
       case STAFF_MEMBER ->
           String.format("%s/%s/%s/%s", STAFF_MEMBER, user.getRef(), fileType, fileName);
       case ADMIN -> String.format("%s/%s/%s/%s", ADMIN, user.getRef(), fileType, fileName);
+      case ORGANIZER -> String.format("%s/%s/%s/%s", ORGANIZER, user.getRef(), fileType, fileName);
       default -> throw new BadRequestException("Unexpected type " + user.getRole());
     };
   }

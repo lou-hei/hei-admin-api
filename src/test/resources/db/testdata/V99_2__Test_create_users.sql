@@ -46,4 +46,10 @@ values ('student1_id', 'Ryan', 'Andria', 'test+ryan@hei.school', 'STD21001', 'EN
         '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'STAFF_MEMBER', '', '', 55.555, -55.555, null),
        ('staff3_id', 'Staff', 'Three', 'test+staff+2@hei.school', 'STF21003', 'ENABLED', 'M',
         '1890-01-01',
-        '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'STAFF_MEMBER', '', '', 55.555, -55.555, null);
+        '2021-09-08T08:25:29.00Z', '0322411128', 'Adr 5', 'STAFF_MEMBER', '', '', 55.555, -55.555, null),
+       ('organizer1_id', 'Organizer 1', 'Smith', 'test+organizer@hei.school', 'ORG22001', 'ENABLED', 'M',
+        '1980-10-10',
+        '2022-09-08T08:25:29.00Z', '0322400028', 'Adr 10', 'ORGANIZER', '', '', 55.555, -55.555, null),
+       ('organizer2_id', 'Organizer 2', 'Doe', 'test+organizer+2@hei.school', 'ORG22002', 'ENABLED', 'F',
+        '1890-01-01',
+        '2022-09-08T08:25:29.00Z', '0322411113', 'Adr 12', 'ORGANIZER', '', '', 55.555, -55.555, null);

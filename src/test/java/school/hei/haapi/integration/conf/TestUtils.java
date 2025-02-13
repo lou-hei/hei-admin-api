@@ -82,7 +82,6 @@ import school.hei.haapi.endpoint.rest.model.CrupdateMonitor;
 import school.hei.haapi.endpoint.rest.model.CrupdatePromotion;
 import school.hei.haapi.endpoint.rest.model.CrupdateStudentFee;
 import school.hei.haapi.endpoint.rest.model.CrupdateTeacher;
-import school.hei.haapi.endpoint.rest.model.EnableStatus;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.EventStats;
@@ -207,6 +206,11 @@ public class TestUtils {
   public static final String LETTER3_REF = "letter3_ref";
   public static final String EVENT_PARTICIPANT5_ID = "event_participant5_id";
 
+  public static final String ORGANIZER1_ID = "organizer1_id";
+  public static final String ORGANIZER2_ID = "organizer2_id";
+  public static final String ORGANIZER1_TOKEN = "organizer1_token";
+  public static final String ORGANIZER2_TOKEN = "organizer2_token";
+
   public static ApiClient anApiClient(String token, int serverPort) {
     ApiClient client = new ApiClient();
     client.setScheme("http");
@@ -244,6 +248,10 @@ public class TestUtils {
     when(cognitoComponent.getEmailByIdToken(STAFF_MEMBER1_TOKEN))
         .thenReturn("test+staff@hei.school");
     when(cognitoComponent.getEmailByIdToken(ADMIN1_TOKEN)).thenReturn("test+admin@hei.school");
+    when(cognitoComponent.getEmailByIdToken(ORGANIZER1_TOKEN))
+        .thenReturn("test+organizer@hei.school");
+    when(cognitoComponent.getEmailByIdToken(ORGANIZER2_TOKEN))
+        .thenReturn("test+organizer+2@hei.school");
     when(cognitoComponent.getEmailByIdToken(SUSPENDED_TOKEN))
         .thenReturn("test+suspended@hei.school");
   }
@@ -312,7 +320,7 @@ public class TestUtils {
         .email(randomUUID() + "@hei.school")
         .ref("TCR21-" + randomUUID())
         .phone("0332511129")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.M)
         .birthDate(LocalDate.parse("2000-01-01"))
         .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
@@ -553,7 +561,7 @@ public class TestUtils {
         .email("test+teacher1@hei.school")
         .ref("TCR21001")
         .phone("0322411125")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.F)
         .birthDate(LocalDate.parse("1990-01-01"))
         .entranceDatetime(Instant.parse("2021-10-08T08:27:24.00Z"))
@@ -571,7 +579,7 @@ public class TestUtils {
         .email("test+teacher2@hei.school")
         .ref("TCR21002")
         .phone("0322411126")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.M)
         .birthDate(LocalDate.parse("1990-01-02"))
         .entranceDatetime(Instant.parse("2021-10-09T08:28:24Z"))
@@ -589,7 +597,7 @@ public class TestUtils {
         .email("test+teacher3@hei.school")
         .ref("TCR21003")
         .phone("0322411126")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.M)
         .birthDate(LocalDate.parse("1990-01-02"))
         .entranceDatetime(Instant.parse("2021-10-09T08:28:24Z"))
@@ -606,7 +614,7 @@ public class TestUtils {
         .email("test+teacher4@hei.school")
         .ref("TCR21004")
         .phone("0322411426")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.F)
         .birthDate(LocalDate.parse("1990-01-04"))
         .entranceDatetime(Instant.parse("2021-10-09T08:28:24Z"))
@@ -624,7 +632,7 @@ public class TestUtils {
         .email("test+monitor@hei.school")
         .ref("MTR21001")
         .phone("0322411123")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.M)
         .birthDate(LocalDate.parse("2000-01-01"))
         .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
@@ -643,7 +651,7 @@ public class TestUtils {
         .email("test+monitor2@hei.school")
         .ref("MTR21002")
         .phone("0322411123")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.M)
         .birthDate(LocalDate.parse("2000-02-02"))
         .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
@@ -662,7 +670,7 @@ public class TestUtils {
         .email("test+monitor@hei.school")
         .ref("MTR21001")
         .phone("0322411123")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.M)
         .birthDate(LocalDate.parse("2000-01-01"))
         .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
@@ -682,7 +690,7 @@ public class TestUtils {
         .email("test+monitor2@hei.school")
         .ref("MTR21002")
         .phone("0322411123")
-        .status(EnableStatus.ENABLED)
+        .status(ENABLED)
         .sex(Sex.M)
         .birthDate(LocalDate.parse("2000-02-02"))
         .entranceDatetime(Instant.parse("2021-11-08T08:25:24.00Z"))
@@ -971,7 +979,7 @@ public class TestUtils {
   }
 
   public static GetStudentGrade studentGrade7() {
-    return new GetStudentGrade().grade(grade7());
+    return new GetStudentGrade().grade(grade7()).student(student3());
   }
 
   public static FeeTemplate feeTemplate1() {
@@ -1297,6 +1305,20 @@ public class TestUtils {
         .groups(List.of(createGroupIdentifier(group1())));
   }
 
+  public static CreateEvent creatableEvent1() {
+    return new CreateEvent()
+        .id(event1().getId())
+        .color(event1().getColor())
+        .beginDatetime(event1().getBeginDatetime())
+        .endDatetime(event1().getEndDatetime())
+        .description(event1().getDescription())
+        .title(event1().getTitle())
+        .eventType(event1().getType())
+        .courseId(event1().getCourse().getId())
+        .plannerId(event1().getPlanner().getId())
+        .groups(event1().getGroups());
+  }
+
   public static Event event2() {
     return new Event()
         .id(EVENT2_ID)
@@ -1386,14 +1408,23 @@ public class TestUtils {
   }
 
   public static CreateEvent someCreatableEventByManager1(EventType eventType) {
+    return someCreatableEvent(
+        eventType,
+        MANAGER_ID,
+        Instant.parse("2023-12-08T08:00:00.00Z"),
+        Instant.parse("2023-12-08T10:00:00.00Z"));
+  }
+
+  public static CreateEvent someCreatableEvent(
+      EventType eventType, String planerId, Instant beginDatetime, Instant endDatetime) {
     return new CreateEvent()
         .id("event" + randomUUID() + "_id")
         .courseId(COURSE1_ID)
-        .beginDatetime(Instant.parse("2023-12-08T08:00:00.00Z"))
-        .endDatetime(Instant.parse("2023-12-08T10:00:00.00Z"))
+        .beginDatetime(beginDatetime)
+        .endDatetime(endDatetime)
         .description("Another event")
         .eventType(eventType)
-        .plannerId(MANAGER_ID)
+        .plannerId(planerId)
         .groups(List.of(createGroupIdentifier(group1())));
   }
 
