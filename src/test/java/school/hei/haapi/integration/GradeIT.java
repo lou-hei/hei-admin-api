@@ -18,6 +18,7 @@ import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenE
 import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam1;
 import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam2;
 import static school.hei.haapi.integration.conf.TestUtils.awardedCourseExam4;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCasdoor;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 import static school.hei.haapi.integration.conf.TestUtils.studentGrade1;
@@ -56,6 +57,7 @@ class GradeIT extends FacadeITMockedThirdParties {
 
   @BeforeEach
   void setUp() {
+    setUpCasdoor(casdoorAuthServiceMock);
     setUpCognito(cognitoComponentMock);
     setUpS3Service(fileService, student1());
 

@@ -13,6 +13,7 @@ import static school.hei.haapi.integration.conf.TestUtils.course2;
 import static school.hei.haapi.integration.conf.TestUtils.course3;
 import static school.hei.haapi.integration.conf.TestUtils.createCourse;
 import static school.hei.haapi.integration.conf.TestUtils.isBefore;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCasdoor;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 import static school.hei.haapi.integration.conf.TestUtils.someCreatableCourseList;
@@ -41,6 +42,7 @@ class CourseIT extends FacadeITMockedThirdParties {
 
   @BeforeEach
   void setUp() {
+    setUpCasdoor(casdoorAuthServiceMock);
     setUpCognito(cognitoComponentMock);
     setUpS3Service(fileService, student1());
   }

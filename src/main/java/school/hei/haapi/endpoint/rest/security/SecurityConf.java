@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -37,11 +38,14 @@ public class SecurityConf {
   private static final String STUDENT_COURSE = "/students/*/courses";
   private final AwardedCourseService awardedCourseService;
   private final UserService userService;
-  private final AuthProvider authProvider;
+
+  // private final AuthProvider authProvider;
+  private final AbstractUserDetailsAuthenticationProvider authProvider;
   private final HandlerExceptionResolver exceptionResolver;
 
   public SecurityConf(
-      AuthProvider authProvider,
+      CasdoorAuthProvider authProvider,
+      // AuthProvider authProvider,
       // InternalToExternalErrorHandler behind
       @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver,
       AwardedCourseService awardedCourseService,
@@ -265,6 +269,13 @@ public class SecurityConf {
                             new AntPathRequestMatcher("/health/event2", GET.name()),
                             new AntPathRequestMatcher("/health/event/uuids", POST.name()),
                             new AntPathRequestMatcher("/health/bucket", GET.name()),
+                            // casdoor
+                            new AntPathRequestMatcher(
+                                "/authentication/casdoor/signin", POST.name()),
+                            new AntPathRequestMatcher(
+                                "/authentication/casdoor/login-url", GET.name()),
+                            new AntPathRequestMatcher(
+                                "/authentication/casdoor/userinfo", GET.name()),
                             new AntPathRequestMatcher("/**", OPTIONS.toString())))
                     .permitAll()
                     .requestMatchers(GET, "/whoami")
