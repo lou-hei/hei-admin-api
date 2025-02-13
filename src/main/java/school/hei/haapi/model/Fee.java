@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -168,17 +169,17 @@ Fee : {"id" : "%s", "remainingAmount" : "%s", "totalAmount" : "%s", "dueDatetime
     return this.getComment().toLowerCase().contains("alternance") && TUITION.equals(this.getType());
   }
 
-  public StudentGrade getOwnerStudentGrade() {
+  public Optional<StudentGrade> getOwnerStudentGrade() {
     if (this.getComment().toLowerCase().contains("l1")) {
-      return L1;
+      return Optional.of(L1);
     }
     if (this.getComment().toLowerCase().contains("l2")) {
-      return L2;
+      return Optional.of(L2);
     }
     if (this.getComment().toLowerCase().contains("l3")) {
-      return L3;
+      return Optional.of(L3);
     }
-    return null;
+    return Optional.empty();
   }
 
   public PaymentType getPaymentType() {
@@ -189,13 +190,13 @@ Fee : {"id" : "%s", "remainingAmount" : "%s", "totalAmount" : "%s", "dueDatetime
     }
   }
 
-  public PaymentFrequency getPaymentFrequency() {
+  public Optional<PaymentFrequency> getPaymentFrequency() {
     if (this.getComment().toLowerCase().contains("mensuel")) {
-      return MONTHLY;
+      return Optional.of(MONTHLY);
     }
     if (this.getComment().toLowerCase().contains("annuel")) {
-      return YEARLY;
+      return Optional.of(YEARLY);
     }
-    return null;
+    return Optional.empty();
   }
 }
