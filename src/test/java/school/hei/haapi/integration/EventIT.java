@@ -1,6 +1,8 @@
 package school.hei.haapi.integration;
 
 import static java.time.temporal.ChronoUnit.HOURS;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -50,6 +52,7 @@ import school.hei.haapi.endpoint.rest.api.EventsApi;
 import school.hei.haapi.endpoint.rest.client.ApiClient;
 import school.hei.haapi.endpoint.rest.client.ApiException;
 import school.hei.haapi.endpoint.rest.model.AttendanceStatus;
+import school.hei.haapi.endpoint.rest.model.CreateEvent;
 import school.hei.haapi.endpoint.rest.model.Event;
 import school.hei.haapi.endpoint.rest.model.EventParticipant;
 import school.hei.haapi.endpoint.rest.model.EventParticipantStats;
@@ -111,10 +114,45 @@ public class EventIT extends FacadeITMockedThirdParties {
     ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
     EventsApi api = new EventsApi(apiClient);
 
-    List<Event> actual =
-        api.crupdateEvents(List.of(createEventCourse1()), WEDNESDAY, 3, "08:30", "12:00");
+    CreateEvent eventCourse1 = createEventCourse1();
 
-    assertEquals(4, actual.size());
+    List<Event> notSortedActual =
+        api.crupdateEvents(List.of(eventCourse1), WEDNESDAY, 3, "08:30", "12:00");
+    assertEquals(3, notSortedActual.size());
+
+    // Sort the result for better readability in the test
+    List<Event> actual =
+        notSortedActual.stream()
+            .sorted(comparing(Event::getBeginDatetime))
+            .collect(toUnmodifiableList());
+
+    Event eventWeek1 = actual.getFirst();
+    assertEquals(Instant.parse("2023-12-13T08:30:00Z"), eventWeek1.getBeginDatetime());
+    assertEquals(Instant.parse("2023-12-13T12:00:00Z"), eventWeek1.getEndDatetime());
+
+    Event eventWeek2 = actual.get(1);
+    assertEquals(Instant.parse("2023-12-20T08:30:00Z"), eventWeek2.getBeginDatetime());
+    assertEquals(Instant.parse("2023-12-20T12:00:00Z"), eventWeek2.getEndDatetime());
+
+    Event eventWeek3 = actual.get(2);
+    assertEquals(Instant.parse("2023-12-27T08:30:00Z"), eventWeek3.getBeginDatetime());
+    assertEquals(Instant.parse("2023-12-27T12:00:00Z"), eventWeek3.getEndDatetime());
+  }
+
+  @Test
+  void manager_modify_ok() throws ApiException {
+    ApiClient apiClient = anApiClient(MANAGER1_TOKEN);
+    EventsApi api = new EventsApi(apiClient);
+
+    CreateEvent eventCourse1 = createEventCourse1();
+    List<Event> actual = api.crupdateEvents(List.of(eventCourse1), null, null, null, null);
+    assertEquals(1, actual.size());
+    assertEquals(eventCourse1.getTitle(), actual.getFirst().getTitle());
+
+    eventCourse1.title("test");
+    List<Event> modified = api.crupdateEvents(List.of(eventCourse1), null, null, null, null);
+    assertEquals(1, modified.size());
+    assertEquals(eventCourse1.getTitle(), modified.getFirst().getTitle());
   }
 
   @Test
