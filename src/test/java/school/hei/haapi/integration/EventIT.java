@@ -345,4 +345,11 @@ public class EventIT extends FacadeITMockedThirdParties {
         managerApi.getEventParticipantStats(STUDENT1_ID, null, null);
     assertNotEquals(0, eventParticipantStats.getTotalEvents());
   }
+
+  @Test
+  void event_as_public_link() throws ApiException {
+    EventsApi api = new EventsApi(anApiClient(null));
+    List<Event> actual = api.getEvents(1, 15, null, null, null, null, null);
+    assertTrue(actual.containsAll(List.of(event1(), event2(), event3())));
+  }
 }
