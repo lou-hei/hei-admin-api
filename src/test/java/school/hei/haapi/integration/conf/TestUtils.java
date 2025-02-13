@@ -971,7 +971,7 @@ public class TestUtils {
   }
 
   public static GetStudentGrade studentGrade7() {
-    return new GetStudentGrade().grade(grade7()).student(student3());
+    return new GetStudentGrade().grade(grade7());
   }
 
   public static FeeTemplate feeTemplate1() {
@@ -1386,23 +1386,14 @@ public class TestUtils {
   }
 
   public static CreateEvent someCreatableEventByManager1(EventType eventType) {
-    return someCreatableEvent(
-        eventType,
-        MANAGER_ID,
-        Instant.parse("2023-12-08T08:00:00.00Z"),
-        Instant.parse("2023-12-08T10:00:00.00Z"));
-  }
-
-  public static CreateEvent someCreatableEvent(
-      EventType eventType, String planerId, Instant beginDatetime, Instant endDatetime) {
     return new CreateEvent()
         .id("event" + randomUUID() + "_id")
         .courseId(COURSE1_ID)
-        .beginDatetime(beginDatetime)
-        .endDatetime(endDatetime)
+        .beginDatetime(Instant.parse("2023-12-08T08:00:00.00Z"))
+        .endDatetime(Instant.parse("2023-12-08T10:00:00.00Z"))
         .description("Another event")
         .eventType(eventType)
-        .plannerId(planerId)
+        .plannerId(MANAGER_ID)
         .groups(List.of(createGroupIdentifier(group1())));
   }
 

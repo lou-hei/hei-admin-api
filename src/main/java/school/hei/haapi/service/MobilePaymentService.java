@@ -4,7 +4,6 @@ import static school.hei.haapi.endpoint.rest.model.MobileMoneyType.ORANGE_MONEY;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.hei.haapi.http.mapper.ExternalResponseMapper;
@@ -39,18 +38,6 @@ public class MobilePaymentService implements MobilePaymentRepository {
   public Optional<MobileTransactionDetails> findTransactionByMpbsWithoutException(Mpbs mpbs) {
     String transactionRef = mpbs.getPspId();
     return findTransactionByIdWithoutException(transactionRef);
-  }
-
-  public List<MobileTransactionDetails> findAllTransactionByMpbsWithoutException(
-      List<Mpbs> mpbsList) {
-    List<String> transactionRefs =
-        mpbsList.stream().map(Mpbs::getPspId).collect(Collectors.toUnmodifiableList());
-    return findAllTransactionByIdWithoutException(transactionRefs);
-  }
-
-  private List<MobileTransactionDetails> findAllTransactionByIdWithoutException(
-      List<String> transactionRefs) {
-    return mobileTransactionDetailsRepository.findAllByPspTransactionRefIn(transactionRefs);
   }
 
   public MobileTransactionDetails findTransactionById(String pspId) {
