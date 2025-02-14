@@ -12,6 +12,7 @@ import static school.hei.haapi.integration.conf.TestUtils.createFeeTemplate2;
 import static school.hei.haapi.integration.conf.TestUtils.feeTemplate1;
 import static school.hei.haapi.integration.conf.TestUtils.feeTemplate2;
 import static school.hei.haapi.integration.conf.TestUtils.feeTemplate3;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCasdoor;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
 import static school.hei.haapi.integration.conf.TestUtils.updateFeeTemplate1;
@@ -38,6 +39,7 @@ public class FeeTemplateIT extends FacadeITMockedThirdParties {
 
   @BeforeEach
   void setUp() {
+    setUpCasdoor(casdoorAuthServiceMock);
     setUpCognito(cognitoComponentMock);
     setUpS3Service(fileService, student1());
   }

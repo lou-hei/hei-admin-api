@@ -37,7 +37,15 @@ public abstract class AbstractContextInitializer
         "OWNCLOUD_BASE_URL=https://owncloud.example.com",
         "ORANGE_SCRAPPER_BASEURL=https://scrapper.com",
         "OWNCLOUD_USERNAME=dummy",
-        "OWNCLOUD_PASSWORD=dummy");
+        "OWNCLOUD_PASSWORD=dummy",
+        "CASDOOR_ORGANIZATION_NAME=dummy",
+        "CASDOOR_REDIRECT_URL=dummy",
+        "CASDOOR_FRONTEND_URL=dummy",
+        "CASDOOR_ENDPOINT=dummy",
+        "CASDOOR_CERTIFICATE=dummy",
+        "CASDOOR_APPLICATION_NAME=dummy",
+        "CASDOOR_CLIENT_ID=dummy",
+        "CASDOOR_CLIENT_SECRET=dummy");
   }
 
   public abstract int getServerPort();

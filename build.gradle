@@ -158,6 +158,8 @@ jacocoTestReport {
 }
 
 dependencies {
+    implementation 'org.casbin:casdoor-spring-boot-starter:1.7.1'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.flywaydb:flyway-core'

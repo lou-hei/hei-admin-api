@@ -16,5 +16,13 @@ public class EnvConf {
     registry.add("OWNCLOUD_PASSWORD", () -> "dummy");
     registry.add("OWNCLOUD_PASSWORD", () -> "dummy");
     registry.add("spring.flyway.locations", () -> "classpath:/db/migration," + flywayTestdataPath);
+    registry.add("CASDOOR_ORGANIZATION_NAME", () -> "dummy");
+    registry.add("CASDOOR_CERTIFICATE", () -> "dummy");
+    registry.add("CASDOOR_APPLICATION_NAME", () -> "dummy");
+    registry.add("CASDOOR_CLIENT_ID", () -> "dummy");
+    registry.add("CASDOOR_CLIENT_SECRET", () -> "dummy");
+    registry.add("CASDOOR_ENDPOINT", () -> "dummy");
+    registry.add("CASDOOR_FRONTEND_URL", () -> "dummy");
+    registry.add("CASDOOR_REDIRECT_URL", () -> "dummy");
   }
 }

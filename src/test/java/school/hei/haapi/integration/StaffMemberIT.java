@@ -10,6 +10,7 @@ import static school.hei.haapi.integration.conf.TestUtils.STAFF_MEMBER1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STAFF_MEMBER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.assertThrowsForbiddenException;
 import static school.hei.haapi.integration.conf.TestUtils.coordinatesWithNullValues;
+import static school.hei.haapi.integration.conf.TestUtils.setUpCasdoor;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.setUpEventBridge;
 import static school.hei.haapi.integration.conf.TestUtils.setUpS3Service;
@@ -55,6 +56,7 @@ public class StaffMemberIT extends FacadeITMockedThirdParties {
 
   @BeforeEach
   public void setUp() {
+    setUpCasdoor(casdoorAuthServiceMock);
     setUpCognito(cognitoComponentMock);
     setUpEventBridge(eventBridgeClientMock);
     setUpS3Service(fileService, teacher1());
