@@ -12,6 +12,7 @@ import static school.hei.haapi.integration.SchoolFileIT.setUpRestTemplate;
 import static school.hei.haapi.integration.StudentIT.student1;
 import static school.hei.haapi.integration.conf.TestUtils.FEE1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.FEE4_ID;
+import static school.hei.haapi.integration.conf.TestUtils.GATE_KEEPER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.MONITOR1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.ORGANIZER1_TOKEN;
@@ -311,6 +312,13 @@ public class UserFileIT extends FacadeITMockedThirdParties {
     ApiClient organizerClient = anApiClient(ORGANIZER1_TOKEN);
     FilesApi api = new FilesApi(organizerClient);
     assertThrowsForbiddenException(() -> api.getUserFiles(STUDENT1_ID, 1, 15, null));
+  }
+
+  @Test
+  void gatekeeper_load_other_files_ko() {
+    ApiClient organizerClient = anApiClient(GATE_KEEPER1_TOKEN);
+    FilesApi api = new FilesApi(organizerClient);
+    assertThrowsForbiddenException(() -> api.getUserFiles(TEACHER1_ID, 1, 15, null));
   }
 
   @Test

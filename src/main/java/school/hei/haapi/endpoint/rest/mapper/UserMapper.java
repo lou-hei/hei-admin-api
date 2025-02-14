@@ -1,6 +1,7 @@
 package school.hei.haapi.endpoint.rest.mapper;
 
 import static school.hei.haapi.endpoint.rest.mapper.FileInfoMapper.ONE_DAY_DURATION_AS_LONG;
+import static school.hei.haapi.model.User.Role.GATE_KEEPER;
 import static school.hei.haapi.model.User.Role.ORGANIZER;
 
 import java.util.HashMap;
@@ -260,6 +261,34 @@ public class UserMapper {
     return organizer;
   }
 
+  public GateKeeper toRestGateKeeper(User user) {
+    GateKeeper gateKeeper = new GateKeeper();
+    String profilePictureKey = user.getProfilePictureKey();
+    String url =
+        profilePictureKey != null
+            ? fileService.getPresignedUrl(profilePictureKey, ONE_DAY_DURATION_AS_LONG)
+            : null;
+
+    gateKeeper.setId(user.getId());
+    gateKeeper.setFirstName(user.getFirstName());
+    gateKeeper.setLastName(user.getLastName());
+    gateKeeper.setEmail(user.getEmail());
+    gateKeeper.setRef(user.getRef());
+    gateKeeper.setStatus(statusEnumMapper.toRestStatus(user.getStatus()));
+    gateKeeper.setPhone(user.getPhone());
+    gateKeeper.setEntranceDatetime(user.getEntranceDatetime());
+    gateKeeper.setBirthDate(user.getBirthDate());
+    gateKeeper.setSex(sexEnumMapper.toRestSexEnum(user.getSex()));
+    gateKeeper.setAddress(user.getAddress());
+    gateKeeper.setBirthPlace(user.getBirthPlace());
+    gateKeeper.setNic(user.getNic());
+    gateKeeper.setProfilePicture(url);
+    gateKeeper.setCoordinates(
+        new Coordinates().longitude(user.getLongitude()).latitude(user.getLatitude()));
+    gateKeeper.setHighSchoolOrigin(user.getHighSchoolOrigin());
+    return gateKeeper;
+  }
+
   public User toDomain(CrupdateManager manager) {
     return User.builder()
         .role(User.Role.MANAGER)
@@ -381,6 +410,28 @@ public class UserMapper {
         .longitude(monitor.getCoordinates().getLongitude())
         .latitude(monitor.getCoordinates().getLatitude())
         .highSchoolOrigin(monitor.getHighSchoolOrigin())
+        .build();
+  }
+
+  public User toDomain(CrupdateGateKeeper gateKeeper) {
+    return User.builder()
+        .role(GATE_KEEPER)
+        .id(gateKeeper.getId())
+        .firstName(gateKeeper.getFirstName())
+        .lastName(gateKeeper.getLastName())
+        .email(gateKeeper.getEmail())
+        .ref(gateKeeper.getRef())
+        .status(statusEnumMapper.toDomainStatus(gateKeeper.getStatus()))
+        .phone(gateKeeper.getPhone())
+        .entranceDatetime(gateKeeper.getEntranceDatetime())
+        .birthDate(gateKeeper.getBirthDate())
+        .sex(sexEnumMapper.toDomainSexEnum(gateKeeper.getSex()))
+        .address(gateKeeper.getAddress())
+        .nic(gateKeeper.getNic())
+        .birthPlace(gateKeeper.getBirthPlace())
+        .longitude(gateKeeper.getCoordinates().getLongitude())
+        .latitude(gateKeeper.getCoordinates().getLatitude())
+        .highSchoolOrigin(gateKeeper.getHighSchoolOrigin())
         .build();
   }
 
