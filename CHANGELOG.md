@@ -1,3 +1,12 @@
+# [1.98.0](https://github.com/hei-school/hei-admin-api/compare/v1.97.0...v1.98.0) (2025-02-14)
+
+
+### Features
+
+* add advanced fees statistics ([c9d6e87](https://github.com/hei-school/hei-admin-api/commit/c9d6e873524f0854d82c050e6ee0a7cc6f4d8aa6))
+
+
+
 # [1.97.0](https://github.com/hei-school/hei-admin-api/compare/v1.96.0...v1.97.0) (2025-02-11)
 
 
@@ -103,25 +112,6 @@
 * add color code for event attribute  ([0ee30c2](https://github.com/hei-school/hei-admin-api/commit/0ee30c26c637a60943576af2afaf992aae5653f8))
 * attaching monitor to multiple students ([b476b8a](https://github.com/hei-school/hei-admin-api/commit/b476b8a95aa2d403c778fe247b7f32bfe7a3ef90))
 * zip multiple feeReceipts ([3829189](https://github.com/hei-school/hei-admin-api/commit/3829189d41c5b57c7aaf86a29211c051ed741e34))
-
-
-
-# [1.88.0](https://github.com/hei-school/hei-admin-api/compare/v1.87.0...v1.88.0) (2025-01-08)
-
-
-### Bug Fixes
-
-* verify mpbs via xls ([0c4b607](https://github.com/hei-school/hei-admin-api/commit/0c4b607ef24345f3bb9b37f635ad419e59b27d86))
-
-
-### Features
-
-* GET /staff_members/xlsx  ([f8339c3](https://github.com/hei-school/hei-admin-api/commit/f8339c3af319ee902436b010c402f2a280e50f68))
-
-
-### Reverts
-
-* Revert "feat: filter fees by status and type " ([f2b8345](https://github.com/hei-school/hei-admin-api/commit/f2b8345d51d3d1ddf5a1f44f9318893325bbd7be))
 
 
 
