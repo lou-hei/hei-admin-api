@@ -1,18 +1,32 @@
 package school.hei.haapi.service;
 
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.groupingByConcurrent;
 import static school.hei.haapi.endpoint.rest.model.FeeStatusEnum.*;
+import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.REMEDIAL_COSTS;
 import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
+import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.MONTHLY;
+import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.YEARLY;
 import static school.hei.haapi.model.exception.ApiException.ExceptionType.SERVER_EXCEPTION;
+import static school.hei.haapi.model.fee.PaymentType.BANK;
+import static school.hei.haapi.model.fee.PaymentType.MPBS;
+import static school.hei.haapi.model.fee.StudentGrade.L1;
+import static school.hei.haapi.model.fee.StudentGrade.L2;
+import static school.hei.haapi.model.fee.StudentGrade.L3;
 import static school.hei.haapi.service.utils.InstantUtils.getFirstDayOfActualMonth;
 
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -23,19 +37,28 @@ import school.hei.haapi.endpoint.event.model.LateFeeVerified;
 import school.hei.haapi.endpoint.event.model.PojaEvent;
 import school.hei.haapi.endpoint.event.model.StudentsWithOverdueFeesReminder;
 import school.hei.haapi.endpoint.event.model.UnpaidFeesReminder;
+import school.hei.haapi.endpoint.rest.model.AdvancedFeesStatistics;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.endpoint.rest.model.FeeTypeEnum;
 import school.hei.haapi.endpoint.rest.model.FeesStatistics;
+import school.hei.haapi.endpoint.rest.model.LateFeesStats;
 import school.hei.haapi.endpoint.rest.model.MpbsStatus;
+import school.hei.haapi.endpoint.rest.model.PaidFeesStats;
 import school.hei.haapi.endpoint.rest.model.PaymentFrequency;
+import school.hei.haapi.endpoint.rest.model.PendingFeesStats;
+import school.hei.haapi.endpoint.rest.model.TotalExpectedFeesStats;
 import school.hei.haapi.model.*;
 import school.hei.haapi.model.exception.ApiException;
+import school.hei.haapi.model.exception.NotFoundException;
+import school.hei.haapi.model.fee.PaymentType;
+import school.hei.haapi.model.fee.StudentGrade;
 import school.hei.haapi.model.validator.FeeValidator;
 import school.hei.haapi.model.validator.UpdateFeeValidator;
 import school.hei.haapi.repository.FeeRepository;
 import school.hei.haapi.repository.dao.FeeDao;
 import school.hei.haapi.repository.model.FeesStats;
 import school.hei.haapi.service.utils.DateUtils;
+import school.hei.haapi.service.utils.DateUtils.RangedInstant;
 import school.hei.haapi.service.utils.XlsxCellsGenerator;
 
 @Service
@@ -108,9 +131,13 @@ public class FeeService {
   }
 
   public Fee getById(String id) {
-    var loggedFee = updateFeeStatus(feeRepository.getById(id));
-    log.info("fee: ------------########## {}", loggedFee.toString());
-    log.info("now: ---------------#########" + Instant.now());
+    var loggedFee =
+        updateFeeStatus(
+            feeRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Fee of id: " + id + " not found")));
+    log.debug("fee: ------------########## {}", loggedFee);
+    log.debug("now: ---------------######### {}", Instant.now());
     return loggedFee;
   }
 
@@ -168,6 +195,144 @@ public class FeeService {
   public FeesStatistics getFeesStats(Instant monthFrom, Instant monthTo) {
     var result = feeDao.getStatByCriteria(null, null, null, null, monthFrom, monthTo, false);
     return FeesStats.to(getHandledNullDataStats(result));
+  }
+
+  @Transactional
+  public AdvancedFeesStatistics getAdvancedFeesStats(Instant monthFrom, Instant monthTo) {
+    var instantRange = new RangedInstant(monthFrom, monthTo);
+    List<Fee> allFees =
+        feeRepository.findAllByDueDatetimeBetween(instantRange.from(), instantRange.to());
+    return new AdvancedFeesStatistics()
+        .lateFeesCount(getLateFeesStats(allFees))
+        .paidFeesCount(getPaidFeesStats(allFees))
+        .pendingFeesCount(getPendingFeesStats(allFees))
+        .totalExpectedFeesCount(getTotalExpectedFeesStats(allFees));
+  }
+
+  private LateFeesStats getLateFeesStats(List<Fee> fees) {
+    List<Fee> lateFees = filterFeesByStatus(fees, LATE);
+    Map<StudentGrade, Long> feeCountByGrade = countFeesByGrades(lateFees);
+    Map<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(lateFees);
+    List<Fee> tuitionFees = feesByType.getOrDefault(TUITION, List.of());
+    Map<PaymentFrequency, Long> feesCountByPaymentFrequency =
+        countFeesByPaymentFrequency(tuitionFees);
+    return new LateFeesStats()
+        .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(lateFees)))
+        .workStudy(countWorkStudyFees(tuitionFees))
+        .monthly(feesCountByPaymentFrequency.get(MONTHLY))
+        .yearly(feesCountByPaymentFrequency.get(YEARLY))
+        .firstGrade(feeCountByGrade.get(L1))
+        .secondGrade(feeCountByGrade.get(L2))
+        .thirdGrade(feeCountByGrade.get(L3));
+  }
+
+  private PaidFeesStats getPaidFeesStats(List<Fee> fees) {
+    List<Fee> paidFees = filterFeesByStatus(fees, PAID);
+    Map<StudentGrade, Long> feeCountByGrade = countFeesByGrades(paidFees);
+    Map<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(paidFees);
+    List<Fee> tuitionFees = feesByType.getOrDefault(TUITION, List.of());
+    Map<PaymentFrequency, Long> feesCountByPaymentFrequency =
+        countFeesByPaymentFrequency(tuitionFees);
+    Map<PaymentType, Long> feesCountByPaymentType = countFeesByPaymentType(tuitionFees);
+    return new PaidFeesStats()
+        .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(paidFees)))
+        .workStudy(countWorkStudyFees(tuitionFees))
+        .monthly(feesCountByPaymentFrequency.get(MONTHLY))
+        .yearly(feesCountByPaymentFrequency.get(YEARLY))
+        .firstGrade(feeCountByGrade.get(L1))
+        .secondGrade(feeCountByGrade.get(L2))
+        .thirdGrade(feeCountByGrade.get(L3))
+        .bankFees(BigDecimal.valueOf(feesCountByPaymentType.get(BANK)))
+        .mobileMoney(BigDecimal.valueOf(feesCountByPaymentType.get(MPBS)));
+  }
+
+  private PendingFeesStats getPendingFeesStats(List<Fee> fees) {
+    List<Fee> pendingFees = filterFeesByStatus(fees, PENDING);
+    Map<StudentGrade, Long> feeCountByGrade = countFeesByGrades(pendingFees);
+    Map<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(pendingFees);
+    List<Fee> tuitionFees = feesByType.getOrDefault(TUITION, List.of());
+    Map<PaymentFrequency, Long> feesCountByPaymentFrequency =
+        countFeesByPaymentFrequency(tuitionFees);
+    return new PendingFeesStats()
+        .remedialFeesCount(BigDecimal.valueOf(countRemedialFees(pendingFees)))
+        .workStudy(countWorkStudyFees(tuitionFees))
+        .monthly(feesCountByPaymentFrequency.get(MONTHLY))
+        .yearly(feesCountByPaymentFrequency.get(YEARLY))
+        .firstGrade(feeCountByGrade.get(L1))
+        .secondGrade(feeCountByGrade.get(L2))
+        .thirdGrade(feeCountByGrade.get(L3));
+  }
+
+  private TotalExpectedFeesStats getTotalExpectedFeesStats(List<Fee> fees) {
+    Map<StudentGrade, Long> feeCountByGrade = countFeesByGrades(fees);
+    Map<FeeTypeEnum, List<Fee>> feesByType = groupFeesByType(fees);
+    List<Fee> tuitionFees = feesByType.getOrDefault(TUITION, List.of());
+    Map<PaymentFrequency, Long> feesCountByPaymentFrequency =
+        countFeesByPaymentFrequency(tuitionFees);
+    return new TotalExpectedFeesStats()
+        .firstGrade(feeCountByGrade.get(L1))
+        .secondGrade(feeCountByGrade.get(L2))
+        .thirdGrade(feeCountByGrade.get(L3))
+        .monthly(feesCountByPaymentFrequency.get(MONTHLY))
+        .yearly(feesCountByPaymentFrequency.get(YEARLY))
+        .workStudy(countWorkStudyFees(tuitionFees));
+  }
+
+  private Map<StudentGrade, Long> countFeesByGrades(List<Fee> fees) {
+    var feesByGradeCount = new HashMap<StudentGrade, Long>();
+    Map<Optional<StudentGrade>, List<Fee>> feesByGrade =
+        fees.stream()
+            .filter(fee -> fee.getOwnerStudentGrade().isPresent())
+            .collect(groupingByConcurrent(Fee::getOwnerStudentGrade));
+    for (StudentGrade grade : StudentGrade.values()) {
+      feesByGradeCount.put(
+          grade, (long) feesByGrade.getOrDefault(Optional.of(grade), List.of()).size());
+    }
+    return feesByGradeCount;
+  }
+
+  private Map<PaymentFrequency, Long> countFeesByPaymentFrequency(List<Fee> fees) {
+    var feesByPaymentFrequencyCount = new HashMap<PaymentFrequency, Long>();
+    Map<Optional<PaymentFrequency>, List<Fee>> feesByPaymentFrequency =
+        fees.stream()
+            .filter(fee -> fee.getPaymentFrequency().isPresent())
+            .collect(groupingByConcurrent(Fee::getPaymentFrequency));
+    for (PaymentFrequency paymentFrequency : PaymentFrequency.values()) {
+      feesByPaymentFrequencyCount.put(
+          paymentFrequency,
+          (long)
+              feesByPaymentFrequency.getOrDefault(Optional.of(paymentFrequency), List.of()).size());
+    }
+    return feesByPaymentFrequencyCount;
+  }
+
+  private Map<PaymentType, Long> countFeesByPaymentType(List<Fee> fees) {
+    var feesByPaymentTypeCount = new HashMap<PaymentType, Long>();
+    Map<PaymentType, List<Fee>> feeByPaymentType =
+        fees.stream().collect(groupingByConcurrent(Fee::getPaymentType));
+    for (PaymentType paymentType : PaymentType.values()) {
+      feesByPaymentTypeCount.put(
+          paymentType, (long) feeByPaymentType.getOrDefault(paymentType, List.of()).size());
+    }
+    return feesByPaymentTypeCount;
+  }
+
+  private long countRemedialFees(List<Fee> fees) {
+    return fees.stream().filter(fee -> REMEDIAL_COSTS.equals(fee.getType())).count();
+  }
+
+  private long countWorkStudyFees(List<Fee> fees) {
+    return fees.stream()
+        .filter(fee -> fee.getComment().toLowerCase().contains("alternance"))
+        .count();
+  }
+
+  private Map<FeeTypeEnum, List<Fee>> groupFeesByType(List<Fee> fees) {
+    return fees.stream().collect(groupingBy(Fee::getType));
+  }
+
+  private List<Fee> filterFeesByStatus(List<Fee> fees, FeeStatusEnum feeStatus) {
+    return fees.stream().filter(fee -> feeStatus.equals(fee.getStatus())).toList();
   }
 
   private FeesStats getHandledNullDataStats(List<FeesStats> feesStats) {

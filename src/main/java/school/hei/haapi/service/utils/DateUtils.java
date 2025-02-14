@@ -30,7 +30,7 @@ public class DateUtils {
   }
 
   // Returns the start and end dates of the current month if the parameters are null
-  public Instant[] getDefaultMonthRange(Instant monthFrom, Instant monthTo) {
+  public static RangedInstant getDefaultMonthRange(Instant monthFrom, Instant monthTo) {
     LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
     LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
 
@@ -41,7 +41,7 @@ public class DateUtils {
         Objects.requireNonNullElse(
             monthTo, lastDayOfMonth.atTime(LocalTime.MAX).atZone(ZoneOffset.UTC).toInstant());
 
-    return new Instant[] {monthFrom, monthTo};
+    return new RangedInstant(monthFrom, monthTo);
   }
 
   public static Instant convertStringToInstant(String dateString) {
@@ -51,4 +51,6 @@ public class DateUtils {
     TemporalAccessor temporalAccessor = formatter.parse(dateString);
     return Instant.from(temporalAccessor);
   }
+
+  public record RangedInstant(Instant from, Instant to) {}
 }

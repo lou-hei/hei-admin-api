@@ -4,6 +4,14 @@ import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static org.hibernate.type.SqlTypes.NAMED_ENUM;
+import static school.hei.haapi.endpoint.rest.model.FeeTypeEnum.TUITION;
+import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.MONTHLY;
+import static school.hei.haapi.endpoint.rest.model.PaymentFrequency.YEARLY;
+import static school.hei.haapi.model.fee.PaymentType.BANK;
+import static school.hei.haapi.model.fee.PaymentType.MPBS;
+import static school.hei.haapi.model.fee.StudentGrade.L1;
+import static school.hei.haapi.model.fee.StudentGrade.L2;
+import static school.hei.haapi.model.fee.StudentGrade.L3;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -11,6 +19,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +33,10 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import school.hei.haapi.endpoint.rest.model.FeeStatusEnum;
 import school.hei.haapi.endpoint.rest.model.FeeTypeEnum;
+import school.hei.haapi.endpoint.rest.model.PaymentFrequency;
 import school.hei.haapi.model.Mpbs.Mpbs;
+import school.hei.haapi.model.fee.PaymentType;
+import school.hei.haapi.model.fee.StudentGrade;
 
 @Entity
 @Table(name = "\"fee\"")
@@ -151,5 +163,40 @@ Fee : {"id" : "%s", "remainingAmount" : "%s", "totalAmount" : "%s", "dueDatetime
   @Override
   public int hashCode() {
     return getClass().hashCode();
+  }
+
+  public boolean isWorkStudyStudentFee() {
+    return this.getComment().toLowerCase().contains("alternance") && TUITION.equals(this.getType());
+  }
+
+  public Optional<StudentGrade> getOwnerStudentGrade() {
+    if (this.getComment().toLowerCase().contains("l1")) {
+      return Optional.of(L1);
+    }
+    if (this.getComment().toLowerCase().contains("l2")) {
+      return Optional.of(L2);
+    }
+    if (this.getComment().toLowerCase().contains("l3")) {
+      return Optional.of(L3);
+    }
+    return Optional.empty();
+  }
+
+  public PaymentType getPaymentType() {
+    if (this.getMpbs() != null) {
+      return MPBS;
+    } else {
+      return BANK;
+    }
+  }
+
+  public Optional<PaymentFrequency> getPaymentFrequency() {
+    if (this.getComment().toLowerCase().contains("mensuel")) {
+      return Optional.of(MONTHLY);
+    }
+    if (this.getComment().toLowerCase().contains("annuel")) {
+      return Optional.of(YEARLY);
+    }
+    return Optional.empty();
   }
 }

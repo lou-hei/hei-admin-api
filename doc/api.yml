@@ -2834,6 +2834,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeesStatistics'
+  /fees/advanced-stats:
+    get:
+      tags:
+        - Paying
+      summary: Get advanced monthly statistics on Fees, the actual month by default
+      parameters:
+        - name: month_from
+          in: query
+          schema:
+            type: string
+            format: date-time
+          required: false
+        - name: month_to
+          in: query
+          schema:
+            type: string
+            format: date-time
+          required: false
+      operationId: getAdvancedFeesStats
+      responses:
+        '200':
+          description: Advanced Fees stats info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvancedFeesStatistics'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
   /fees/templates:
     get:
       tags:
@@ -6588,6 +6624,70 @@ components:
           type: integer
         suspended:
           type: integer
+    AdvancedFeesStatistics:
+      type: object
+      properties:
+        total_expected_fees_count:
+          $ref: "#/components/schemas/TotalExpectedFeesStats"
+        paid_fees_count:
+          $ref: "#/components/schemas/PaidFeesStats"
+        pending_fees_count:
+          $ref: "#/components/schemas/PendingFeesStats"
+        late_fees_count:
+          $ref: "#/components/schemas/LateFeesStats"
+    BaseFeesStats:
+      type: object
+      properties:
+        first_grade:
+          type: integer
+          format: int64
+        second_grade:
+          type: integer
+          format: int64
+        third_grade:
+          type: integer
+          format: int64
+        work_study:
+          type: integer
+          format: int64
+        monthly:
+          type: integer
+          format: int64
+        yearly:
+          type: integer
+          format: int64
+    TotalExpectedFeesStats:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseFeesStats"
+    PaidFeesStats:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseFeesStats"
+        - $ref: "#/components/schemas/RemedialFeesCount"
+      properties:
+        mobile_money:
+          type: number
+          format: int64
+        bank_fees:
+          type: number
+          format: int64
+    PendingFeesStats:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseFeesStats"
+        - $ref: "#/components/schemas/RemedialFeesCount"
+    LateFeesStats:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/BaseFeesStats"
+        - $ref: "#/components/schemas/RemedialFeesCount"
+    RemedialFeesCount:
+      type: object
+      properties:
+        remedial_fees_count:
+          type: number
+          format: int64
     FeesStatistics:
       type: object
       properties:
